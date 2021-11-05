@@ -79,9 +79,9 @@ class MyController extends Controller
 
 
     //********************************CRUD PRODUCTOS********************************/
-    public function nuevoProducto($id, $fk_familia, $nombre, $precio, $utilidad)
+    public function nuevoProducto($id, $fk_unidad, $descripcion, $utilidad, $costo, $precio_venta)
     {
-        $resultado = DB::insert('insert into producto (id, fk_familia, nombre, precio, utilidad) values (?, ?, ?, ?, ?)', [$id, $fk_familia, $nombre, $precio, $utilidad]);
+        $resultado = DB::insert('insert into producto (id, fk_unidad, descripcion, utilidad, costo, precio_venta) values (?, ?, ?, ?, ?, ?)', [$id, $fk_unidad, $descripcion, $utilidad, $costo, $precio_venta]);
         return response()->json_string = json_encode($resultado);
     }
 
@@ -97,9 +97,9 @@ class MyController extends Controller
         return response()->json_string = json_encode($resultado);
     }
 
-    public function actualizaProducto($fk_familia, $nombre, $precio, $utilidad, $id)
+    public function actualizaProducto($fk_unidad, $descripcion, $utildiad, $costo, $precio_venta, $id)
     {
-        $resultado = DB::update('update producto set fk_familia = ?, nombre = ?, precio = ?, utilidad = ? where id = ?', [$fk_familia, $nombre, $precio, $utilidad, $id]);
+        $resultado = DB::update('update producto set fk_unidad = ?, descripcion = ?, utilidad = ?, costo = ?, precio_venta = ? where id = ?', [$fk_unidad, $descripcion, $utildiad, $costo, $precio_venta, $id]);
         return response()->json_string = json_encode($resultado);
     }
 
