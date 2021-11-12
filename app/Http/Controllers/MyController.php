@@ -130,10 +130,10 @@ class MyController extends Controller
         return response()->json_string = json_encode($resultado);
     }
 
-    public function accionCliente($fk_localidad, $nombre, $telefono, $email, $direccion, $id, $any)
+    public function accionCliente($id, $fk_localidad, $nombre, $telefono, $email, $direccion, $accion)
     {
 
-        if ($any == 0) {
+        if ($accion == 0) {
             $resultado = DB::update('update cliente set fk_localidad = ?, nombre = ?, telefono = ?, email = ?, direccion = ? where id = ?', [$fk_localidad, $nombre, $telefono, $email, $direccion, $id]);
             return response()->json_string = json_encode($resultado);
         } else {
