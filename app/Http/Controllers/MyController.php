@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
 
 class MyController extends Controller
 {
@@ -131,38 +130,16 @@ class MyController extends Controller
         return response()->json_string = json_encode($resultado);
     }
 
-    public function accionCliente(Request $data)
+    public function accionCliente($fk_localidad, $nombre, $telefono, $email, $direccion, $id, $any)
     {
-        $reportArray = $data->reportArray;
-        $result = [];
 
-        if (is_array($reportArray)) {
-            foreach ($reportArray as $key => $val) {
-
-                $id = $val['id'];
-                $any = $val['any'];
-                $email = $val['email'];
-                $nombre = $val['nombre'];
-                $telefono = $val['telefono'];
-                $direccion = $val['direccion'];
-                $fk_localidad = $val['localidad'];
-
-                if ($any == 0) {
-                    $resultado = DB::update('update cliente set fk_localidad = ?, nombre = ?, telefono = ?, email = ?, direccion = ? where id = ?', [$fk_localidad, $nombre, $telefono, $email, $direccion, $id]);
-                    if ($resultado == -1) {
-                        $result = [
-                            "DETALLE" => mysqli_error($resultado)
-                        ];
-                    }
-                    $result[$key] = $resultado;
-                } else {
-                    $resultado = DB::delete('delete cliente where id = ?', [$id]);
-                }
-            }
+        if ($any == 0) {
+            $resultado = DB::update('update cliente set fk_localidad = ?, nombre = ?, telefono = ?, email = ?, direccion = ? where id = ?', [$fk_localidad, $nombre, $telefono, $email, $direccion, $id]);
+            return response()->json_string = json_encode($resultado);
         } else {
-            $result = ['DETALLE' => 'Objeto null'];
+            $resultado = DB::delete('delete cliente where id = ?', [$id]);
+            return response()->json_string = json_encode($resultado);
         }
-        return  response()->json($result);
     }
 
 
