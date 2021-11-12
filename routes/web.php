@@ -46,7 +46,7 @@ Route::get('nuevocliente', [MyController::class, 'nuevoCliente']);
 Route::get('clientes', [MyController::class, 'getClientes']);
 Route::get('clientexid', [MyController::class, 'getClienteXid']);
 Route::get('actualizacliente', [MyController::class, 'actualizaCliente']);
-Route::get('eliminacliente/{id}', [MyController::class, 'eliminaCliente']);
+Route::get('accioncliente/{id}/{localidad}/{nombre}/{telefono}/{email}/{direccion}/{any}', [MyController::class, 'accionCliente']);
 
 //********************************RUTAS LOCALIDAD**********************************/
 Route::get('nuevalocalidad', [MyController::class, 'nuevaLocalidad']);

@@ -130,16 +130,16 @@ class MyController extends Controller
         return response()->json_string = json_encode($resultado);
     }
 
-    public function actualizaCliente($fk_localidad, $nombre, $telefono, $email, $direccion, $id)
+    public function accionCliente($fk_localidad, $nombre, $telefono, $email, $direccion, $id, $any)
     {
-        $resultado = DB::update('update cliente set fk_localidad = ?, nombre = ?, telefono = ?, email = ?, direccion = ? where id = ?', [$fk_localidad, $nombre, $telefono, $email, $direccion, $id]);
-        return response()->json_string = json_encode($resultado);
-    }
 
-    public function eliminaCliente($id)
-    {
-        $resultado = DB::delete('delete cliente where id = ?', [$id]);
-        return response()->json_string = json_encode($resultado);
+        if ($any == 0) {
+            $resultado = DB::update('update cliente set fk_localidad = ?, nombre = ?, telefono = ?, email = ?, direccion = ? where id = ?', [$fk_localidad, $nombre, $telefono, $email, $direccion, $id]);
+            return response()->json_string = json_encode($resultado);
+        } else {
+            $resultado = DB::delete('delete cliente where id = ?', [$id]);
+            return response()->json_string = json_encode($resultado);
+        }
     }
 
 
