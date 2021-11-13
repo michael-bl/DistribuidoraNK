@@ -135,7 +135,7 @@ class MyController extends Controller
 
         if ($accion == 0) {
             $resultado = DB::update('update cliente set fk_localidad = ?, nombre = ?, telefono = ?, email = ?, direccion = ? where id = ?', [$fk_localidad, $nombre, $telefono, $email, $direccion, $id]);
-            return response()->json_string = json_encode($resultado);
+            return response()->json(["result" => $resultado]);
         } else {
             $resultado = DB::delete('delete cliente where id = ?', [$id]);
             return response()->json_string = json_encode($resultado);
