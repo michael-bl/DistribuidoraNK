@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.distribuidorank">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:usesCleartextTraffic="true"
+        android:theme="@style/Theme.DistribuidoraNK">
+        <activity
+            android:name=".vista.LoginActivity"
+            android:theme="@style/Theme.DistribuidoraNK.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".vista.ClienteContent"
+            android:label="@string/buscar"
+            android:theme="@style/Theme.DistribuidoraNK.NoActionBar">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".vista.ProductoActivity"
+            android:label="@string/title_activity_producto"
+            android:theme="@style/Theme.DistribuidoraNK.NoActionBar">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".vista.FacturacionActivity"
+            android:label="@string/title_activity_facturacion"
+            android:theme="@style/Theme.DistribuidoraNK.NoActionBar">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".vista.LocalidadActivity"
+            android:label="@string/title_activity_localizacion"
+            android:theme="@style/Theme.DistribuidoraNK.NoActionBar">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".vista.UnidadActivity"
+            android:label="@string/title_activity_unidad"
+            android:theme="@style/Theme.DistribuidoraNK.NoActionBar">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".vista.ClienteActivity"
+            android:label="@string/title_activity_cliente"
+            android:theme="@style/Theme.DistribuidoraNK.NoActionBar">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".vista.ProveedorActivity"
+            android:label="@string/title_activity_proveedor"
+            android:theme="@style/Theme.DistribuidoraNK.NoActionBar">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".vista.UsuarioActivity"
+            android:label="@string/title_activity_usuario"
+            android:theme="@style/Theme.DistribuidoraNK.NoActionBar.NoActionBar">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".vista.MainActivity"
+            android:label="@string/title_activity_principal"
+            android:theme="@style/Theme.DistribuidoraNK.NoActionBar.NoActionBar">
+            <intent-filter>
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

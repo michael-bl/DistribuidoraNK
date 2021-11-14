@@ -1,0 +1,67 @@
+<resources>
+    <string name="app_name">DistribuidoraNK</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Siguiente</string>
+    <string name="previous">Previous</string>
+
+    <string name="login">Login</string>
+    <string name="contrasena">Contraseña</string>
+    <string name="nav_header_desc">Navigation header</string>
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_header_title">Inicio</string>
+    <string name="nav_header_subtitle">Settings</string>
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="title_activity_login">LoginActivity</string>
+    <string name="prompt_email">Email</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Not a valid username</string>
+    <string name="invalid_password">Password must be >5 characters</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="communicate">Communicate</string>
+    <string name="share">Share</string>
+    <string name="send">Send</string>
+    <!--> Titulos de activitys -->
+    <string name="logo_distribuidorank">Logo</string>
+    <string name="title_activity_principal">Distribuidora NK</string>
+    <string name="title_activity_usuario">Usuario</string>
+    <string name="title_activity_cliente">Cliente</string>
+    <string name="title_activity_proveedor">Proveedor</string>
+    <string name="title_activity_producto">Producto</string>
+    <string name="title_activity_localizacion">Localización</string>
+    <string name="title_activity_unidad">Unidad de Medida</string>
+    <string name="title_activity_facturacion">Facturación</string>
+    <!--Uso general-->
+    <string name="nuevo">Nuevo</string>
+    <string name="actualizar">Actualizar</string>
+    <string name="guardar">Guardar</string>
+    <string name="eliminar">Eliminar</string>
+    <string name="id">Código</string>
+    <string name="fecha">Fecha</string>
+    <string name="buscar">Buscar</string>
+    <string name="procesar">Procesar</string>
+    <string name="masAcciones">Más acciones</string>
+    <!--Usuario-->
+    <string name="usuario">Usuario</string>
+    <string name="cedula">Cédula</string>
+    <string name="nombre">Nombre</string>
+    <string name="telefono">Teléfono</string>
+    <string name="direccion">Dirección</string>
+    <!--Producto-->
+    <string name="unidadMedida">Unidad de Medida</string>
+    <string name="detalle">Detalle</string>
+    <string name="utilidad">Utilidad</string>
+    <string name="precioCompra">Precio de compra</string>
+    <string name="precioVenta">Precio de venta</string>
+    <string name="gananciaGeneral">Ganancia general</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+</resources>
