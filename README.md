@@ -1,2 +1,0 @@
-# DistribuidoraNK
- Aplicación android
