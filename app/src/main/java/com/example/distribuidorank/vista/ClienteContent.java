@@ -28,7 +28,6 @@ import com.example.distribuidorank.modelo.Cliente;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +46,6 @@ public class ClienteContent extends AppCompatActivity {
     private ArrayList<String> idClienteSeleccionado;
     // Variable string con lista de clientes
     private ArrayList<String> stringListaClientes;
-    // Variable string con lista de clientes info del obj completa
-    private ArrayList<String> stringListaClientes2;
     // Variable del textview para ingresar busqueda
     private TextInputEditText tvBuscar;
     // Objeto Cliente
@@ -57,6 +54,8 @@ public class ClienteContent extends AppCompatActivity {
     private View view;
     private AlertDialog.Builder builder;
     private LayoutInflater inflater;
+    private Intent intent;
+    private Bundle bundle;
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
 
@@ -70,10 +69,24 @@ public class ClienteContent extends AppCompatActivity {
         inflater = getLayoutInflater();
         view = inflater.inflate(R.layout.dialog_opciones,null);
         builder = new AlertDialog.Builder(this);
+        intent = new Intent(this, ClienteActivity.class);
+        bundle = new Bundle();
         cliente = new Cliente();
         //Evento boton procesar
         Button btnSiguiente = findViewById(R.id.btnSiguienteContent);
-        btnSiguiente.setOnClickListener(v -> dialogAccion().show());
+        btnSiguiente.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (cliente.getAccion()==0){
+                    dialogAccion().show();
+                } else {
+                    cliente.setAccion(0);
+                    bundle.putSerializable("cliente", cliente);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+            }
+        });
     }
 
     /** Dialog captura opcion - Actualizar o eliminar objeto */
@@ -83,17 +96,15 @@ public class ClienteContent extends AppCompatActivity {
         btnActualizar.setText("Actualizar");
         final Button btnEliminar = view.findViewById(R.id.btnMasOpciones);
         btnEliminar.setText("Eliminar");
-        Intent intent = new Intent(this, ClienteActivity.class);
-        Bundle bundle = new Bundle();
         btnActualizar.setOnClickListener(v -> {
-            cliente.setAccion(0);
-            bundle.putSerializable("cliente", (Serializable) cliente);
+            cliente.setAccion(1);
+            bundle.putSerializable("cliente", cliente);
             intent.putExtras(bundle);
             startActivity(intent);
         });
         btnEliminar.setOnClickListener(v -> {
-            cliente.setAccion(1);
-            bundle.putSerializable("cliente", (Serializable) cliente);
+            cliente.setAccion(2);
+            bundle.putSerializable("cliente", cliente);
             intent.putExtras(bundle);
             startActivity(intent);
         });

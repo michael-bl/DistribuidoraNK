@@ -24,7 +24,7 @@ import com.example.distribuidorank.controlador.ConnectivityService;
 import com.example.distribuidorank.controlador.SelectionAdapter;
 import com.example.distribuidorank.modelo.Cliente;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,11 +104,11 @@ public class ClienteActivity extends AppCompatActivity {
         if (con.stateConnection(ClienteActivity.this)) {
             // Verificamos que todos los datos del reporte esten ingresados
             if (makeReport()) {
-                 Call<JsonArray> requestReport = ApiUtils.getApiServices().accionCliente(cedula, localidad, nombre, telefono, email, direccion, accion);
-                //Call<JsonArray> requestReport = ApiUtils.getApiServices().accionCliente(cliente);
-                requestReport.enqueue(new Callback<JsonArray>() {
+                //Call<JsonObject> requestReport = ApiUtils.getApiServices().accionCliente(cedula, localidad, nombre, telefono, email, direccion, accion);
+                Call<JsonObject> requestReport = ApiUtils.getApiServices().nuevoCliente(cliente);
+                requestReport.enqueue(new Callback<JsonObject>() {
                     @Override
-                    public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
+                    public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                         try {
                             //Verificamos si la transaccion fue exitosa y mostramos mensaje de error
                             if (!response.isSuccessful()) {
@@ -121,8 +121,8 @@ public class ClienteActivity extends AppCompatActivity {
                         }
                     }
                     @Override
-                    public void onFailure(Call<JsonArray> call, Throwable t) {
-                        Toast.makeText(ClienteActivity.this, "ResponseMsg, la peticion fallo en:  " + t.toString(), Toast.LENGTH_SHORT).show();
+                    public void onFailure(Call<JsonObject> call, Throwable t) {
+                        Toast.makeText(ClienteActivity.this,"La peticion falló:  " + t.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
 

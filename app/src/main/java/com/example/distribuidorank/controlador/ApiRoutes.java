@@ -2,7 +2,7 @@ package com.example.distribuidorank.controlador;
 
 import com.example.distribuidorank.modelo.Cliente;
 import com.example.distribuidorank.modelo.Usuario;
-import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import java.util.List;
 
@@ -25,28 +25,18 @@ public interface ApiRoutes {
 
     // Guarda nuevo cliente
     @Headers({"Accept: application/json; Content-Type: application/json; charset=utf-8; deviceplatform:android; User-Agent:Mozilla/5.0"})
-    @POST("nuevocliente/{id}/{localidad}/{nombre}/{telefono}/{email}/{direccion}")
-    Call<JsonArray> postCliente(@Body String a, String b, String c, String d, String e, String f);
+    @POST("nuevocliente2")
+    Call<JsonObject> nuevoCliente(@Body Cliente c);
 
     // Actualiza o elimina cliente
-    //@Headers({"Accept: application/json; Content-Type: application/json; charset=utf-8; deviceplatform:android; User-Agent:Mozilla/5.0"})
-    //@FormUrlEncoded
-    @POST("accioncliente/{id}/{localidad}/{nombre}/{telefono}/{email}/{direccion}/{accion}")
-    Call<JsonArray> accionCliente(@Path("id") String a,
-                                  @Path("localidad") String b,
-                                  @Path("nombre") String c,
-                                  @Path("telefono") String e,
-                                  @Path("email") String d,
-                                  @Path("direccion") String f,
-                                  @Path("accion") int g);
-    /*@GET("accioncliente/{id}/{localidad}/{nombre}/{telefono}/{email}/{direccion}/{accion}")
-    Call<JsonArray> accionCliente(@Path("id") String a,
-                                  @Path("localidad") String b,
-                                  @Path("nombre") String c,
-                                  @Path("telefono") String e,
-                                  @Path("email") String d,
-                                  @Path("direccion") String f,
-                                  @Path("accion") int g);*/
+      @GET("accioncliente/{id}/{localidad}/{nombre}/{telefono}/{email}/{direccion}/{accion}")
+      Call<JsonObject> accionCliente(@Path("id") String a,
+                                   @Path("localidad") String b,
+                                   @Path("nombre") String c,
+                                   @Path("telefono") String e,
+                                   @Path("email") String d,
+                                   @Path("direccion") String f,
+                                   @Path("accion") int g);
 
     // Obtiene lista de empleados
     //@GET("employees")
