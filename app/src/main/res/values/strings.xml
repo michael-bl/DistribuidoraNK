@@ -56,6 +56,7 @@
     <string name="direccion">Dirección</string>
     <!--Producto-->
     <string name="unidadMedida">Unidad de Medida</string>
+    <string name="comprar">Comprar</string>
     <string name="detalle">Detalle</string>
     <string name="utilidad">Utilidad</string>
     <string name="precioCompra">Precio de compra</string>

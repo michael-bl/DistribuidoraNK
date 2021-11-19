@@ -3,9 +3,7 @@ package com.example.distribuidorank.modelo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-import java.text.DecimalFormat;
-
-public class Producto {
+public class Producto{
     public Producto(){
     }
 
@@ -23,15 +21,15 @@ public class Producto {
 
     @SerializedName("utilidad")
     @Expose
-    private DecimalFormat utilidad;
+    private Float utilidad;
 
-    @SerializedName("costo")
+    @SerializedName("precio_compra")
     @Expose
-    private DecimalFormat costo;
+    private Float precio_compra;
 
     @SerializedName("precio_venta")
     @Expose
-    private DecimalFormat precio_venta;
+    private Float precio_venta;
 
     public int getId() {
         return id;
@@ -57,27 +55,27 @@ public class Producto {
         this.descripcion = descripcion;
     }
 
-    public DecimalFormat getUtilidad() {
+    public Float getUtilidad() {
         return utilidad;
     }
 
-    public void setUtilidad(DecimalFormat utilidad) {
+    public void setUtilidad(Float utilidad) {
         this.utilidad = utilidad;
     }
 
-    public DecimalFormat getCosto() {
-        return costo;
+    public Float getPrecio_compra() {
+        return precio_compra;
     }
 
-    public void setCosto(DecimalFormat costo) {
-        this.costo = costo;
+    public void setPrecio_compra(Float precio_compra) {
+        this.precio_compra = precio_compra;
     }
 
-    public DecimalFormat getPrecio_venta() {
+    public Float getPrecio_venta() {
         return precio_venta;
     }
 
-    public void setPrecio_venta(DecimalFormat precio_venta) {
+    public void setPrecio_venta(Float precio_venta) {
         this.precio_venta = precio_venta;
     }
 }

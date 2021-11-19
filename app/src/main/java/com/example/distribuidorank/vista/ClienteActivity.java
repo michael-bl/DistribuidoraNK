@@ -104,8 +104,8 @@ public class ClienteActivity extends AppCompatActivity {
         if (con.stateConnection(ClienteActivity.this)) {
             // Verificamos que todos los datos del reporte esten ingresados
             if (makeReport()) {
-                //Call<JsonObject> requestReport = ApiUtils.getApiServices().accionCliente(cedula, localidad, nombre, telefono, email, direccion, accion);
-                Call<JsonObject> requestReport = ApiUtils.getApiServices().nuevoCliente(cliente);
+                Call<JsonObject> requestReport = ApiUtils.getApiServices().accionCliente(cedula, localidad, nombre, telefono, email, direccion, accion);
+                //Call<JsonObject> requestReport = ApiUtils.getApiServices().nuevoCliente(cliente);
                 requestReport.enqueue(new Callback<JsonObject>() {
                     @Override
                     public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
@@ -144,7 +144,7 @@ public class ClienteActivity extends AppCompatActivity {
         TextView txtDireccion = findViewById(R.id.txtDireccionCliente);
         TextView txtEmail = findViewById(R.id.txtEmailCliente);
         /*cliente.setId(txtCedula.getText().toString());
-        cliente.setNombre(txtNombre.getText().toString());
+        cliente.setNombre(txtCardNombre.getText().toString());
         cliente.setTelefono(txtTelefono.getText().toString());
         cliente.setFk_localidad(txtLocalidad.getText().toString());
         cliente.setDireccion(txtDireccion.getText().toString());

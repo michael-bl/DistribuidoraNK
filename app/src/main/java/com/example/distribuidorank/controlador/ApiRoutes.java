@@ -2,6 +2,7 @@ package com.example.distribuidorank.controlador;
 
 import com.example.distribuidorank.modelo.Cliente;
 import com.example.distribuidorank.modelo.Usuario;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.util.List;
@@ -19,7 +20,7 @@ public interface ApiRoutes {
     @GET("login/{user}/{pass}")
     Call<List<Usuario>> login(@Path("user") String user, @Path("pass") String pass);
 
-    // Obtiene todas las actividades o labores
+    // Retorna todas clientes
     @GET("clientes")
     Call<List<Cliente>> getCliente();
 
@@ -38,9 +39,11 @@ public interface ApiRoutes {
                                    @Path("direccion") String f,
                                    @Path("accion") int g);
 
-    // Obtiene lista de empleados
-    //@GET("employees")
-    //Call<List<Empleado>> getEmployee();
+    // Retorna lista de productos desde el servidor remoto
+    @GET("productos")
+    Call<JsonArray> getProductos();
+    /*@GET("productos")
+    Call<JsonArray> getProductos();*/
 
     // Obtiene ultimos 5 reportes guardados por id encargado
     //@GET("lastreports/{id_manager}")
