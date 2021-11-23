@@ -3,6 +3,8 @@ package com.example.distribuidorank.modelo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.util.Date;
+
 public class Usuario {
     public Usuario(){
 
@@ -34,6 +36,11 @@ public class Usuario {
     @SerializedName("direccion")
     @Expose
     private String direccion;
+
+    @SerializedName("ultima_actualizacion")
+    @Expose
+    private Date ultima_actualizacion;
+
 
 
     public String getId() {
@@ -90,5 +97,13 @@ public class Usuario {
 
     public void setDireccion(String direccion) {
         this.direccion = direccion;
+    }
+
+    public Date getUltima_actualizacion() {
+        return this.ultima_actualizacion;
+    }
+
+    public void setUltima_actualizacion(Date ultima_actualizacion) {
+        this.ultima_actualizacion = ultima_actualizacion;
     }
 }

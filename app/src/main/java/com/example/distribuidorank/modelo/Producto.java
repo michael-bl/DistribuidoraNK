@@ -1,9 +1,15 @@
 package com.example.distribuidorank.modelo;
 
+import android.util.Log;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Producto{
+import java.text.DecimalFormat;
+import java.text.ParseException;
+import java.util.Date;
+
+public class Producto {
     public Producto(){
     }
 
@@ -11,9 +17,9 @@ public class Producto{
     @Expose
     private int id;
 
-    @SerializedName("fk_familia")
+    @SerializedName("fk_unidad")
     @Expose
-    private int fk_familia;
+    private int fk_unidad;
 
     @SerializedName("descripcion")
     @Expose
@@ -21,15 +27,24 @@ public class Producto{
 
     @SerializedName("utilidad")
     @Expose
-    private Float utilidad;
+    private float utilidad;
 
     @SerializedName("precio_compra")
     @Expose
-    private Float precio_compra;
+    private float precio_compra;
 
     @SerializedName("precio_venta")
     @Expose
-    private Float precio_venta;
+    private float precio_venta;
+
+    @SerializedName("ultima_actualizacion")
+    @Expose
+    private Date ultima_actualizacion;
+
+    @Expose(serialize = false)
+    private static final DecimalFormat decimal_format =new DecimalFormat("#############.00");
+
+
 
     public int getId() {
         return id;
@@ -39,12 +54,12 @@ public class Producto{
         this.id = id;
     }
 
-    public int getFk_familia() {
-        return fk_familia;
+    public int getFk_unidad() {
+        return fk_unidad;
     }
 
-    public void setFk_familia(int fk_familia) {
-        this.fk_familia = fk_familia;
+    public void setFk_unidad(int fk_unidad) {
+        this.fk_unidad = fk_unidad;
     }
 
     public String getDescripcion() {
@@ -55,27 +70,62 @@ public class Producto{
         this.descripcion = descripcion;
     }
 
-    public Float getUtilidad() {
+    public float getUtilidad() {
         return utilidad;
     }
 
-    public void setUtilidad(Float utilidad) {
-        this.utilidad = utilidad;
+    public void setUtilidad(String utilidad) {
+        try {
+            this.utilidad = decimal_format.parse(utilidad).floatValue();
+        } catch (ParseException | NullPointerException e) {
+            this.utilidad = 0;
+            Log.e("Parse Exception", String.format("Clase: Detalle_factura\tMétodo: setUtilidad\nError:%s", e.toString()));
+        }
     }
 
-    public Float getPrecio_compra() {
+    public void setUtilidad(float utilidad) {
+        this.utilidad = Float.parseFloat(decimal_format.format(utilidad)); // Permite cortar cualquier cola de decimales que venga
+    }
+
+    public float getPrecio_compra() {
         return precio_compra;
     }
 
-    public void setPrecio_compra(Float precio_compra) {
-        this.precio_compra = precio_compra;
+    public void setPrecio_compra(String precio_compra) {
+        try {
+            this.precio_compra = decimal_format.parse(precio_compra).floatValue();
+        } catch (ParseException | NullPointerException e) {
+            this.precio_compra = 0;
+            Log.e("Parse Exception", String.format("Clase: Detalle_factura\tMétodo: setPrecio_compra\nError:%s", e.toString()));
+        }
     }
 
-    public Float getPrecio_venta() {
+    public void setPrecio_compra(float precio_compra) {
+        this.precio_compra = Float.parseFloat(decimal_format.format(precio_compra)); // Permite cortar cualquier cola de decimales que venga
+    }
+
+    public float getPrecio_venta() {
         return precio_venta;
     }
 
-    public void setPrecio_venta(Float precio_venta) {
-        this.precio_venta = precio_venta;
+    public void setPrecio_venta(String precio_venta) {
+        try {
+            this.precio_venta = decimal_format.parse(precio_venta).floatValue();
+        } catch (ParseException | NullPointerException e) {
+            this.precio_venta = 0;
+            Log.e("Parse Exception", String.format("Clase: Detalle_factura\tMétodo: setPrecio_venta\nError:%s", e.toString()));
+        }
+    }
+
+    public void setPrecio_venta(float precio_venta) {
+        this.precio_venta = Float.parseFloat(decimal_format.format(precio_venta)); // Permite cortar cualquier cola de decimales que venga
+    }
+
+    public Date getUltima_actualizacion() {
+        return this.ultima_actualizacion;
+    }
+
+    public void setUltima_actualizacion(Date ultima_actualizacion) {
+        this.ultima_actualizacion = ultima_actualizacion;
     }
 }

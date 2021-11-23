@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class Cliente implements Serializable {
 
@@ -21,7 +22,7 @@ public class Cliente implements Serializable {
 
     @SerializedName("fk_localidad")
     @Expose
-    private String fk_localidad;
+    private int fk_localidad;
 
     @SerializedName("nombre")
     @Expose
@@ -43,6 +44,12 @@ public class Cliente implements Serializable {
     @Expose
     private int accion;
 
+    @SerializedName("ultima_actualizacion")
+    @Expose
+    private Date ultima_actualizacion;
+
+
+
     public String getId() {
         return id;
     }
@@ -51,11 +58,11 @@ public class Cliente implements Serializable {
         this.id = id;
     }
 
-    public String getFk_localidad() {
+    public int getFk_localidad() {
         return fk_localidad;
     }
 
-    public void setFk_localidad(String fk_localidad) {
+    public void setFk_localidad(int fk_localidad) {
         this.fk_localidad = fk_localidad;
     }
 
@@ -105,5 +112,13 @@ public class Cliente implements Serializable {
 
     public void setArrayCliente(ArrayList<Cliente> arrayCliente) {
         this.arrayCliente = arrayCliente;
+    }
+
+    public Date getUltima_actualizacion() {
+        return ultima_actualizacion;
+    }
+
+    public void setUltima_actualizacion(Date ultima_actualizacion) {
+        this.ultima_actualizacion = ultima_actualizacion;
     }
 }
