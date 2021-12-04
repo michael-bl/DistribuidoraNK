@@ -25,6 +25,12 @@ public class Cabecera_factura {
     @Expose
     private Date fecha;
 
+    @SerializedName("ultima_actualizacion")
+    @Expose
+    private Date ultima_actualizacion;
+
+
+
     public int getId() {
         return id;
     }
@@ -55,5 +61,13 @@ public class Cabecera_factura {
 
     public void setFecha(Date fecha) {
         this.fecha = fecha;
+    }
+
+    public Date getUltima_actualizacion() {
+        return ultima_actualizacion;
+    }
+
+    public void setUltima_actualizacion(Date ultima_actualizacion) {
+        this.ultima_actualizacion = ultima_actualizacion;
     }
 }
