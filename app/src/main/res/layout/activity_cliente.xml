@@ -93,7 +93,7 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txtLocalidadCliente"
+                android:id="@+id/txtBuscarProducto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -116,14 +116,8 @@
                 android:maxLines="2" />
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Spinner
-            android:id="@+id/spLocalidadCliente"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp" />
-
         <Button
-            android:id="@+id/btnSiguienteContent"
+            android:id="@+id/btnSiguienteContentProducto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"

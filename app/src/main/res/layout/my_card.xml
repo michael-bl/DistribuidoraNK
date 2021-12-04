@@ -9,14 +9,14 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="wrap_content"
-        android:layout_height="172dp"
+        android:layout_height="187dp"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        app:cardBackgroundColor="#DDF3C5"
         app:cardCornerRadius="13dp"
+        app:cardElevation="1dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -24,112 +24,111 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="283dp"
-                android:layout_height="33dp"
-                android:layout_alignParentBottom="true"
-                android:layout_marginStart="130dp"
-                android:layout_marginLeft="130dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="133dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/txtCardUtilidad"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/utilidad"
-                    android:visibility="invisible" />
-            </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="177dp">
 
             <ImageView
                 android:id="@+id/imgCardProducto"
-                android:layout_width="121dp"
-                android:layout_height="106dp"
+                android:layout_width="174dp"
+                android:layout_height="117dp"
                 android:layout_alignParentStart="true"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
                 android:layout_marginStart="4dp"
                 android:layout_marginLeft="4dp"
                 android:layout_marginTop="5dp"
-                android:layout_marginEnd="270dp"
-                android:layout_marginRight="270dp"
-                android:layout_marginBottom="60dp"
+                android:layout_marginBottom="55dp"
                 android:contentDescription="Img producto"
                 app:srcCompat="@android:drawable/ic_dialog_alert" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="283dp"
-                android:layout_height="33dp"
-                android:layout_marginStart="130dp"
-                android:layout_marginLeft="130dp"
-                android:layout_marginTop="5dp">
-
-            </com.google.android.material.textfield.TextInputLayout>
-
             <TextView
                 android:id="@+id/txtCardNombre"
-                android:layout_width="270dp"
-                android:layout_height="46dp"
+                android:layout_width="266dp"
+                android:layout_height="37dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
-                android:layout_marginEnd="119dp"
-                android:layout_marginRight="119dp"
-                android:layout_marginBottom="7dp"
+                android:layout_marginEnd="123dp"
+                android:layout_marginRight="123dp"
+                android:layout_marginBottom="9dp"
                 android:gravity="center"
-                android:text="TextView" />
+                android:text="TextView"
+                tools:text="@string/nombre" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="265dp"
-                android:layout_height="33dp"
-                android:layout_marginStart="130dp"
-                android:layout_marginLeft="130dp"
-                android:layout_marginTop="42dp">
-
-                <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/txtCardPrecioVenta"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center"
-                    android:hint="@string/precioVenta" />
-            </com.google.android.material.textfield.TextInputLayout>
+            <TextView
+                android:id="@+id/txtCardPrecioCompra"
+                android:layout_width="198dp"
+                android:layout_height="35dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="184dp"
+                android:layout_marginLeft="184dp"
+                android:layout_marginEnd="9dp"
+                android:layout_marginRight="9dp"
+                android:layout_marginBottom="94dp"
+                android:drawableLeft="@drawable/colon1"
+                android:gravity="center"
+                android:text="TextView"
+                tools:text="@string/precioCompra" />
 
             <Button
                 android:id="@+id/btnCardComprar"
                 android:layout_width="wrap_content"
-                android:layout_height="38dp"
+                android:layout_height="40dp"
+                android:layout_alignParentTop="true"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_alignParentBottom="true"
                 android:layout_marginStart="5dp"
                 android:layout_marginLeft="5dp"
-                android:layout_marginEnd="4dp"
-                android:layout_marginRight="4dp"
-                android:layout_marginBottom="8dp"
-                android:text="@string/comprar" />
+                android:layout_marginTop="131dp"
+                android:layout_marginEnd="9dp"
+                android:layout_marginRight="9dp"
+                android:layout_marginBottom="6dp"
+                android:text="@string/agregar" />
+
+            <TextView
+                android:id="@+id/txtCardUtilidad"
+                android:layout_width="198dp"
+                android:layout_height="35dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="184dp"
+                android:layout_marginLeft="184dp"
+                android:layout_marginEnd="9dp"
+                android:layout_marginRight="9dp"
+                android:layout_marginBottom="134dp"
+                android:drawableLeft="@drawable/porcentaje"
+                android:gravity="center"
+                android:text="TextView"
+                tools:text="@string/utilidad" />
+
+            <TextView
+                android:id="@+id/txtCardPrecioVenta"
+                android:layout_width="198dp"
+                android:layout_height="35dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="184dp"
+                android:layout_marginLeft="184dp"
+                android:layout_marginEnd="9dp"
+                android:layout_marginRight="9dp"
+                android:layout_marginBottom="55dp"
+                android:gravity="center"
+                android:text="TextView"
+                app:drawableLeftCompat="@drawable/colon1"
+                tools:text="@string/precioVenta" />
 
         </RelativeLayout>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="33dp"
-            android:layout_marginStart="130dp"
-            android:layout_marginLeft="130dp"
-            android:layout_marginTop="79dp"
-            android:gravity="center">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txtCardPrecioCompra"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:hint="@string/precioCompra" />
-        </com.google.android.material.textfield.TextInputLayout>
     </androidx.cardview.widget.CardView>
 </LinearLayout>

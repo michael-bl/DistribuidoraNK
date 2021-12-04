@@ -10,7 +10,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.distribuidorank.R;
 import com.example.distribuidorank.modelo.Targeta;
-import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 
@@ -22,9 +21,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             implements View
             .OnClickListener {
         private TextView nombre;
-        private TextInputEditText precioCompra;
-        private TextInputEditText precioVenta;
-        private TextInputEditText utilidad;
+        private TextView precioVenta;
+        private TextView precioCompra;
+        private TextView utilidad;
         private Button btnAgregar;
 
         public DataObjectHolder(View view) {

@@ -56,9 +56,11 @@
     <string name="direccion">Dirección</string>
     <!--Producto-->
     <string name="unidadMedida">Unidad de Medida</string>
-    <string name="comprar">Comprar</string>
+    <string name="agregar">Agregar</string>
     <string name="detalle">Detalle</string>
+    <string name="nombreProducto">Nombre Producto</string>
     <string name="utilidad">Utilidad</string>
+    <string name="calcular_utilidad">Calcular Utilidad</string>
     <string name="precioCompra">Precio de compra</string>
     <string name="precioVenta">Precio de venta</string>
     <string name="gananciaGeneral">Ganancia general</string>

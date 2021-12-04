@@ -44,7 +44,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private LayoutInflater inflater;
     private View view;
-
+    private Bundle bundle;
+    private Producto producto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,15 +82,13 @@ public class MainActivity extends AppCompatActivity {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
          if(id==R.id.nav_usuario){
              Intent intent = new Intent(this.getApplicationContext(), UsuarioActivity.class);
              startActivity(intent);
         } if(id==R.id.nav_cliente){
-            dialogOpciones().show();
+            dialogOpciones("Clientes").show();
         }if(id==R.id.nav_producto){
-            Intent intent = new Intent(this.getApplicationContext(),ProductoActivity.class);
-            startActivity(intent);
+            dialogOpciones("Productos").show();
         }if(id==R.id.nav_proveedor){
             Intent intent = new Intent(this.getApplicationContext(), ProveedorActivity.class);
             startActivity(intent);
@@ -186,21 +185,46 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /** AlertDialog con opciones a realizar sobre objeto */
-    private AlertDialog dialogOpciones() {
+    private AlertDialog dialogOpciones(String objeto) {
 
         view = inflater.inflate(R.layout.dialog_opciones,null);
         final Button btnNuevo = view.findViewById(R.id.btnNuevo);
         final Button btnActualizar = view.findViewById(R.id.btnMasOpciones);
         btnNuevo.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ClienteActivity.class);
-            startActivity(intent);
+            Intent intent;
+            switch (objeto){
+                case "Clientes":
+                intent = new Intent(MainActivity.this, ClienteActivity.class);
+                startActivity(intent);
+                break;
+                case "Productos":
+                    intent = new Intent(MainActivity.this, ProductoActivity.class);
+                    bundle = new Bundle();
+                    producto = new Producto();
+                    producto.setAccion(0);
+                    producto.setEstado(1);
+                    bundle.putSerializable("producto", producto);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                break;
+            }
+
         });
         btnActualizar.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, ClienteContent.class);
-            startActivity(intent);
+            Intent intent;
+            switch (objeto){
+                case "Clientes":
+                    intent = new Intent(MainActivity.this, ClienteContent.class);
+                    startActivity(intent);
+                    break;
+                case "Productos":
+                    intent = new Intent(MainActivity.this, ProductoContent.class);
+                    startActivity(intent);
+                    break;
+            }
         });
         
-        builder.setView(view).setTitle("Cliente: seleccione una opción").setPositiveButton("", (dialog, id) -> {((ViewGroup)drawerLayout.getParent()).removeView(view);
+        builder.setView(view).setTitle("Opciones de " + objeto).setPositiveButton("", (dialog, id) -> {((ViewGroup)drawerLayout.getParent()).removeView(view);
         }).setNegativeButton("Cancelar", (dialog, which) -> ((ViewGroup)drawerLayout.getParent()).removeView(view));
         return builder.create();
     }

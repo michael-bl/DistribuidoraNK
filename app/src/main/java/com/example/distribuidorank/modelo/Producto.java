@@ -3,7 +3,9 @@ package com.example.distribuidorank.modelo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Producto{
+import java.io.Serializable;
+
+public class Producto implements Serializable {
     public Producto(){
     }
 
@@ -30,6 +32,18 @@ public class Producto{
     @SerializedName("precio_venta")
     @Expose
     private Float precio_venta;
+
+    @SerializedName("accion")
+    @Expose
+    private int accion;
+
+    @SerializedName("estado")
+    @Expose
+    private int estado;
+
+    @SerializedName("detalle")
+    @Expose
+    private String detalle;
 
     public int getId() {
         return id;
@@ -77,5 +91,29 @@ public class Producto{
 
     public void setPrecio_venta(Float precio_venta) {
         this.precio_venta = precio_venta;
+    }
+
+    public int getAccion() {
+        return accion;
+    }
+
+    public void setAccion(int accion) {
+        this.accion = accion;
+    }
+
+    public int getEstado() {
+        return estado;
+    }
+
+    public void setEstado(int estado) {
+        this.estado = estado;
+    }
+
+    public String getDetalle() {
+        return detalle;
+    }
+
+    public void setDetalle(String detalle) {
+        this.detalle = detalle;
     }
 }

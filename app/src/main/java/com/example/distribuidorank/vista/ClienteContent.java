@@ -73,7 +73,7 @@ public class ClienteContent extends AppCompatActivity {
         bundle = new Bundle();
         cliente = new Cliente();
         //Evento boton procesar
-        Button btnSiguiente = findViewById(R.id.btnSiguienteContent);
+        Button btnSiguiente = findViewById(R.id.btnSiguienteContentCliente);
         btnSiguiente.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -81,6 +81,7 @@ public class ClienteContent extends AppCompatActivity {
                     dialogAccion().show();
                 } else {
                     cliente.setAccion(0);
+                    cliente.setEstado(1);
                     bundle.putSerializable("cliente", cliente);
                     intent.putExtras(bundle);
                     startActivity(intent);
@@ -98,18 +99,20 @@ public class ClienteContent extends AppCompatActivity {
         btnEliminar.setText("Eliminar");
         btnActualizar.setOnClickListener(v -> {
             cliente.setAccion(1);
+            cliente.setEstado(1);
             bundle.putSerializable("cliente", cliente);
             intent.putExtras(bundle);
             startActivity(intent);
         });
         btnEliminar.setOnClickListener(v -> {
             cliente.setAccion(2);
+            cliente.setEstado(0);
             bundle.putSerializable("cliente", cliente);
             intent.putExtras(bundle);
             startActivity(intent);
         });
 
-        builder.setView(view).setTitle("Escoga una opción!").setPositiveButton("", (dialog, id) -> {((ViewGroup)drawerLayout.getParent()).removeView(view);
+        builder.setView(view).setTitle("Elija una opción!").setPositiveButton("", (dialog, id) -> {((ViewGroup)drawerLayout.getParent()).removeView(view);
         }).setNegativeButton("Cancelar", (dialog, which) -> ((ViewGroup)drawerLayout.getParent()).removeView(view));
         return builder.create();
     }
@@ -118,11 +121,10 @@ public class ClienteContent extends AppCompatActivity {
         // Verificamos que el dispositivo tenga coneccion a internet
         ConnectivityService con = new ConnectivityService();
         if (con.stateConnection(this)) {
-            Call<List<Cliente>> requestLastReports = ApiUtils.getApiServices().getCliente();
+            Call<List<Cliente>> requestLastReports = ApiUtils.getApiServices().getClientes();
             requestLastReports.enqueue(new Callback<List<Cliente>>() {
                 @Override
                 public void onResponse(Call<List<Cliente>> call, Response<List<Cliente>> response) {
-
                     if (!response.isSuccessful()) {
                         Toast.makeText(ClienteContent.this, response.message() + "Error al cargar datos!", Toast.LENGTH_SHORT).show();
                     } else {
@@ -154,7 +156,7 @@ public class ClienteContent extends AppCompatActivity {
     }
 
     /**
-     * Carga datos de empleados en un spinner
+     * Carga datos de empleados en un spUnidadProducto
      */
     private void setListaEmpleados(ArrayList<String> listacliente, Cliente c) {
         this.cliente = c;
@@ -172,7 +174,7 @@ public class ClienteContent extends AppCompatActivity {
         listviewCliente = findViewById(R.id.lvClientes);
         listviewCliente.setAdapter(mAdapter);
         // Inicializamos textview de busqueda
-        tvBuscar = findViewById(R.id.txtLocalidadCliente);
+        tvBuscar = findViewById(R.id.txtBuscarCliente);
         tvBuscar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -213,6 +215,7 @@ public class ClienteContent extends AppCompatActivity {
                 if (checked) {
                     idClienteSeleccionado.add(listviewCliente.getItemAtPosition(position).toString());
                     mAdapter.setNewSelection(position);
+                    cliente = listaClientes.get(position);
                 } else {
                     idClienteSeleccionado.remove(listviewCliente.getItemAtPosition(position).toString());
                     mAdapter.removeSelection(position);

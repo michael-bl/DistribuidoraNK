@@ -43,6 +43,10 @@ public class Cliente implements Serializable {
     @Expose
     private int accion;
 
+    @SerializedName("estado")
+    @Expose
+    private int estado;
+
     public String getId() {
         return id;
     }
@@ -105,5 +109,13 @@ public class Cliente implements Serializable {
 
     public void setArrayCliente(ArrayList<Cliente> arrayCliente) {
         this.arrayCliente = arrayCliente;
+    }
+
+    public int getEstado() {
+        return estado;
+    }
+
+    public void setEstado(int estado) {
+        this.estado = estado;
     }
 }
