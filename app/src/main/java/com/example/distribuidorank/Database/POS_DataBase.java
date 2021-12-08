@@ -1497,13 +1497,17 @@ public class POS_DataBase extends DataBaseHelper {
 
             values.put("id", unidad.getId());
             values.put("detalle", unidad.getDetalle());
+            values.put("estado", unidad.getEstado());
+            values.put("ultima_actualizacion", unidad.getUltima_actualizacion().toString());
 
             @SuppressLint("DefaultLocale") long trans_ID = db.update("unidad", values, String.format("id = %d", unidad.getId()), null);
 
             if (trans_ID > 0) {
                 @SuppressLint("DefaultLocale") String sql_Command = String.format("UPDATE unidad SET detalle = '%s' WHERE id = %d",
                         unidad.getDetalle(),
-                        unidad.getId());
+                        unidad.getId(),
+                        unidad.getEstado(),
+                        unidad.getUltima_actualizacion());
 
                 ContentValues values2 = new ContentValues();
 
@@ -1540,17 +1544,21 @@ public class POS_DataBase extends DataBaseHelper {
             values.put("telefono", usuario.getTelefono());
             values.put("email", usuario.getEmail());
             values.put("direccion", usuario.getDireccion());
+            values.put("estado", usuario.getEstado());
+            values.put("ultima_actualizacion", usuario.getUltima_actualizacion().toString());
 
             long trans_ID = db.update("usuario", values, String.format("id = %s", usuario.getId()), null);
 
             if (trans_ID > 0) {
-                @SuppressLint("DefaultLocale") String sql_Command = String.format("UPDATE usuario SET fk_localidad = '%d', nombre = '%s', pass = '%s', telefono = '%s', email = '%s', direccion = '%s' WHERE id = %s",
+                @SuppressLint("DefaultLocale") String sql_Command = String.format("UPDATE usuario SET fk_localidad = '%d', nombre = '%s', pass = '%s', telefono = '%s', email = '%s', direccion = '%s', estado = '%s', ultima_actualizacion = '%s' WHERE id = %s",
                         usuario.getFk_localidad(),
                         usuario.getNombre(),
                         usuario.getPass(),
                         usuario.getTelefono(),
                         usuario.getEmail(),
                         usuario.getDireccion(),
+                        usuario.getEstado(),
+                        usuario.getUltima_actualizacion(),
                         usuario.getId());
 
                 ContentValues values2 = new ContentValues();

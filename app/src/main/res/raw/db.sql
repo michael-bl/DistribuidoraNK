@@ -3,7 +3,7 @@
 
 CREATE TABLE IF NOT EXISTS "cabecera_factura" (
 
-	"id"			                                INTEGER NOT NULL AUTOINCREMENT,
+	"id"			                        INTEGER NOT NULL AUTOINCREMENT,
 	"tipo"			                        INTEGER NOT NULL,
 	"fk_cliente"		                    VARCHAR(12) NOT NULL,
 	"fecha"			                        DATETIME NOT NULL,
@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS "cabecera_factura" (
  	"telefono"		                    VARCHAR(8) NOT NULL,
  	"email"			                        VARCHAR(60) NOT NULL,
  	"direccion"		                    VARCHAR(60) NOT NULL,
+ 	"estado"                            INTEGER,
     "ultima_actualizacion"	DATETIME NOT NULL,
 
  	PRIMARY KEY("id"),
@@ -45,6 +46,7 @@ CREATE TABLE IF NOT EXISTS "cabecera_factura" (
 
  	"id"			                                INTEGER NOT NULL AUTOINCREMENT,
  	"localidad"		                    VARCHAR(50) NOT NULL,
+ 	"estado"                            INTEGER,
     "ultima_actualizacion"	DATETIME NOT NULL,
 
  	PRIMARY KEY("id")
@@ -58,6 +60,7 @@ CREATE TABLE IF NOT EXISTS "cabecera_factura" (
  	"utilidad"		                        REAL NOT NULL,
  	"costo"			                        REAL NOT NULL,
  	"precio_venta"		            REAL,
+ 	"estado"                        INTEGER,
     "ultima_actualizacion"	DATETIME NOT NULL,
 
  	PRIMARY KEY("id"),
@@ -70,6 +73,7 @@ CREATE TABLE IF NOT EXISTS "cabecera_factura" (
  	"nombre"		                        VARCHAR(16) NOT NULL,
  	"telefono"		                    VARCHAR(8) NOT NULL,
  	"email"			                        VARCHAR(60) NOT NULL,
+ 	"estado"                            INTEGER,
     "ultima_actualizacion"	DATETIME NOT NULL,
 
  	PRIMARY KEY("id")
@@ -79,6 +83,7 @@ CREATE TABLE IF NOT EXISTS "cabecera_factura" (
 
  	"id"			                                INTEGER NOT NULL AUTOINCREMENT,
  	"detalle"		                        VARCHAR(20) NOT NULL,
+ 	"estado"                            INTEGER,
     "ultima_actualizacion"	DATETIME NOT NULL,
 
  	PRIMARY KEY("id")
@@ -86,13 +91,14 @@ CREATE TABLE IF NOT EXISTS "cabecera_factura" (
 
  CREATE TABLE IF NOT EXISTS "usuario" (
 
- 	"id"			                                VARCHAR(12) NOT NULL,
- 	"fk_localidad"		            INTEGER NOT NULL,
- 	"nombre"		                        VARCHAR(16) NOT NULL,
- 	"pass"			                        VARCHAR(70) NOT NULL,
+ 	"id"			                    VARCHAR(12) NOT NULL,
+ 	"fk_localidad"		                INTEGER NOT NULL,
+ 	"nombre"		                    VARCHAR(16) NOT NULL,
+ 	"pass"			                    VARCHAR(70) NOT NULL,
  	"telefono"		                    VARCHAR(8) NOT NULL,
- 	"email"			                        VARCHAR(60) NOT NULL,
+ 	"email"			                    VARCHAR(60) NOT NULL,
  	"direccion"		                    VARCHAR(60) NOT NULL,
+ 	"estado"                            INTEGER,
     "ultima_actualizacion"	DATETIME NOT NULL,
 
  	PRIMARY KEY("id"),
@@ -101,8 +107,8 @@ CREATE TABLE IF NOT EXISTS "cabecera_factura" (
 
   CREATE TABLE IF NOT EXISTS "log_eventos" (
 
- 	"id"			                                INTEGER NOT NULL AUTOINCREMENT,
-	"fecha"			                        DATETIME NOT NULL,
+ 	"id"			                    INTEGER NOT NULL AUTOINCREMENT,
+	"fecha"			                    DATETIME NOT NULL,
   	"string_sql"		                TEXT NOT NULL,
  	"actualizado"		                INTEGER NOT NULL,
 

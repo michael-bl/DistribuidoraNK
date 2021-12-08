@@ -121,4 +121,16 @@ public class Cliente implements Serializable {
     public void setUltima_actualizacion(Date ultima_actualizacion) {
         this.ultima_actualizacion = ultima_actualizacion;
     }
+
+    @SerializedName("estado")
+    @Expose
+    private int estado;
+
+    public int getEstado() {
+        return estado;
+    }
+
+    public void setEstado(int estado) {
+        this.estado = estado;
+    }
 }

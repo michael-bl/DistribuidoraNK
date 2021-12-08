@@ -26,6 +26,7 @@ import com.example.distribuidorank.modelo.Targeta;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.JsonArray;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -96,8 +97,7 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this.getApplicationContext(),LocalidadActivity.class);
             startActivity(intent);
         }if(id==R.id.nav_facturacion){
-            Intent intent = new Intent(this.getApplicationContext(),FacturacionActivity.class);
-            startActivity(intent);
+            dialogOpciones("Facturacion").show();
         }if(id==R.id.nav_unidadmedida){
             Intent intent = new Intent(this.getApplicationContext(), UnidadActivity.class);
             startActivity(intent);
@@ -136,9 +136,9 @@ public class MainActivity extends AppCompatActivity {
                 //obj.setImagen(listaProductos.get(i).Imagen);
                 Producto p = listaProductos.get(i);
                 obj.setNombre(p.getDescripcion());
-                obj.setPrecioCompra(p.getPrecio_compra().toString());
-                obj.setPrecioVenta(p.getPrecio_venta().toString());
-                obj.setUtilidad(p.getUtilidad().toString());
+                obj.setPrecioCompra(Float.toString(p.getPrecio_compra()));
+                obj.setPrecioVenta(Float.toString(p.getPrecio_venta()));
+                obj.setUtilidad(Float.toString(p.getUtilidad()));
                 cardList.add(i, obj);
             }
         }
@@ -207,6 +207,13 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtras(bundle);
                     startActivity(intent);
                 break;
+                case "Facturacion":
+                    intent = new Intent(this.getApplicationContext(),FacturacionActivity.class);
+                    bundle = new Bundle();
+                    bundle.putSerializable("productos", (Serializable) listaProductos);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    break;
             }
 
         });

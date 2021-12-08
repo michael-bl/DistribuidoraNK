@@ -4,12 +4,11 @@ import com.example.distribuidorank.modelo.Cliente;
 import com.example.distribuidorank.modelo.Usuario;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+
 import java.util.List;
+
 import retrofit2.Call;
-import retrofit2.http.Body;
 import retrofit2.http.GET;
-import retrofit2.http.Headers;
-import retrofit2.http.POST;
 import retrofit2.http.Path;
 
 public interface ApiRoutes {
@@ -18,15 +17,9 @@ public interface ApiRoutes {
     @GET("login/{user}/{pass}")
     Call<List<Usuario>> login(@Path("user") String user, @Path("pass") String pass);
 
-    // Retorna todas clientes
+    // Retorna lista de clientes
     @GET("clientes")
     Call<List<Cliente>> getClientes();
-
-    // Guarda nuevo cliente
-    @Headers({"Accept: application/json; Content-Type: application/json; " +
-            "charset=utf-8; deviceplatform:android; User-Agent:Mozilla/5.0"})
-    @POST("accioncliente2")
-    Call<JsonObject> accionCliente2(@Body Cliente cliente);
 
     // Agrega nuevo, actualiza o desactiva cliente
       @GET("accioncliente/{id}/{localidad}/{nombre}/{telefono}/{email}/{direccion}/{accion}/{estado}")
@@ -42,7 +35,7 @@ public interface ApiRoutes {
     // Retorna lista de productos activos
     @GET("productos")
     Call<JsonArray> getProductos();
-    // Agrega nuevo, actualiza o desactiva cliente
+    // Agrega nuevo, actualiza o desactiva producto
     @GET("accionproducto/{id}/{fk_unidad}/{descripcion}/{utilidad}/{precio_compra}/{precio_venta}/{accion}/{estado}")
     Call<JsonObject> accionProducto(@Path("id") int a,
                                    @Path("fk_unidad") String b,
@@ -52,7 +45,7 @@ public interface ApiRoutes {
                                    @Path("precio_venta") String f,
                                    @Path("accion") int g,
                                    @Path("estado") int h);
-
+    // Rertorna lista de unidades
     @GET("unidad")
     Call<JsonArray> getUnidades();
 }

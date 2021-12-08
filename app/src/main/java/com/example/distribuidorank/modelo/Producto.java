@@ -5,11 +5,12 @@ import android.util.Log;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.Date;
 
-public class Producto {
+public class Producto implements Serializable {
     public Producto(){
     }
 
@@ -43,7 +44,6 @@ public class Producto {
 
     @Expose(serialize = false)
     private static final DecimalFormat decimal_format =new DecimalFormat("#############.00");
-
 
 
     public int getId() {
@@ -127,5 +127,53 @@ public class Producto {
 
     public void setUltima_actualizacion(Date ultima_actualizacion) {
         this.ultima_actualizacion = ultima_actualizacion;
+    }
+
+    @SerializedName("accion")
+    @Expose
+    private int accion;
+
+    @SerializedName("estado")
+    @Expose
+    private int estado;
+
+    @SerializedName("fk_familia")
+    @Expose
+    private int fk_familia;
+
+    @SerializedName("detalle")
+    @Expose
+    private String detalle;
+
+    public String getDetalle() {
+        return detalle;
+    }
+
+    public void setDetalle(String detalle) {
+        this.detalle = detalle;
+    }
+
+    public int getAccion() {
+        return accion;
+    }
+
+    public void setAccion(int accion) {
+        this.accion = accion;
+    }
+
+    public int getEstado() {
+        return estado;
+    }
+
+    public void setEstado(int estado) {
+        this.estado = estado;
+    }
+
+    public void setFk_familia(int fk_familia) {
+        this.fk_familia = fk_familia;
+    }
+
+    public int getFk_familia() {
+        return fk_familia;
     }
 }

@@ -22,6 +22,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.EmptyStackException;
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -36,13 +37,13 @@ public class ProductoActivity extends AppCompatActivity {
     //Spinner unidades
     private Spinner spUnidades;
     //Boton calcular utilidad
-    Button btnAceptar, btncalcularUtilidad;
+    private Button btnAceptar, btncalcularUtilidad;
     // Objeto producto
     private Producto producto;
     private int accion, estado, id;
     private float precioCompra, precioVenta, nuevaUtilidad, resta;
     private List<Unidad> listaUnidades;
-    DecimalFormat decimalFormat;
+    private DecimalFormat decimalFormat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,14 +62,14 @@ public class ProductoActivity extends AppCompatActivity {
         if(bundle !=null){
             //Extrayendo el extra de tipo cadena
             producto = (Producto) bundle.getSerializable("producto");
-            if (producto.getAccion()==0){
-            } else {
+            if (Objects.requireNonNull(producto).getAccion()!=0){
                 mostrarDatosdelProducto(producto);
             }
         }
+        
         // evento del boton btnAceptarProducto
         btnAceptar = findViewById(R.id.btnAceptarProducto);
-        btnAceptar.setOnClickListener(v -> guardarProducto());
+        btnAceptar.setOnClickListener(v->guardarProducto());
 
         btncalcularUtilidad = findViewById(R.id.btnCalculaUtilidadProducto);
         btncalcularUtilidad.setOnClickListener(v -> calcularUtilidad());
@@ -109,9 +110,9 @@ public class ProductoActivity extends AppCompatActivity {
         try {
             txtIdProducto.setText(String.valueOf(producto.getId()));
             txtDescripcion.setText(producto.getDescripcion());
-            txtPrecioCompra.setText(producto.getPrecio_compra().toString());
-            txtPrecioVenta.setText(producto.getPrecio_venta().toString());
-            txtUtilidad.setText(producto.getUtilidad().toString());
+            txtPrecioCompra.setText(Float.toString(producto.getPrecio_compra()));
+            txtPrecioVenta.setText(Float.toString(producto.getPrecio_venta()));
+            txtUtilidad.setText(Float.toString(producto.getUtilidad()));
         } catch (Error nullPointerException){
             Toast.makeText(ProductoActivity.this, nullPointerException.getMessage(), Toast.LENGTH_SHORT).show();
         }
@@ -202,11 +203,11 @@ public class ProductoActivity extends AppCompatActivity {
                     } else {
                         // Manejar datos obtenidos en la petición
                         listaUnidades = new ArrayList<>();
-                        JsonArray listaPro = response.body();
-                        for (int j = 0; j<listaPro.size();j++){
+                        JsonArray arrayListaProductos = response.body();
+                        for (int j = 0; j<arrayListaProductos.size();j++){
                             Unidad unidad = new Unidad();
-                            unidad.setId(listaPro.get(j).getAsJsonObject().get("id").getAsInt());
-                            unidad.setDetalle(listaPro.get(j).getAsJsonObject().get("detalle").toString());
+                            unidad.setId(arrayListaProductos.get(j).getAsJsonObject().get("id").getAsInt());
+                            unidad.setDetalle(arrayListaProductos.get(j).getAsJsonObject().get("detalle").toString());
                             listaUnidades.add(unidad);
                         }
                         llenarSpinnerUnidades(listaUnidades);

@@ -94,7 +94,7 @@ public class ProductoContent extends AppCompatActivity {
 
     }
 
-    /** Dialog captura opcion - Actualizar o eliminar objeto */
+    /** MensajeDialog captura opcion - Actualizar o eliminar objeto */
     private AlertDialog dialogAccion() {
         view = inflater.inflate(R.layout.dialog_opciones,null);
 

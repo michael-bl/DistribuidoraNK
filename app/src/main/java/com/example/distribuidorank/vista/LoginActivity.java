@@ -60,9 +60,6 @@ public class LoginActivity extends AppCompatActivity {
                             if (rpt.size()!=0){
                                 for (int i=0;i<rpt.size();i++) {
                                     if (dniUser.equals(rpt.get(i).getId()) && pass.equals(rpt.get(i).getPass())) {
-                                        //db = new DbReporte (ActivityLogin.this);
-                                        // Guardar encargado
-                                        //db.insertNewManager(dniUser, rpt.get(i).getNombre());
                                         // Lanzamos actividad principal
                                         Intent intent = new Intent(v.getContext(), MainActivity.class);
                                         startActivity(intent);
