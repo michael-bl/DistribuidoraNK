@@ -67,6 +67,7 @@ public class ProductoContent extends AppCompatActivity {
 
         // Solicita los datos al servidor remoto
         obtenerProductos();
+
         idProductoSeleccionado = new ArrayList<>();
         inflater = getLayoutInflater();
         view = inflater.inflate(R.layout.dialog_opciones,null);
@@ -75,7 +76,7 @@ public class ProductoContent extends AppCompatActivity {
         bundle = new Bundle();
         producto = new Producto();
 
-        //Evento boton siguiente
+        //Evento boton siguiente, hacia ProductoActivity.class
         Button btnSiguiente = findViewById(R.id.btnSiguienteContentProducto);
         btnSiguiente.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,7 +95,7 @@ public class ProductoContent extends AppCompatActivity {
 
     }
 
-    /** MensajeDialog captura opcion - Actualizar o eliminar objeto */
+    /** MsgDialogDBLocal captura opcion - Actualizar o eliminar objeto */
     private AlertDialog dialogAccion() {
         view = inflater.inflate(R.layout.dialog_opciones,null);
 

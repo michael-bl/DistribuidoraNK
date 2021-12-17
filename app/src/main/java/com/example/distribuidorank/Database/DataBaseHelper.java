@@ -20,26 +20,26 @@ public class DataBaseHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
     private static final String DATABASE_NAME = "pos.db";
     private static String DATABASE_SCRIPT;
+    private SQLiteDatabase DB;
 
-    public DataBaseHelper( Context _context) {
+    public DataBaseHelper(Context _context) {
         super(_context, DATABASE_NAME, null, DATABASE_VERSION);
-
         DATABASE_SCRIPT = readFile(_context);
     }
 
     @Override
-    public void onCreate(@NonNull SQLiteDatabase db) {
+    public void onCreate(@NonNull SQLiteDatabase database) {
+        DB = database;
         StringTokenizer tokens = new StringTokenizer(DATABASE_SCRIPT, ";");
 
-        db.beginTransaction();
-
+        DB.beginTransaction();
         while(tokens.hasMoreTokens()){
-            db.execSQL(tokens.nextToken());
+            DB.execSQL(tokens.nextToken());
         }
 
-        db.setTransactionSuccessful();
-        db.endTransaction();
-        db.close();
+        DB.setTransactionSuccessful();
+        DB.endTransaction();
+        //DB.close();
     }
 
     @Override

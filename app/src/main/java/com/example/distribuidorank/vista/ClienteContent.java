@@ -90,7 +90,7 @@ public class ClienteContent extends AppCompatActivity {
         });
     }
 
-    /** MensajeDialog captura opcion - Actualizar o eliminar objeto */
+    /** MsgDialogDBLocal captura opcion - Actualizar o eliminar objeto */
     private AlertDialog dialogAccion() {
         view = inflater.inflate(R.layout.dialog_opciones,null);
         final Button btnActualizar = view.findViewById(R.id.btnNuevo);

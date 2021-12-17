@@ -7,32 +7,36 @@
 
         <item
             android:id="@+id/nav_usuario"
-            android:icon="@drawable/usuario"
-            android:title="@string/usuario"/>
+            android:icon="@drawable/usuarios"
+            android:title="@string/usuario" />
         <item
             android:id="@+id/nav_cliente"
-            android:icon="@drawable/ic_menu_gallery"
+            android:icon="@drawable/clientes"
             android:title="@string/title_activity_cliente" />
         <item
             android:id="@+id/nav_producto"
-            android:icon="@drawable/ic_menu_slideshow"
+            android:icon="@drawable/productos"
             android:title="@string/title_activity_producto" />
         <item
             android:id="@+id/nav_proveedor"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/proveedor"
             android:title="@string/title_activity_proveedor" />
         <item
             android:id="@+id/nav_localizacion"
-            android:icon="@drawable/ic_menu_manage"
+            android:icon="@drawable/ubicacion"
             android:title="@string/title_activity_localizacion" />
         <item
             android:id="@+id/nav_facturacion"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/title_activity_facturacion"/>
+            android:icon="@drawable/factura"
+            android:title="@string/title_activity_facturacion" />
         <item
             android:id="@+id/nav_unidadmedida"
-            android:icon="@drawable/ic_menu_manage"
-            android:title="@string/title_activity_unidad"/>
+            android:icon="@drawable/unidad"
+            android:title="@string/title_activity_unidad" />
+        <item
+            android:id="@+id/nav_configdb"
+            android:icon="@drawable/basededatos"
+            android:title="@string/configdb" />
     </group>
     <item android:title="@string/communicate">
         <menu>

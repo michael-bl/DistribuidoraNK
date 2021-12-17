@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.distribuidorank.R;
 import com.example.distribuidorank.controlador.ApiUtils;
 import com.example.distribuidorank.controlador.ConnectivityService;
+import com.example.distribuidorank.controlador.MsgDialogDBLocal;
 import com.example.distribuidorank.controlador.RecyclerViewAdapter;
 import com.example.distribuidorank.modelo.Producto;
 import com.example.distribuidorank.modelo.Targeta;
@@ -82,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up btnSiguienteContent, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
          if(id==R.id.nav_usuario){
              Intent intent = new Intent(this.getApplicationContext(), UsuarioActivity.class);
              startActivity(intent);
@@ -101,6 +101,10 @@ public class MainActivity extends AppCompatActivity {
         }if(id==R.id.nav_unidadmedida){
             Intent intent = new Intent(this.getApplicationContext(), UnidadActivity.class);
             startActivity(intent);
+        }if(id==R.id.nav_configdb){
+            //Dialog para crear db local, sincronizar hacia local o remoto
+            MsgDialogDBLocal messageDialog = new MsgDialogDBLocal(this);
+            messageDialog.opcionesDBLocal().show();
         }else if (id == R.id.nav_send) {
             return true;
         } if(id==R.id.nav_share){
@@ -184,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /** AlertDialog con opciones a realizar sobre objeto */
+    /** AlertDialog con opciones a realizar sobre tipo de objeto seleccionado*/
     private AlertDialog dialogOpciones(String objeto) {
 
         view = inflater.inflate(R.layout.dialog_opciones,null);

@@ -30,7 +30,8 @@ import retrofit2.Response;
 
 public class ProductoActivity extends AppCompatActivity {
     // Variables de un producto
-    private String idUnidad, unidad, descripcion, precio_compra, precio_venta, utilidad;
+    private String idUnidad, unidad, descripcion, precio_compra, precio_venta,
+            utilidad;
     // Variables de los textviews
     private TextInputEditText txtIdProducto, txtDescripcion, txtPrecioCompra,
             txtPrecioVenta, txtUtilidad;
@@ -66,15 +67,17 @@ public class ProductoActivity extends AppCompatActivity {
                 mostrarDatosdelProducto(producto);
             }
         }
-        
+        //MsgDialogDBLocal md = new MsgDialogDBLocal(this, listaUnidades);
         // evento del boton btnAceptarProducto
         btnAceptar = findViewById(R.id.btnAceptarProducto);
-        btnAceptar.setOnClickListener(v->guardarProducto());
+        btnAceptar.setOnClickListener(v-> guardarProducto());
+                //md.opcionesDBLocal("Productos").show());
 
         btncalcularUtilidad = findViewById(R.id.btnCalculaUtilidadProducto);
         btncalcularUtilidad.setOnClickListener(v -> calcularUtilidad());
         // obtener unidades desde remoto
         obtenerUnidades();
+
     }
 
     private void instanciaComponentes(){

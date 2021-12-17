@@ -433,11 +433,12 @@ public class POS_DataBase extends DataBaseHelper {
             ContentValues values = new ContentValues();
 
             values.put("id", producto.getId());
-            values.put("fk_familia", producto.getFk_unidad());
+            values.put("fk_unidad", producto.getFk_unidad());
             values.put("descripcion", producto.getDescripcion());
             values.put("utilidad", String.valueOf(producto.getUtilidad()));
             values.put("precio_compra", String.valueOf(producto.getPrecio_compra()));
             values.put("precio_venta", String.valueOf(producto.getPrecio_venta()));
+            values.put("estado", String.valueOf(producto.getEstado()));
             values.put("ultima_actualizacion", this.simpleDateFormat.format(this.calendar.getTime()));
 
             long trans_ID = db.insert("producto", null, values); // Guarda el id de la transacción en la base de datos
