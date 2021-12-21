@@ -26,8 +26,8 @@ public interface ApiRoutes {
       Call<JsonObject> accionCliente(@Path("id") String a,
                                    @Path("localidad") String b,
                                    @Path("nombre") String c,
-                                   @Path("telefono") String e,
-                                   @Path("email") String d,
+                                   @Path("telefono") String d,
+                                   @Path("email") String e,
                                    @Path("direccion") String f,
                                    @Path("accion") int g,
                                    @Path("direccion") int h);
@@ -40,12 +40,12 @@ public interface ApiRoutes {
     Call<JsonObject> accionProducto(@Path("id") int a,
                                    @Path("fk_unidad") String b,
                                    @Path("descripcion") String c,
-                                   @Path("utilidad") String e,
-                                   @Path("precio_compra") String d,
+                                   @Path("utilidad") String d,
+                                   @Path("precio_compra") String e,
                                    @Path("precio_venta") String f,
                                    @Path("accion") int g,
                                    @Path("estado") int h);
     // Rertorna lista de unidades
-    @GET("unidad")
+    @GET("unidades")
     Call<JsonArray> getUnidades();
 }

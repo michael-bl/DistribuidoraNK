@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
         //Solicitud de productos remotos
-        obtenerProductos();
+        getProductos();
     }
 
     @Override
@@ -119,7 +119,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /** Recibe lista de productos guardados en bd, luego crea las targetas para cada uno**/
-    private void getDataSet(List<Producto> listaProductos) {
+    private void crearTargetasProductos(List<Producto> listaProductos) {
         // Lista de cardviews dinámicas para mostrar productos
         cardList = new ArrayList<>();
         recyclerView = findViewById(R.id.recyclerVCard);
@@ -151,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**Solicitamos los datos al servidor remoto */
-    private void obtenerProductos() {
+    private void getProductos() {
         // Verificamos que el dispositivo tenga coneccion a internet
         ConnectivityService con = new ConnectivityService();
         if (con.stateConnection(this)) {
@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
                             p.setUtilidad(listaPro.get(j).getAsJsonObject().get("utilidad").getAsFloat());
                             listaProductos.add(p);
                         }
-                        getDataSet(listaProductos);
+                        crearTargetasProductos(listaProductos);
                     }
                 }
                 @Override

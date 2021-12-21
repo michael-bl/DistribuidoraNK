@@ -64,7 +64,7 @@ public class ClienteContent extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_cliente);
         // Solicita los datos al servidor remoto
-        obtenerClientes();
+        getClientes();
         idClienteSeleccionado = new ArrayList<>();
         inflater = getLayoutInflater();
         view = inflater.inflate(R.layout.dialog_opciones,null);
@@ -117,7 +117,8 @@ public class ClienteContent extends AppCompatActivity {
         return builder.create();
     }
 
-    public void obtenerClientes(){
+    /** Solicita los clientes al servidor remoto*/
+    public void getClientes(){
         // Verificamos que el dispositivo tenga coneccion a internet
         ConnectivityService con = new ConnectivityService();
         if (con.stateConnection(this)) {
@@ -155,9 +156,7 @@ public class ClienteContent extends AppCompatActivity {
         }
     }
 
-    /**
-     * Carga datos de empleados en un spUnidadProducto
-     */
+    /** Carga datos de empleados en un spUnidadProducto */
     private void setListaEmpleados(ArrayList<String> listacliente, Cliente c) {
         this.cliente = c;
         listviewCliente = findViewById(R.id.lvClientes);
@@ -166,7 +165,7 @@ public class ClienteContent extends AppCompatActivity {
         onTextChanged();
         setUpActionBar();
     }
-    /**Filtro sobre el Listview de empleados*/
+    /** Filtro sobre el Listview de empleados*/
     private void onTextChanged(){
         // Arraylist con datos filtrados
         final ArrayList<String> array_sort = new ArrayList<>();

@@ -29,17 +29,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ProductoActivity extends AppCompatActivity {
-    // Variables de un producto
+
     private String idUnidad, unidad, descripcion, precio_compra, precio_venta,
             utilidad;
-    // Variables de los textviews
     private TextInputEditText txtIdProducto, txtDescripcion, txtPrecioCompra,
             txtPrecioVenta, txtUtilidad;
-    //Spinner unidades
     private Spinner spUnidades;
-    //Boton calcular utilidad
     private Button btnAceptar, btncalcularUtilidad;
-    // Objeto producto
     private Producto producto;
     private int accion, estado, id;
     private float precioCompra, precioVenta, nuevaUtilidad, resta;
@@ -76,7 +72,7 @@ public class ProductoActivity extends AppCompatActivity {
         btncalcularUtilidad = findViewById(R.id.btnCalculaUtilidadProducto);
         btncalcularUtilidad.setOnClickListener(v -> calcularUtilidad());
         // obtener unidades desde remoto
-        obtenerUnidades();
+        getUnidades();
 
     }
 
@@ -121,7 +117,7 @@ public class ProductoActivity extends AppCompatActivity {
         }
     }
 
-    //Asigna los nuevos valores a las variables del objeto a guardar
+    //Asigna los nuevos valores a las variables del objeto producto a guardar
     private boolean crearProducto() {
             estado = producto.getEstado();
             accion = producto.getAccion();
@@ -135,6 +131,7 @@ public class ProductoActivity extends AppCompatActivity {
             return true;
     }
 
+    /** Seteamos las unidades al spinner correspondiente*/
     private void llenarSpinnerUnidades(List<Unidad> unidadList) {
         listaUnidades = unidadList;
         ArrayList<String> stringUnidades = new ArrayList<>();
@@ -154,7 +151,7 @@ public class ProductoActivity extends AppCompatActivity {
         }
     }
 
-    //guardar el cliente
+    /** Almacena accion sobre producto, sea nuevo o actualizado, por medio de variable accion se indica que se desa hacer*/
     private void guardarProducto(){
         // Validamos que el dispositivo tenga coneccion a internet
         ConnectivityService con = new ConnectivityService();
@@ -192,8 +189,8 @@ public class ProductoActivity extends AppCompatActivity {
         }
     }
 
-    /**Solicitamos los datos al servidor remoto */
-    private void obtenerUnidades() {
+    /**Solicitamos los datos de unidades al servidor remoto */
+    private void getUnidades() {
         // Verificamos que el dispositivo tenga coneccion a internet
         ConnectivityService con = new ConnectivityService();
         if (con.stateConnection(this)) {

@@ -1,10 +1,7 @@
 package com.example.distribuidorank.Database;
 
 import android.content.Context;
-
-import com.example.distribuidorank.modelo.Producto;
-
-import java.util.List;
+import android.widget.Toast;
 
 public class Conexiones {
     private Context context;
@@ -29,24 +26,36 @@ public class Conexiones {
         }
     }
 
-    /* Recibe lista de productos, los recorre e inserta uno a uno en la db local*/
-    public void insertarProductosEnDbLocal(List<Producto> listaProductos){
+    /* Recibe string con lista de productos, los envia al metodo insert de la clase POS_Database*/
+    public void insertarProductosEnDbLocal(String listaProductos){
         posDataBase = new POS_DataBase(context);
         try {
-            for(int k=0; k<listaProductos.size(); k++){
-                Producto producto = new Producto();
-                producto.setId(listaProductos.get(k).getId());
-                producto.setFk_familia(listaProductos.get(k).getFk_familia());
-                producto.setDescripcion(listaProductos.get(k).getDescripcion());
-                producto.setUtilidad(listaProductos.get(k).getUtilidad());
-                producto.setPrecio_compra(listaProductos.get(k).getPrecio_compra());
-                producto.setPrecio_venta(listaProductos.get(k).getPrecio_venta());
-                producto.setEstado(listaProductos.get(k).getEstado());
-                posDataBase.insertProducto(producto,0);
-            }
+            String resultado = posDataBase.INSERT("Producto", listaProductos, 1) ? "Productos almecenados correctamente!": "Error al guardar!";
+            Toast.makeText(context, resultado, Toast.LENGTH_SHORT).show();
         } catch (NullPointerException nullPointerException) {
             nullPointerException.printStackTrace();
         }
     }
 
+    /* Recibe string con lista de unidades, las envia al metodo insert de la clase POS_Database*/
+    public void insertarUnidadesEnDbLocal(String listaUnidades){
+        posDataBase = new POS_DataBase(context);
+        try {
+            String resultado = posDataBase.INSERT("Unidad", listaUnidades, 1) ? "Unidades almecenadas correctamente!": "Error al guardar!";
+            Toast.makeText(context, resultado, Toast.LENGTH_SHORT).show();
+        } catch (NullPointerException nullPointerException) {
+            nullPointerException.printStackTrace();
+        }
+    }
+
+    /* Recibe string con liste de clientes, los envia al metodo insert de la clase POS_Database*/
+    public void insertarClientesEnDbLocal(String listaClientes){
+        posDataBase = new POS_DataBase(context);
+        try {
+            String resultado = posDataBase.INSERT("Cliente", listaClientes, 1) ? "Clientes almecenados correctamente!": "Error al guardar!";
+            Toast.makeText(context, resultado, Toast.LENGTH_SHORT).show();
+        } catch (NullPointerException nullPointerException) {
+            nullPointerException.printStackTrace();
+        }
+    }
 }
