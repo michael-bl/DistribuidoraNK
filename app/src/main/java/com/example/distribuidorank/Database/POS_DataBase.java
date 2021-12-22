@@ -157,7 +157,7 @@ public class POS_DataBase extends DataBaseHelper {
 
             // Respaldo para la tabla log_eventos
             if (trans_ID != -1) {
-                @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO cliente  (id, fk_localidad, nombre, telefono, email, direccion, estado) VALUES (%s, %d, %s, %s, %s, %s, %d)",
+                @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO cliente (id, fk_localidad, nombre, telefono, email, direccion, estado) VALUES (%s, %d, %s, %s, %s, %s, %d)",
                         cliente.getId(),
                         cliente.getFk_localidad(),
                         cliente.getNombre(),
@@ -210,7 +210,7 @@ public class POS_DataBase extends DataBaseHelper {
 
                 // Respaldo para la tabla log_eventos
                 if (trans_ID != -1) {
-                    @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO cliente  (id, fk_localidad, nombre, telefono, email, direccion, estado) VALUES (%s, %d, %s, %s, %s, %s, %d)",
+                    @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO cliente (id, fk_localidad, nombre, telefono, email, direccion, estado) VALUES (%s, %d, %s, %s, %s, %s, %d)",
                             cliente.getId(),
                             cliente.getFk_localidad(),
                             cliente.getNombre(),
@@ -262,7 +262,7 @@ public class POS_DataBase extends DataBaseHelper {
 
             // Respaldo para la tabla log_eventos
             if (trans_ID != -1) {
-                @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO detalle_factura  (id, fk_cabecera, fk_producto, utilidad, precio_compra, precio_venta) VALUES (%d, %d, %d, %s, %s, %s)",
+                @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO detalle_factura (id, fk_cabecera, fk_producto, utilidad, precio_compra, precio_venta) VALUES (%d, %d, %d, %s, %s, %s)",
                         detalle_factura.getId(),
                         detalle_factura.getFk_cabecera(),
                         detalle_factura.getFk_producto(),
@@ -312,7 +312,7 @@ public class POS_DataBase extends DataBaseHelper {
 
                 // Respaldo para la tabla log_eventos
                 if (trans_ID != -1) {
-                    @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO detalle_factura  (id, fk_cabecera, fk_producto, utilidad, precio_compra, precio_venta) VALUES (%d, %d, %d, %s, %s, %s)",
+                    @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO detalle_factura (id, fk_cabecera, fk_producto, utilidad, precio_compra, precio_venta) VALUES (%d, %d, %d, %s, %s, %s)",
                             detalle_factura.getId(),
                             detalle_factura.getFk_cabecera(),
                             detalle_factura.getFk_producto(),
@@ -351,7 +351,8 @@ public class POS_DataBase extends DataBaseHelper {
             ContentValues values = new ContentValues();
 
             values.put("id", localidad.getId());
-            values.put("fk_localidad", localidad.getLocalidad());
+            values.put("localidad", localidad.getLocalidad());
+            values.put("estado", localidad.getEstado());
             values.put("ultima_actualizacion", this.simpleDateFormat.format(this.calendar.getTime()));
 
             long trans_ID = db.insert("localidad", null, values); // Guarda el id de la transacción en la base de datos
@@ -360,9 +361,10 @@ public class POS_DataBase extends DataBaseHelper {
 
             // Respaldo para la tabla log_eventos
             if (trans_ID != -1) {
-                @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO localidad  (id, fk_localidad) VALUES (%d, %s)",
+                @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO localidad (id, localidad, estado) VALUES (%d, %s, %d)",
                         localidad.getId(),
-                        localidad.getLocalidad());
+                        localidad.getLocalidad(),
+                        localidad.getEstado());
 
                 ContentValues values2 = new ContentValues();
 
@@ -394,7 +396,8 @@ public class POS_DataBase extends DataBaseHelper {
                 ContentValues values = new ContentValues();
 
                 values.put("id", localidad.getId());
-                values.put("fk_localidad", localidad.getLocalidad());
+                values.put("localidad", localidad.getLocalidad());
+                values.put("estado", localidad.getEstado());
                 values.put("ultima_actualizacion", this.simpleDateFormat.format(this.calendar.getTime()));
 
                 long trans_ID = db.insert("localidad", null, values); // Guarda el id de la transacción en la base de datos
@@ -402,9 +405,10 @@ public class POS_DataBase extends DataBaseHelper {
 
                 // Respaldo para la tabla log_eventos
                 if (trans_ID != -1) {
-                    @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO localidad  (id, fk_localidad) VALUES (%d, %s)",
+                    @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO localidad (id, localidad, estado) VALUES (%d, %s, %d)",
                             localidad.getId(),
-                            localidad.getLocalidad());
+                            localidad.getLocalidad(),
+                            localidad.getEstado());
 
                     ContentValues values2 = new ContentValues();
 
@@ -451,7 +455,7 @@ public class POS_DataBase extends DataBaseHelper {
 
             // Respaldo para la tabla log_eventos
             if (trans_ID != -1) {
-                @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO producto  (id, fk_familia, descripcion, utilidad, precio_compra, precio_venta, estado) VALUES (%d, %d, %s, %s, %s, %s, %d)",
+                @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO producto (id, fk_familia, descripcion, utilidad, precio_compra, precio_venta, estado) VALUES (%d, %d, %s, %s, %s, %s, %d)",
                         producto.getId(),
                         producto.getFk_unidad(),
                         producto.getDescripcion(),
@@ -503,7 +507,7 @@ public class POS_DataBase extends DataBaseHelper {
 
                 // Respaldo para la tabla log_eventos
                 if (trans_ID != -1) {
-                    @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO producto  (id, fk_familia, descripcion, utilidad, precio_compra, precio_venta, estado) VALUES (%d, %d, %s, %s, %s, %s, %d)",
+                    @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO producto (id, fk_familia, descripcion, utilidad, precio_compra, precio_venta, estado) VALUES (%d, %d, %s, %s, %s, %s, %d)",
                             producto.getId(),
                             producto.getFk_unidad(),
                             producto.getDescripcion(),
@@ -546,6 +550,7 @@ public class POS_DataBase extends DataBaseHelper {
             values.put("nombre", proveedor.getNombre());
             values.put("telefono", proveedor.getTelefono());
             values.put("email", proveedor.getEmail());
+            values.put("estado", proveedor.getEstado());
             values.put("ultima_actualizacion", this.simpleDateFormat.format(this.calendar.getTime()));
 
             long trans_ID = db.insert("proveedor", null, values); // Guarda el id de la transacción en la base de datos
@@ -553,11 +558,12 @@ public class POS_DataBase extends DataBaseHelper {
 
             // Respaldo para la tabla log_eventos
             if (trans_ID != -1) {
-                @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO usuario  (id, nombre, telefono, email) VALUES (%s, %s, %s, %s)",
+                @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO proveedor (id, nombre, telefono, email, estado) VALUES (%s, %s, %s, %s, %d)",
                         proveedor.getId(),
                         proveedor.getNombre(),
                         proveedor.getTelefono(),
-                        proveedor.getEmail());
+                        proveedor.getEmail(),
+                        proveedor.getEstado());
 
                 ContentValues values2 = new ContentValues();
 
@@ -592,6 +598,7 @@ public class POS_DataBase extends DataBaseHelper {
                 values.put("nombre", proveedor.getNombre());
                 values.put("telefono", proveedor.getTelefono());
                 values.put("email", proveedor.getEmail());
+                values.put("estado", proveedor.getEstado());
                 values.put("ultima_actualizacion", this.simpleDateFormat.format(this.calendar.getTime()));
 
                 long trans_ID = db.insert("proveedor", null, values); // Guarda el id de la transacción en la base de datos
@@ -599,11 +606,12 @@ public class POS_DataBase extends DataBaseHelper {
 
                 // Respaldo para la tabla log_eventos
                 if (trans_ID != -1) {
-                    @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO usuario  (id, nombre, telefono, email) VALUES (%s, %s, %s, %s)",
+                    @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO proveedor (id, nombre, telefono, email, estado) VALUES (%s, %s, %s, %s, %d)",
                             proveedor.getId(),
                             proveedor.getNombre(),
                             proveedor.getTelefono(),
-                            proveedor.getEmail());
+                            proveedor.getEmail(),
+                            proveedor.getEstado());
 
                     ContentValues values2 = new ContentValues();
 
@@ -645,7 +653,7 @@ public class POS_DataBase extends DataBaseHelper {
 
             // Respaldo para la tabla log_eventos
             if (trans_ID != -1) {
-                @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO unidad  (id, detalle, estado) VALUES (%d, %s, %d)",
+                @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO unidad (id, detalle, estado) VALUES (%d, %s, %d)",
                         unidad.getId(),
                         unidad.getDetalle(),
                         unidad.getEstado());
@@ -689,7 +697,7 @@ public class POS_DataBase extends DataBaseHelper {
 
                 // Respaldo para la tabla log_eventos
                 if (trans_ID != -1) {
-                    @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO unidad  (id, detalle, estado) VALUES (%d, %s, %d)",
+                    @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO unidad (id, detalle, estado) VALUES (%d, %s, %d)",
                             unidad.getId(),
                             unidad.getDetalle(),
                             unidad.getEstado());
@@ -738,7 +746,7 @@ public class POS_DataBase extends DataBaseHelper {
 
             // Respaldo para la tabla log_eventos
             if (trans_ID != -1) {
-                @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO usuario  (id, fk_localidad, nombre, pass, telefono, email, direccion) VALUES (%s, %d, %s, %s, %s, %s, %s)",
+                @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO usuario (id, fk_localidad, nombre, pass, telefono, email, direccion) VALUES (%s, %d, %s, %s, %s, %s, %s)",
                         usuario.getId(),
                         usuario.getFk_localidad(),
                         usuario.getNombre(),

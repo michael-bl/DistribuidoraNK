@@ -28,5 +28,6 @@
         android:id="@+id/btnEliminarBaseDatos"
         android:layout_width="220dp"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
         android:text="@string/eliminarBasedatos" />
 </androidx.appcompat.widget.LinearLayoutCompat>

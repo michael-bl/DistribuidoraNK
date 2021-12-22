@@ -35,6 +35,7 @@ public interface ApiRoutes {
     // Retorna lista de productos activos
     @GET("productos")
     Call<JsonArray> getProductos();
+
     // Agrega nuevo, actualiza o desactiva producto
     @GET("accionproducto/{id}/{fk_unidad}/{descripcion}/{utilidad}/{precio_compra}/{precio_venta}/{accion}/{estado}")
     Call<JsonObject> accionProducto(@Path("id") int a,
@@ -45,7 +46,24 @@ public interface ApiRoutes {
                                    @Path("precio_venta") String f,
                                    @Path("accion") int g,
                                    @Path("estado") int h);
-    // Rertorna lista de unidades
+
+    // Retorna lista de unidades
     @GET("unidades")
     Call<JsonArray> getUnidades();
+
+    // Retorna lista de localidades
+    @GET("localidades")
+    Call<JsonArray> getLocalidades();
+
+    // Retorna lista de proveedores
+    @GET("proveedores")
+    Call<JsonArray> getProveedores();
+
+    // Retorna lista de cabeceras de factura
+    @GET("cabecerasfacturas")
+    Call<JsonArray> getCabeceraFactura();
+
+    // Retorna lista detalles de factura
+    @GET("detallesfacturas")
+    Call<JsonArray> getDetalleFactura();
 }

@@ -16,6 +16,10 @@ public class Localidad {
     @Expose
     private String localidad;
 
+    @SerializedName("estado")
+    @Expose
+    private int estado;
+
     @SerializedName("ultima_actualizacion")
     @Expose
     private Date ultima_actualizacion;
@@ -44,5 +48,13 @@ public class Localidad {
 
     public void setUltima_actualizacion(Date ultima_actualizacion) {
         this.ultima_actualizacion = ultima_actualizacion;
+    }
+
+    public int getEstado() {
+        return estado;
+    }
+
+    public void setEstado(int estado) {
+        this.estado = estado;
     }
 }

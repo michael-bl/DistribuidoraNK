@@ -27,6 +27,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MsgDialogDBLocal {
+    private ConnectivityService conexionAinternet;
     private List<Cliente> listaClientes;
     private AlertDialog.Builder builder;
     private DrawerLayout drawerLayout;
@@ -53,7 +54,7 @@ public class MsgDialogDBLocal {
     }
 
     /**
-     * AlertDialog con opciones de a realizar sobre db local
+     * AlertDialog conexionAinternet opciones de a realizar sobre db local
      **/
     public AlertDialog opcionesDBLocal() {
         File DB_FILE = new File("/data/data/com.example.distribuidorank/databases/pos.db");
@@ -71,11 +72,9 @@ public class MsgDialogDBLocal {
                 Toast.makeText(context, "La base de datos local, ya existe!!!", Toast.LENGTH_LONG).show();
             }
         });
-        // Ejecutar metodos que solicitan datos remotos
-        // dentro de cada metodo llamar al metodo dentro de POS_DataBase
-        // que se encargará de insertar la informacion de manera local
+        // Ejecutar metodos que solicitan datos remotos e insertar almacenar de manera local
         btnSincroLocal.setOnClickListener(v -> {
-            mostrarProgressBar();   // Barra de progreso, no porcentual
+            mostrarProgressBar();   // Barra de progreso
             getClientes();
             getUnidades();
             getProductos();
@@ -97,10 +96,10 @@ public class MsgDialogDBLocal {
     /** Solicita los clientes al servidor remoto*/
     public void getClientes(){
         // Verificamos que el dispositivo tenga coneccion a internet
-        ConnectivityService con = new ConnectivityService();
-        if (con.stateConnection(context)) {
-            Call<List<Cliente>> requestLastReports = ApiUtils.getApiServices().getClientes();
-            requestLastReports.enqueue(new Callback<List<Cliente>>() {
+        conexionAinternet = new ConnectivityService();
+        if (conexionAinternet.stateConnection(context)) {
+            Call<List<Cliente>> requestClientes = ApiUtils.getApiServices().getClientes();
+            requestClientes.enqueue(new Callback<List<Cliente>>() {
                 @Override
                 public void onResponse(Call<List<Cliente>> call, Response<List<Cliente>> response) {
                     if (!response.isSuccessful()) {
@@ -128,10 +127,10 @@ public class MsgDialogDBLocal {
     /**Solicitamos los datos de unidades al servidor remoto */
     private void getUnidades() {
         // Verificamos que el dispositivo tenga coneccion a internet
-        ConnectivityService con = new ConnectivityService();
-        if (con.stateConnection(context)) {
-            Call<JsonArray> requestProductos = ApiUtils.getApiServices().getUnidades();
-            requestProductos.enqueue(new Callback<JsonArray>() {
+        conexionAinternet = new ConnectivityService();
+        if (conexionAinternet.stateConnection(context)) {
+            Call<JsonArray> requestUnidades = ApiUtils.getApiServices().getUnidades();
+            requestUnidades.enqueue(new Callback<JsonArray>() {
                 public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
                     if (!response.isSuccessful()) {
                         // Mensaje de error
@@ -157,8 +156,8 @@ public class MsgDialogDBLocal {
     /** Solicitamos los productos al servidor remoto */
     private void getProductos() {
         // Verificamos que el dispositivo tenga coneccion a internet
-        ConnectivityService con = new ConnectivityService();
-        if (con.stateConnection(context)) {
+        conexionAinternet = new ConnectivityService();
+        if (conexionAinternet.stateConnection(context)) {
             Call<JsonArray> requestProductos = ApiUtils.getApiServices().getProductos();
             requestProductos.enqueue(new Callback<JsonArray>() {
                 public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
@@ -169,9 +168,9 @@ public class MsgDialogDBLocal {
                         // Manejar datos obtenidos en la petición
                         objetoGson = new Gson();
                         conexiones = new Conexiones(context);
-                        JsonArray listaPro = response.body();
+                        JsonArray arrayListaProductos = response.body();
                         // Enviamos lista productos a clase conexion para que inserte datos en tabla local
-                        conexiones.insertarProductosEnDbLocal(objetoGson.toJson(listaPro));
+                        conexiones.insertarProductosEnDbLocal(objetoGson.toJson(arrayListaProductos));
                     }
                 }
                 @Override
@@ -183,15 +182,124 @@ public class MsgDialogDBLocal {
             Toast.makeText(context, "El dispositivo no puede accesar a la red en este momento!", Toast.LENGTH_SHORT).show();
         }
     }
-    private void getLocalidades() {
+    /** Solicitamos las localidades al servidor remoto */
+    private void getLocalidades(){
+        // Verificamos que el dispositivo tenga coneccion a internet
+        conexionAinternet = new ConnectivityService();
+        if (conexionAinternet.stateConnection(context)) {
+            Call<JsonArray> requestLocalidades = ApiUtils.getApiServices().getLocalidades();
+            requestLocalidades.enqueue(new Callback<JsonArray>() {
+                public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
+                    if (!response.isSuccessful()) {
+                        // Mensaje de error
+                        Toast.makeText(context, response.message() +" al cargar datos!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // Manejar datos obtenidos en la petición
+                        objetoGson = new Gson();
+                        conexiones = new Conexiones(context);
+                        JsonArray arrayListaLocalidades = response.body();
+                        // Enviamos lista productos a clase conexion para que inserte datos en tabla local
+                        conexiones.insertarLocalidadesEnDbLocal(objetoGson.toJson(arrayListaLocalidades));
+                    }
+                }
+                @Override
+                public void onFailure(Call<JsonArray> call, Throwable t) {
+                    Toast.makeText(context, "La peticion falló!" + t.toString(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(context, "El dispositivo no puede accesar a la red en este momento!", Toast.LENGTH_SHORT).show();
+        }
     }
 
-    private void getProveedores() {
-    }
-    private void getCabecerasFacturas() {
+    /** Solicitamos las proveedores al servidor remoto */
+    private void getProveedores(){
+        // Verificamos que el dispositivo tenga coneccion a internet
+        conexionAinternet = new ConnectivityService();
+        if (conexionAinternet.stateConnection(context)) {
+            Call<JsonArray> requestProveedores = ApiUtils.getApiServices().getProveedores();
+            requestProveedores.enqueue(new Callback<JsonArray>() {
+                public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
+                    if (!response.isSuccessful()) {
+                        // Mensaje de error
+                        Toast.makeText(context, response.message() +" al cargar datos!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // Manejar datos obtenidos en la petición
+                        objetoGson = new Gson();
+                        conexiones = new Conexiones(context);
+                        JsonArray arrayListaProveedores = response.body();
+                        // Enviamos lista proveedores a clase conexion para que inserte datos en tabla local
+                        conexiones.insertarProveedoresEnDbLocal(objetoGson.toJson(arrayListaProveedores));
+                    }
+                }
+                @Override
+                public void onFailure(Call<JsonArray> call, Throwable t) {
+                    Toast.makeText(context, "La peticion falló!" + t.toString(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(context, "El dispositivo no puede accesar a la red en este momento!", Toast.LENGTH_SHORT).show();
+        }
     }
 
+    /** Solicitamos las cabeceras de facturas al servidor remoto */
+    private void getCabecerasFacturas(){
+        // Verificamos que el dispositivo tenga coneccion a internet
+        conexionAinternet = new ConnectivityService();
+        if (conexionAinternet.stateConnection(context)) {
+            Call<JsonArray> requestCabeceraFactura = ApiUtils.getApiServices().getCabeceraFactura();
+            requestCabeceraFactura.enqueue(new Callback<JsonArray>() {
+                public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
+                    if (!response.isSuccessful()) {
+                        // Mensaje de error
+                        Toast.makeText(context, response.message() +" al cargar datos!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // Manejar datos obtenidos en la petición
+                        objetoGson = new Gson();
+                        conexiones = new Conexiones(context);
+                        JsonArray arrayListaCabeceraFactura = response.body();
+                        // Enviamos lista cabeceras de facturas a clase conexion para que inserte datos en tabla local
+                        conexiones.insertarCabeceraFacturaEnDbLocal(objetoGson.toJson(arrayListaCabeceraFactura));
+                    }
+                }
+                @Override
+                public void onFailure(Call<JsonArray> call, Throwable t) {
+                    Toast.makeText(context, "La peticion falló!" + t.toString(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(context, "El dispositivo no puede accesar a la red en este momento!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    /** Solicitamos las cabeceras de facturas al servidor remoto */
     private void getDetallesFacturas() {
+        // Verificamos que el dispositivo tenga coneccion a internet
+        conexionAinternet = new ConnectivityService();
+        if (conexionAinternet.stateConnection(context)) {
+            Call<JsonArray> requestDetalleFactura = ApiUtils.getApiServices().getDetalleFactura();
+            requestDetalleFactura.enqueue(new Callback<JsonArray>() {
+                public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
+                    if (!response.isSuccessful()) {
+                        // Mensaje de error
+                        Toast.makeText(context, response.message() +" al cargar datos!", Toast.LENGTH_SHORT).show();
+                    } else {
+                        // Manejar datos obtenidos en la petición
+                        objetoGson = new Gson();
+                        conexiones = new Conexiones(context);
+                        JsonArray arrayListaDetalleFactura = response.body();
+                        // Enviamos lista detalles de facturas a clase conexion para que inserte datos en tabla local
+                        conexiones.insertarDetalleFacturaEnDbLocal(objetoGson.toJson(arrayListaDetalleFactura));
+                    }
+                }
+                @Override
+                public void onFailure(Call<JsonArray> call, Throwable t) {
+                    Toast.makeText(context, "La peticion falló!" + t.toString(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } else {
+            Toast.makeText(context, "El dispositivo no puede accesar a la red en este momento!", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /* Mostramos barra de progreso mientras se descargan y almacenan los datos en db local*/
@@ -202,14 +310,14 @@ public class MsgDialogDBLocal {
         progressBar.setIndeterminate(true);
         progressBar.setProgress(0);
         progressBar.show();
-        final int tiempoTotal = 180; // 3 segundos
+        final int tiempoTotal = 270; // 4.5 segundos
         final Thread thread = new Thread(){
             @Override
             public void run() {
                 int contador = 0;
                 while (contador<tiempoTotal){
                     try {
-                        sleep(180);
+                        sleep(270);
                         contador+=5;
                         progressBar.setProgress(contador);
                     } catch (InterruptedException interruptedException){
