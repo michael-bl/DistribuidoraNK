@@ -3,11 +3,11 @@ package com.example.distribuidorank.modelo;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Usuario {
+public class Usuario implements Serializable {
     public Usuario(){
-
     }
     @SerializedName("id")
     @Expose
@@ -45,6 +45,9 @@ public class Usuario {
     @Expose
     private int estado;
 
+    @SerializedName("accion")
+    @Expose
+    private int accion;
 
     public String getId() {
         return id;
@@ -115,5 +118,13 @@ public class Usuario {
 
     public void setEstado(int estado) {
         this.estado = estado;
+    }
+
+    public int getAccion() {
+        return accion;
+    }
+
+    public void setAccion(int accion) {
+        this.accion = accion;
     }
 }

@@ -35,7 +35,7 @@
             android:layout_height="wrap_content">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/txtBuscarCliente"
+                android:id="@+id/txtBuscarContentCliente"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -45,13 +45,13 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <ListView
-            android:id="@+id/lvClientes"
+            android:id="@+id/lvContentClientes"
             android:layout_width="match_parent"
             android:layout_height="350dp"
             android:layout_marginTop="10dp" />
 
         <Button
-            android:id="@+id/btnSiguienteContentCliente"
+            android:id="@+id/btnNextContentCliente"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"

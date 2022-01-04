@@ -14,6 +14,7 @@ import com.example.distribuidorank.modelo.Cabecera_factura;
 import com.example.distribuidorank.modelo.Cliente;
 import com.example.distribuidorank.modelo.Detalle_factura;
 import com.example.distribuidorank.modelo.Localidad;
+import com.example.distribuidorank.modelo.Modo;
 import com.example.distribuidorank.modelo.Producto;
 import com.example.distribuidorank.modelo.Proveedor;
 import com.example.distribuidorank.modelo.Unidad;
@@ -739,6 +740,7 @@ public class POS_DataBase extends DataBaseHelper {
             values.put("telefono", usuario.getTelefono());
             values.put("email", usuario.getEmail());
             values.put("direccion", usuario.getDireccion());
+            values.put("estado", usuario.getEstado());
             values.put("ultima_actualizacion", this.simpleDateFormat.format(this.calendar.getTime()));
 
             long trans_ID = db.insert("usuario", null, values); // Guarda el id de la transacción en la base de datos
@@ -746,14 +748,15 @@ public class POS_DataBase extends DataBaseHelper {
 
             // Respaldo para la tabla log_eventos
             if (trans_ID != -1) {
-                @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO usuario (id, fk_localidad, nombre, pass, telefono, email, direccion) VALUES (%s, %d, %s, %s, %s, %s, %s)",
+                @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO usuario (id, fk_localidad, nombre, pass, telefono, email, direccion, estado) VALUES (%s, %d, %s, %s, %s, %s, %s, %d)",
                         usuario.getId(),
                         usuario.getFk_localidad(),
                         usuario.getNombre(),
                         usuario.getPass(),
                         usuario.getTelefono(),
                         usuario.getEmail(),
-                        usuario.getDireccion());
+                        usuario.getDireccion(),
+                        usuario.getEstado());
 
                 ContentValues values2 = new ContentValues();
 
@@ -770,6 +773,44 @@ public class POS_DataBase extends DataBaseHelper {
 
         } catch (Exception e) {
             Log.e("SQLite DataBase", String.format("Clase: POS_Database\tMétodo: insertUsuario\nError:%s", e.toString()));
+            return false;
+        }
+    }
+
+    public boolean insertModo(Modo modo, int actualizado) {
+        try {
+            DataBaseHelper helper = new DataBaseHelper(this.context);
+            SQLiteDatabase db = helper.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+
+            values.put("id", modo.getId());
+            values.put("mode", modo.getMode());
+
+            long trans_ID = db.insert("modo", null, values); // Guarda el id de la transacción en la base de datos
+            Log.i("SQLite DataBase", String.valueOf(trans_ID));
+
+            // Respaldo para la tabla log_eventos
+            if (trans_ID != -1) {
+                @SuppressLint("DefaultLocale") String sql_Command = String.format("INSERT INTO modo (id, mode) VALUES (%d, %d)",
+                        modo.getId(),
+                        modo.getMode());
+
+                ContentValues values2 = new ContentValues();
+
+                values2.put("fecha", this.simpleDateFormat.format(this.calendar.getTime()));
+                values2.put("string_sql", sql_Command);
+                values2.put("actualizado", actualizado);
+
+                trans_ID = db.insert("log_eventos", null, values2); // Guarda el id de la transacción en la base de datos
+                Log.i("SQLite DataBase", String.valueOf(trans_ID));
+            }
+
+            db.close();
+            return true;
+
+        } catch (Exception e) {
+            Log.e("SQLite DataBase", String.format("Clase: POS_Database\tMétodo: insertModo\nError:%s", e.toString()));
             return false;
         }
     }
@@ -844,7 +885,6 @@ public class POS_DataBase extends DataBaseHelper {
     public ArrayList<Cliente> selectCliente() {
 
         ArrayList<Cliente> clientes = new ArrayList<>();
-        Cliente cliente = new Cliente();
         Cursor cursor;
 
         try {
@@ -856,14 +896,15 @@ public class POS_DataBase extends DataBaseHelper {
 
             if (cursor.moveToFirst()) {
                 do {
-
+                    Cliente cliente = new Cliente();
                     cliente.setId(cursor.getString(0));
                     cliente.setFk_localidad(cursor.getInt(1));
                     cliente.setNombre(cursor.getString(2));
                     cliente.setTelefono(cursor.getString(3));
                     cliente.setEmail(cursor.getString(4));
                     cliente.setDireccion(cursor.getString(5));
-                    cliente.setUltima_actualizacion(this.simpleDateFormat.parse(cursor.getString(6)));
+                    cliente.setEstado(cursor.getInt(6));
+                    cliente.setUltima_actualizacion(this.simpleDateFormat.parse(cursor.getString(7)));
 
                     clientes.add(cliente);
 
@@ -975,7 +1016,6 @@ public class POS_DataBase extends DataBaseHelper {
     public ArrayList<Localidad> selectLocalidad() {
 
         ArrayList<Localidad> localidades = new ArrayList<>();
-        Localidad localidad = new Localidad();
         Cursor cursor;
 
         try {
@@ -987,10 +1027,11 @@ public class POS_DataBase extends DataBaseHelper {
 
             if (cursor.moveToFirst()) {
                 do {
-
+                    Localidad localidad = new Localidad();
                     localidad.setId(cursor.getInt(0));
                     localidad.setLocalidad(cursor.getString(1));
-                    localidad.setUltima_actualizacion(this.simpleDateFormat.parse(cursor.getString(2)));
+                    localidad.setEstado(cursor.getInt(2));
+                    localidad.setUltima_actualizacion(this.simpleDateFormat.parse(cursor.getString(3)));
 
                     localidades.add(localidad);
 
@@ -1033,7 +1074,6 @@ public class POS_DataBase extends DataBaseHelper {
     public ArrayList<Producto> selectProducto() {
 
         ArrayList<Producto> productos = new ArrayList<>();
-        Producto producto = new Producto();
         Cursor cursor;
 
         try {
@@ -1045,14 +1085,15 @@ public class POS_DataBase extends DataBaseHelper {
 
             if (cursor.moveToFirst()) {
                 do {
-
+                    Producto producto = new Producto();
                     producto.setId(cursor.getInt(0));
                     producto.setFk_unidad(cursor.getInt(1));
                     producto.setDescripcion(cursor.getString(2));
                     producto.setUtilidad(cursor.getString(3));
                     producto.setPrecio_compra(cursor.getString(4));
                     producto.setPrecio_venta(cursor.getString(5));
-                    producto.setUltima_actualizacion(this.simpleDateFormat.parse(cursor.getString(6)));
+                    producto.setEstado(cursor.getInt(6));
+                    producto.setUltima_actualizacion(this.simpleDateFormat.parse(cursor.getString(7)));
 
                     productos.add(producto);
 
@@ -1099,7 +1140,6 @@ public class POS_DataBase extends DataBaseHelper {
     public ArrayList<Proveedor> selectProveedor() {
 
         ArrayList<Proveedor> proveedores = new ArrayList<>();
-        Proveedor proveedor = new Proveedor();
         Cursor cursor;
 
         try {
@@ -1111,7 +1151,7 @@ public class POS_DataBase extends DataBaseHelper {
 
             if (cursor.moveToFirst()) {
                 do {
-
+                    Proveedor proveedor = new Proveedor();
                     proveedor.setId(cursor.getString(0));
                     proveedor.setNombre(cursor.getString(1));
                     proveedor.setTelefono(cursor.getString(2));
@@ -1160,7 +1200,6 @@ public class POS_DataBase extends DataBaseHelper {
     public ArrayList<Unidad> selectUnidad() {
 
         ArrayList<Unidad> unidades = new ArrayList<>();
-        Unidad unidad = new Unidad();
         Cursor cursor;
 
         try {
@@ -1172,10 +1211,11 @@ public class POS_DataBase extends DataBaseHelper {
 
             if (cursor.moveToFirst()) {
                 do {
-
+                    Unidad unidad = new Unidad();
                     unidad.setId(cursor.getInt(0));
                     unidad.setDetalle(cursor.getString(1));
-                    unidad.setUltima_actualizacion(this.simpleDateFormat.parse(cursor.getString(2)));
+                    unidad.setEstado(cursor.getInt(2));
+                    unidad.setUltima_actualizacion(this.simpleDateFormat.parse(cursor.getString(3)));
 
                     unidades.add(unidad);
 
@@ -1215,6 +1255,37 @@ public class POS_DataBase extends DataBaseHelper {
         return unidad;
     }
 
+    public ArrayList<Usuario> selectUsuario() {
+        ArrayList<Usuario> usuarios = new ArrayList<>();
+        Cursor cursor;
+        try {
+            DataBaseHelper helper = new DataBaseHelper(this.context);
+            SQLiteDatabase db = helper.getReadableDatabase();
+            cursor = db.rawQuery("SELECT * FROM usuario", null);
+            Log.i("SQLite DataBase", "Sentencia 'SELECT' ejecutada");
+
+            if (cursor.moveToFirst()) {
+                do{
+                    Usuario usuario = new Usuario();
+                    usuario.setId(cursor.getString(0));
+                    usuario.setFk_localidad(cursor.getInt(1));
+                    usuario.setNombre(cursor.getString(2));
+                    usuario.setPass(cursor.getString(3));
+                    usuario.setTelefono(cursor.getString(4));
+                    usuario.setEmail(cursor.getString(5));
+                    usuario.setDireccion(cursor.getString(6));
+                    usuario.setEstado(cursor.getInt(7));
+                    usuario.setUltima_actualizacion(this.simpleDateFormat.parse(cursor.getString(8)));
+                    usuarios.add(usuario);
+                } while (cursor.moveToNext());
+                cursor.close();
+            }
+        } catch (Exception e) {
+            Log.e("SQLite DataBase", String.format("Clase: POS_Database\tMétodo: selectUsuario(1)\nError:%s", e.toString()));
+        }
+        return usuarios;
+    }
+
     public Usuario selectUsuario(String id) {
 
         Usuario usuario = new Usuario();
@@ -1235,14 +1306,37 @@ public class POS_DataBase extends DataBaseHelper {
                 usuario.setTelefono(cursor.getString(4));
                 usuario.setEmail(cursor.getString(5));
                 usuario.setDireccion(cursor.getString(6));
-                usuario.setUltima_actualizacion(this.simpleDateFormat.parse(cursor.getString(7)));
+                usuario.setEstado(cursor.getInt(7));
+                usuario.setUltima_actualizacion(this.simpleDateFormat.parse(cursor.getString(8)));
 
                 cursor.close();
             }
         } catch (Exception e) {
-            Log.e("SQLite DataBase", String.format("Clase: POS_Database\tMétodo: selectUsuario\nError:%s", e.toString()));
+            Log.e("SQLite DataBase", String.format("Clase: POS_Database\tMétodo: selectUsuario(2)\nError:%s", e.toString()));
         }
         return usuario;
+    }
+
+    @SuppressLint("DefaultLocale")
+    public int selectModo() {
+
+        Modo modo = new Modo();
+        Cursor cursor;
+
+        try {
+            DataBaseHelper helper = new DataBaseHelper(this.context);
+            SQLiteDatabase db = helper.getReadableDatabase();
+            cursor = db.rawQuery("SELECT mode FROM modo WHERE id = 1", null);
+            Log.i("SQLite DataBase", "Sentencia 'SELECT' ejecutada");
+
+            if (cursor.moveToFirst()) {
+                modo.setMode(cursor.getInt(0));
+                cursor.close();
+            }
+        } catch (Exception e) {
+            Log.e("SQLite DataBase", String.format("Clase: POS_Database\tMétodo: selectModo(1)\nError:%s", e.toString()));
+        }
+        return modo.getMode();
     }
     /* ****************************************************************************************************************************************** */
 
@@ -1565,8 +1659,9 @@ public class POS_DataBase extends DataBaseHelper {
             values.put("email", usuario.getEmail());
             values.put("direccion", usuario.getDireccion());
             values.put("estado", usuario.getEstado());
-            values.put("ultima_actualizacion", usuario.getUltima_actualizacion().toString());
-
+            //values.put("ultima_actualizacion", usuario.getUltima_actualizacion().toString()); verificar con Mario la fecha a insertar
+            // esta linea comentada o la que esta en uso
+            values.put("ultima_actualizacion", this.simpleDateFormat.format(this.calendar.getTime()));
             long trans_ID = db.update("usuario", values, String.format("id = %s", usuario.getId()), null);
 
             if (trans_ID > 0) {
@@ -1598,6 +1693,45 @@ public class POS_DataBase extends DataBaseHelper {
 
         } catch (Exception e) {
             Log.e("SQLite DataBase", String.format("Clase: POS_Database\tMétodo: updateUsuario\nError:%s", e.toString()));
+            return false;
+        }
+    }
+
+    @SuppressLint("DefaultLocale")
+    public boolean updateModo(Modo modo, int actualizado) {
+        try {
+            DataBaseHelper helper = new DataBaseHelper(this.context);
+            SQLiteDatabase db = helper.getWritableDatabase();
+
+            ContentValues values = new ContentValues();
+
+            values.put("id", modo.getId());
+            values.put("fk_localidad", modo.getMode());
+
+            long trans_ID = db.update("modo", values, String.format("id = %d", modo.getId()), null);
+
+            if (trans_ID > 0) {
+                @SuppressLint("DefaultLocale") String sql_Command = String.format("UPDATE modo SET mode = '%d' WHERE id = %d",
+                        modo.getId(),
+                        modo.getMode());
+
+                ContentValues values2 = new ContentValues();
+
+                values2.put("fecha", this.simpleDateFormat.format(this.calendar.getTime()));
+                values2.put("string_sql", sql_Command);
+                values2.put("actualizado", actualizado);
+
+                trans_ID = db.insert("log_eventos", null, values2); // Guarda el id de la transacción en la base de datos
+
+                Log.i("SQLite DataBase", String.valueOf(trans_ID));
+                Log.i("SQLite DataBase", "Sentencia 'UPDATE' ejecutada");
+            }
+
+            db.close();
+            return true;
+
+        } catch (Exception e) {
+            Log.e("SQLite DataBase", String.format("Clase: POS_Database\tMétodo: updateModo\nError:%s", e.toString()));
             return false;
         }
     }
@@ -1937,6 +2071,10 @@ public class POS_DataBase extends DataBaseHelper {
                 result = insertUsuario(this.gson.fromJson(object, Usuario.class), actualizado);
                 break;
 
+            case "Modo":
+                result = insertModo(this.gson.fromJson(object, Modo.class), actualizado);
+                break;
+
             default:
                 result = false;
                 break;
@@ -1977,6 +2115,14 @@ public class POS_DataBase extends DataBaseHelper {
 
             case "Unidad":
                 object = this.gson.toJson(selectUnidad());
+                break;
+
+            case "Usuario":
+                object = this.gson.toJson(selectUsuario());
+                break;
+
+            case "Modo":
+                object = this.gson.toJson(selectModo());
                 break;
 
             default:
@@ -2067,6 +2213,10 @@ public class POS_DataBase extends DataBaseHelper {
 
             case "Usuario":
                 result = updateUsuario(this.gson.fromJson(object, Usuario.class), actualizado);
+                break;
+
+            case "Modo":
+                result = updateModo(this.gson.fromJson(object, Modo.class), actualizado);
                 break;
 
             default:

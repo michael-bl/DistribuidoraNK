@@ -18,19 +18,35 @@ public interface ApiRoutes {
     Call<List<Usuario>> login(@Path("user") String user, @Path("pass") String pass);
 
     // Retorna lista de clientes
+    @GET("usuarios")
+    Call<JsonArray> getUsuarios();
+
+    // Agrega nuevo, actualiza o desactiva usuario
+    @GET("accionusuario/{id}/{fk_localidad}/{nombre}/{pass}/{telefono}/{email}/{direccion}/{accion}/{estado}")
+    Call<JsonObject> accionUsuario(@Path("id") String a,
+                                   @Path("fk_localidad") int b,
+                                   @Path("nombre") String c,
+                                   @Path("pass") String d,
+                                   @Path("telefono") String e,
+                                   @Path("email") String f,
+                                   @Path("direccion") String g,
+                                   @Path("accion") int h,
+                                   @Path("estado") int i);
+
+    // Retorna lista de clientes
     @GET("clientes")
     Call<List<Cliente>> getClientes();
 
     // Agrega nuevo, actualiza o desactiva cliente
-      @GET("accioncliente/{id}/{localidad}/{nombre}/{telefono}/{email}/{direccion}/{accion}/{estado}")
+      @GET("accioncliente/{id}/{fk_localidad}/{nombre}/{telefono}/{email}/{direccion}/{accion}/{estado}")
       Call<JsonObject> accionCliente(@Path("id") String a,
-                                   @Path("localidad") String b,
+                                   @Path("fk_localidad") int b,
                                    @Path("nombre") String c,
                                    @Path("telefono") String d,
                                    @Path("email") String e,
                                    @Path("direccion") String f,
                                    @Path("accion") int g,
-                                   @Path("direccion") int h);
+                                   @Path("estado") int h);
 
     // Retorna lista de productos activos
     @GET("productos")
@@ -39,7 +55,7 @@ public interface ApiRoutes {
     // Agrega nuevo, actualiza o desactiva producto
     @GET("accionproducto/{id}/{fk_unidad}/{descripcion}/{utilidad}/{precio_compra}/{precio_venta}/{accion}/{estado}")
     Call<JsonObject> accionProducto(@Path("id") int a,
-                                   @Path("fk_unidad") String b,
+                                   @Path("fk_unidad") int b,
                                    @Path("descripcion") String c,
                                    @Path("utilidad") String d,
                                    @Path("precio_compra") String e,

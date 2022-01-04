@@ -1,50 +1,43 @@
 package com.example.distribuidorank.vista;
 
 import android.os.Bundle;
-import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.distribuidorank.Database.Conexiones;
 import com.example.distribuidorank.R;
 import com.example.distribuidorank.controlador.ApiUtils;
 import com.example.distribuidorank.controlador.ConnectivityService;
-import com.example.distribuidorank.controlador.SelectionAdapter;
 import com.example.distribuidorank.modelo.Cliente;
+import com.example.distribuidorank.modelo.Localidad;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ClienteActivity extends AppCompatActivity {
-    // lista de objetos tipo cliente
-    private List<Cliente> listaCliente;
-    // MultiSelect list adapter
-    private SelectionAdapter mAdapter;
-    // Variable del listview clientes
-    private ListView lvCliente;
-    // Variable del textview para ingresar busqueda
-    private TextInputEditText tvBuscar;
-    // Variable con lista de clientes
-    private ArrayList<String> stringArrayListCliente;
-    // Variable para ids de clientes
-    private ArrayList<Cliente> arrayCliente = new ArrayList<>();
-    // Variables de un cliente
-    private String cedula, localidad, nombre, telefono, email, direccion;
-    private TextInputEditText txtCedula , txtNombre ,txtDireccion ,txtEmail , txtLocalidad , txtTelefono ;
-    // Objeto cliente
+    private TextInputEditText txtIdCliente, txtNombre, txtTelefono, txtEmail, txtDireccion;
+    private String idCliente, nombre, telefono, email, direccion;
+    private List<Localidad> listaLocalidades;
+    private int accion, estado, idLocalidad;
+    private Spinner spLocalidad, spEstado;
+    private Conexiones conexiones;
     private Cliente cliente;
-    private int accion, estado;
+    private Gson objetoGson;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,78 +45,110 @@ public class ClienteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_cliente);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //Instanica de los inputtext
+
+        // Instancia de textviews y otros componentes de la UI
         instanciaComponentes();
-        // cliente
+
         cliente = new Cliente();
-        // obtener datos del bundle
+
+        spEstado = findViewById(R.id.spEstadoCliente);
+        spLocalidad = findViewById(R.id.spLocalidadCliente);
+
+        // Obtener datos del bundle
         Bundle bundle = this.getIntent().getExtras();
-        if(bundle !=null){
-            //Extrayendo el extra de tipo cadena
+        if (bundle != null) {
+            // Extrayendo el extra de tipo cadena
             cliente = (Cliente) bundle.getSerializable("cliente");
-            mostrarDatosdelCliente(cliente);
+            if (Objects.requireNonNull(cliente).getAccion() != 0)
+                mostrarDatosdelCliente(cliente);
+            else
+                llenarSpinnerEstado(0); // 0 para setear orden por defecto
         }
-        // Metodo para solicitar los datos al server
-        //obtenerClientes();
-        Button btnGuardar = findViewById(R.id.btnSiguienteContentProducto);
-        btnGuardar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                guardarCliente();
-            }
+
+        Button btnGuardar = findViewById(R.id.btnGuardarCliente);
+        btnGuardar.setOnClickListener(v -> {
+            int guardarLocalOremoto = conexiones.getModoDeAlmacenamiento();
+            if (guardarLocalOremoto == 0) guardarClienteLocal();
+            else guardarClienteRemoto();
         });
+
+        // Solicitamos localidades
+        getLocalidadLocalOremoto();
     }
 
     private void instanciaComponentes() {
-        txtCedula = findViewById(R.id.txtCedulaCliente);
-        txtNombre = findViewById(R.id.txtNombreCliente);
         txtDireccion = findViewById(R.id.txtDireccionCliente);
-        txtEmail = findViewById(R.id.txtEmailCliente);
-        txtLocalidad = findViewById(R.id.txtBuscarProducto);
         txtTelefono = findViewById(R.id.txtTelefonoCliente);
+        txtIdCliente = findViewById(R.id.txtCedulaCliente);
+        txtNombre = findViewById(R.id.txtNombreCliente);
+        txtEmail = findViewById(R.id.txtEmailCliente);
     }
 
-    //mostramos los datos del usuario en los campos de la interfaz
-    private void mostrarDatosdelCliente(Cliente cliente){
-        // Seteamos los datos en los views
+    /**
+     * Mostramos los datos del cliente en los campos de la interfaz
+     */
+    private void mostrarDatosdelCliente(Cliente cliente) {
         try {
-            txtCedula.setText( cliente.getId());
-            txtNombre.setText( cliente.getNombre());
-            txtDireccion.setText( cliente.getDireccion());
-            txtEmail.setText( cliente.getEmail());
-            txtLocalidad.setText(cliente.getFk_localidad());
-            txtTelefono.setText( cliente.getTelefono());
-        } catch (Error nullPointerException){
-            Toast.makeText(ClienteActivity.this, nullPointerException.getMessage(), Toast.LENGTH_SHORT).show();
+            llenarSpinnerEstado(1);
+            txtEmail.setText(cliente.getEmail());
+            txtIdCliente.setText(cliente.getId());
+            txtNombre.setText(cliente.getNombre());
+            txtTelefono.setText(cliente.getTelefono());
+            txtDireccion.setText(cliente.getDireccion());
+        } catch (Error npe) {
+            Toast.makeText(ClienteActivity.this, "Error, favor verificar: " + npe.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
-    //guardar el nuevo cliente
-    private void guardarCliente(){
+    /**
+     * Asignamos los nuevos valores a las variables del cliente
+     */
+    private boolean crearCliente() {
+        try {
+            accion = cliente.getAccion();
+            email = txtEmail.getText().toString().trim();
+            nombre = txtNombre.getText().toString().trim();
+            telefono = txtTelefono.getText().toString().trim();
+            idCliente = txtIdCliente.getText().toString().trim();
+            direccion = txtDireccion.getText().toString().trim();
+            estado = Integer.parseInt(spEstado.getItemAtPosition(spEstado.getSelectedItemPosition()).toString().trim().substring(0, 1));
+            idLocalidad = Integer.parseInt(spLocalidad.getItemAtPosition(spLocalidad.getSelectedItemPosition()).toString().trim().substring(0, 1));
+        } catch (Error e) {
+            Toast.makeText(ClienteActivity.this, "Error, favor verificar: " + e.toString(), Toast.LENGTH_LONG).show();
+        }
+        return !idCliente.equals("") & !nombre.equals("") & !telefono.equals("") & !email.equals("") & !direccion.equals("");
+    }
+
+    /**
+     * Guardar el nuevo cliente
+     */
+    private void guardarClienteRemoto() {
         // Validamos que el dispositivo tenga coneccion a internet
         ConnectivityService con = new ConnectivityService();
         if (con.stateConnection(ClienteActivity.this)) {
             // Verificamos que todos los datos del reporte esten ingresados
-            if (makeReport()) {
-                Call<JsonObject> solicitudAccionCliente = ApiUtils.getApiServices().accionCliente(cedula, localidad, nombre, telefono, email, direccion, accion, estado);
-                //Call<JsonObject> solicitudAccionCliente = ApiUtils.getApiServices().accionCliente2(cliente);
+            if (crearCliente()) {
+                Call<JsonObject> solicitudAccionCliente = ApiUtils.getApiServices().accionCliente(idCliente, idLocalidad, nombre, telefono, email, direccion, accion, estado);
                 solicitudAccionCliente.enqueue(new Callback<JsonObject>() {
                     @Override
                     public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                         try {
-                            //Verificamos si la transaccion fue exitosa y mostramos mensaje de error
+                            //Verificamos si la transaccion fue exitosa, sino mostramos mensaje de error
                             if (!response.isSuccessful()) {
                                 Toast.makeText(ClienteActivity.this, response.message(), Toast.LENGTH_SHORT).show();
                             } else {
                                 Toast.makeText(ClienteActivity.this, "Cliente guardado exitosamente!", Toast.LENGTH_SHORT).show();
+                                //finalizamos esta activity
+                                finish();
                             }
-                        } catch (java.lang.Error e){
+                        } catch (java.lang.Error e) {
                             Toast.makeText(ClienteActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }
+
                     @Override
                     public void onFailure(Call<JsonObject> call, Throwable t) {
-                        Toast.makeText(ClienteActivity.this,"La peticion falló:  " + t.toString(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ClienteActivity.this, "La peticion falló:  " + t.toString(), Toast.LENGTH_SHORT).show();
                     }
                 });
 
@@ -131,36 +156,149 @@ public class ClienteActivity extends AppCompatActivity {
                 Toast.makeText(ClienteActivity.this, "Faltan datos del reporte!", Toast.LENGTH_SHORT).show();
             }
         } else {
-            Toast.makeText(ClienteActivity.this, "El dispositivo no puede accesar a la red en este momento!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(ClienteActivity.this, "Sin conexión de red en este momento!", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private boolean makeReport() {
-        arrayCliente = new ArrayList<>();
-        Spinner sp = findViewById(R.id.spLocalidadCliente);
-        TextView txtCedula = findViewById(R.id.txtCedulaCliente);
-        TextView txtNombre = findViewById(R.id.txtNombreCliente);
-        TextView txtTelefono = findViewById(R.id.txtTelefonoCliente);
-        TextView txtLocalidad = findViewById(R.id.txtBuscarProducto);
-        TextView txtDireccion = findViewById(R.id.txtDireccionCliente);
-        TextView txtEmail = findViewById(R.id.txtEmailCliente);
-        /*cliente.setId(txtCedula.getText().toString());
-        cliente.setNombre(txtCardNombre.getText().toString());
-        cliente.setTelefono(txtTelefono.getText().toString());
-        cliente.setFk_localidad(txtLocalidad.getText().toString());
-        cliente.setDireccion(txtDireccion.getText().toString());
-        cliente.setEmail(txtEmail.getText().toString());
-        arrayCliente.add(cliente);
-        cliente.setArrayCliente(arrayCliente);*/
+    /**
+     * Almacena cliente, sea nuevo o actualizado, por medio de variable accion se indica que se debe hacer
+     */
+    private void guardarClienteLocal() {
+        try {
+            if (crearCliente()) {
+                objetoGson = new Gson();
+                conexiones = new Conexiones(this);
+                cliente.setEmail(email);
+                cliente.setId(idCliente);
+                cliente.setEstado(estado);
+                cliente.setNombre(nombre);
+                cliente.setTelefono(telefono);
+                cliente.setDireccion(direccion);
+                cliente.setFk_localidad(idLocalidad);
+                if (conexiones.accionesTablaCliente(accion, objetoGson.toJson(cliente)) == 0)
+                    Toast.makeText(ClienteActivity.this, "Error al guardar cliente!", Toast.LENGTH_LONG).show();
+                else
+                    Toast.makeText(ClienteActivity.this, "Cliente guardado correctamente!", Toast.LENGTH_LONG).show();
+                //finalizamos esta activity
+                finish();
+            }
+        } catch (NullPointerException npe) {
+            Toast.makeText(ClienteActivity.this, "Error al guardar cliente:  " + npe.toString(), Toast.LENGTH_LONG).show();
+        }
+    }
 
-        estado = cliente.getEstado();
-        accion = cliente.getAccion();
-        cedula=txtCedula.getText().toString();
-        nombre=txtNombre.getText().toString();
-        telefono=txtTelefono.getText().toString();
-        localidad=txtLocalidad.getText().toString();
-        direccion=txtDireccion.getText().toString();
-        email = txtEmail.getText().toString();
-        return true;
+    /**
+     * Escoge de donde obtener los datos
+     */
+    private void getLocalidadLocalOremoto() {
+        try {
+            conexiones = new Conexiones(this);
+            int modo = conexiones.getModoDeAlmacenamiento();
+            if (modo == 0) getLocalidaLocal();
+            else getLocalidadRemoto();
+        } catch (NullPointerException npe) {
+            Toast.makeText(ClienteActivity.this, "Error, favor verificar: " + npe.toString(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * Solicitamos los datos de localidades al servidor remoto
+     */
+    private void getLocalidadRemoto() {
+        // Verificamos que el dispositivo tenga coneccion a internet
+        ConnectivityService con = new ConnectivityService();
+        if (con.stateConnection(this)) {
+            Call<JsonArray> requestProductos = ApiUtils.getApiServices().getUnidades();
+            requestProductos.enqueue(new Callback<JsonArray>() {
+                public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
+                    if (!response.isSuccessful()) {
+                        // Mensaje de error
+                        Toast.makeText(ClienteActivity.this, response.message() + " al cargar datos!", Toast.LENGTH_LONG).show();
+                    } else {
+                        // Manejar datos obtenidos en la petición
+                        listaLocalidades = new ArrayList<>();
+                        JsonArray arrayListLocalidades = response.body();
+                        for (int j = 0; j < arrayListLocalidades.size(); j++) {
+                            Localidad localidad = new Localidad();
+                            localidad.setId(arrayListLocalidades.get(j).getAsJsonObject().get("id").getAsInt());
+                            localidad.setLocalidad(arrayListLocalidades.get(j).getAsJsonObject().get("localidad").toString());
+                            listaLocalidades.add(localidad);
+                        }
+                        llenarSpinnerLocalidades(listaLocalidades);
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<JsonArray> call, Throwable t) {
+                    Toast.makeText(ClienteActivity.this, "La petición al servidor falló!" + t.toString(), Toast.LENGTH_LONG).show();
+                }
+            });
+        } else {
+            Toast.makeText(ClienteActivity.this, "Sin conexión de red en este momento!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * Solicitamos los datos de localidades a db local
+     */
+    private void getLocalidaLocal() {
+        try {
+            conexiones = new Conexiones(this);
+            List<Localidad> arrayListLocalidades = conexiones.getLocalidades();
+            llenarSpinnerLocalidades(arrayListLocalidades);
+        } catch (NullPointerException e) {
+            Toast.makeText(ClienteActivity.this, "Error, favor verificar: " + e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * Seteamos las localidades al spinner
+     */
+    private void llenarSpinnerLocalidades(List<Localidad> localidadList) {
+        ArrayList<String> stringLocalidades = new ArrayList<>();
+        try {
+            listaLocalidades = localidadList;
+            int posicion = 0;
+            for (int k = 0; k < localidadList.size(); k++) {
+                stringLocalidades.add(localidadList.get(k).getId() + "-" + localidadList.get(k).getLocalidad());
+                if (localidadList.get(k).getId() == cliente.getFk_localidad()) {
+                    posicion = k;
+                }
+            }
+            ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, stringLocalidades);
+            this.spLocalidad.setAdapter(adapter);
+            this.spLocalidad.setSelection(posicion);
+        } catch (NullPointerException npe) {
+            Toast.makeText(ClienteActivity.this, npe.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * Seteamos los estados al spinner, preleccionando el que posee el cliente
+     */
+    private void llenarSpinnerEstado(int accion) {
+        ArrayList<String> localidadList = new ArrayList<>();
+        try {
+            int posicion = 0;
+            localidadList.add("0-Inactivo");
+            localidadList.add("1-Activo");
+            ArrayAdapter adapter = new ArrayAdapter(ClienteActivity.this, android.R.layout.simple_list_item_1, localidadList);
+
+            if (accion > 0) {
+                for (int i = 0; i < localidadList.size(); i++) {
+                    if (localidadList.get(i).substring(0, 1).equals(String.valueOf(cliente.getEstado()))) {
+                        posicion = i;
+                    }
+                }
+                this.spEstado.setAdapter(adapter);
+                this.spEstado.setSelection(posicion);
+            } else {
+                this.spEstado.setAdapter(adapter);
+            }
+        } catch (NullPointerException npe) {
+            Toast.makeText(ClienteActivity.this, npe.getMessage(), Toast.LENGTH_LONG).show();
+        } catch (IncompatibleClassChangeError icche) {
+            Toast.makeText(ClienteActivity.this, icche.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
 }

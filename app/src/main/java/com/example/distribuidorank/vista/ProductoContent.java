@@ -20,6 +20,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.example.distribuidorank.Database.Conexiones;
+import com.example.distribuidorank.Database.ExistDataBaseSqlite;
 import com.example.distribuidorank.R;
 import com.example.distribuidorank.controlador.ApiUtils;
 import com.example.distribuidorank.controlador.ConnectivityService;
@@ -28,76 +30,78 @@ import com.example.distribuidorank.modelo.Producto;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonSyntaxException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 public class ProductoContent extends AppCompatActivity {
-    // lista de objetos tipo producto
-    private List<Producto> listaProductos;
-    // MultiSelect list adapter
-    private SelectionAdapter mAdapter;
-    // Variable del listview clientes
-    private ListView listviewProducto;
-    // Variable para ids de empleados
     private ArrayList<String> idProductoSeleccionado;
-    // Variable string con lista de clientes
-    private ArrayList<String> stringListaProductos;
-    // Variable del textview para ingresar busqueda
-    private TextInputEditText tvBuscar;
-    // Objeto Cliente
+    private ArrayList<String> stringIdsListaProductos;
+    private TextInputEditText tvBuscarProducto;
+    private List<Producto> listaProductos;
+    private ExistDataBaseSqlite existDb;
+    private Conexiones conexiones;
+    // MultiSelect list adapter
+    private ListView listviewProductos;
+    private SelectionAdapter mAdapter;
     private Producto producto;
     // Para mostrar alertDialog
-    private View view;
+    private NavigationView navigationView;
     private AlertDialog.Builder builder;
+    private DrawerLayout drawerLayout;
     private LayoutInflater inflater;
     private Intent intent;
     private Bundle bundle;
-    private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
+    private View view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.content_producto);
 
-        // Solicita los datos al servidor remoto
-        obtenerProductos();
-
         idProductoSeleccionado = new ArrayList<>();
         inflater = getLayoutInflater();
-        view = inflater.inflate(R.layout.dialog_opciones,null);
+        view = inflater.inflate(R.layout.dialog_opciones, null);
         builder = new AlertDialog.Builder(this);
         intent = new Intent(this, ProductoActivity.class);
         bundle = new Bundle();
         producto = new Producto();
 
+        //Extrayendo el extra de tipo cadena
+        producto = (Producto) bundle.getSerializable("producto");
+
         //Evento boton siguiente, hacia ProductoActivity.class
-        Button btnSiguiente = findViewById(R.id.btnSiguienteContentProducto);
-        btnSiguiente.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (producto.getAccion()==0){
-                    dialogAccion().show();
-                } else {
-                    producto.setAccion(0);
-                    producto.setEstado(1);
-                    bundle.putSerializable("producto", producto);
-                    intent.putExtras(bundle);
-                    startActivity(intent);
-                }
+        Button btnSiguiente = findViewById(R.id.btnNextContentProducto);
+        btnSiguiente.setOnClickListener(v -> {
+            if (producto.getAccion() == 0) {
+                dialogAccion().show();
+            } else {
+                producto.setAccion(0);
+                producto.setEstado(1);
+                bundle.putSerializable("producto", producto);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
 
+        //Solicitar productos
+        existDb = new ExistDataBaseSqlite();
+        if (existDb.existeDataBase())
+            getProductosLocal();
+        else getProductosRemoto();
     }
 
-    /** MsgDialogDBLocal captura opcion - Actualizar o eliminar objeto */
+    /**
+     * Alert dialog para capturar opcion - Actualizar o eliminar(desactivar) un producto
+     */
     private AlertDialog dialogAccion() {
-        view = inflater.inflate(R.layout.dialog_opciones,null);
+        view = inflater.inflate(R.layout.dialog_opciones, null);
 
         final Button btnActualizar = view.findViewById(R.id.btnNuevo);
         btnActualizar.setText("Actualizar");
@@ -120,12 +124,35 @@ public class ProductoContent extends AppCompatActivity {
             startActivity(intent);
         });
 
-        builder.setView(view).setTitle("Escoga una opción!").setPositiveButton("", (dialog, id) -> {((ViewGroup)drawerLayout.getParent()).removeView(view);
-        }).setNegativeButton("Cancelar", (dialog, which) -> ((ViewGroup)drawerLayout.getParent()).removeView(view));
+        builder.setView(view).setTitle("Escoga una opción!").setPositiveButton("", (dialog, id) -> {
+            ((ViewGroup) drawerLayout.getParent()).removeView(view);
+        }).setNegativeButton("Cancelar", (dialog, which) -> ((ViewGroup) drawerLayout.getParent()).removeView(view));
         return builder.create();
     }
 
-    public void obtenerProductos(){
+    /**
+     * Obtiene lista de productos de bd local
+     */
+    private void getProductosLocal() {
+        try {
+            conexiones = new Conexiones(ProductoContent.this);
+            List<Producto> listaProductos = new ArrayList<>(conexiones.getProductos());
+            stringIdsListaProductos = new ArrayList<>();
+            for (Producto producto : listaProductos) {
+                stringIdsListaProductos.add(producto.getId() + "-" + producto.getDescripcion());
+            }
+            setListaProductos(stringIdsListaProductos, listaProductos);
+        } catch (NullPointerException npe) {
+            Toast.makeText(ProductoContent.this, "Error, verifique por favor: " + npe.getMessage(), Toast.LENGTH_LONG).show();
+        } catch (JsonSyntaxException jse) {
+            Toast.makeText(ProductoContent.this, "Error, verifique por favor: " + jse.getMessage(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    /**
+     * Obtiene lista de productos de bd remota
+     */
+    public void getProductosRemoto() {
         // Verificamos que el dispositivo tenga coneccion a internet
         ConnectivityService con = new ConnectivityService();
         if (con.stateConnection(this)) {
@@ -139,11 +166,11 @@ public class ProductoContent extends AppCompatActivity {
                     } else {
                         // Manejar datos obtenidos en la petición
                         JsonArray listaPro = response.body();
-                        stringListaProductos =  new ArrayList<>();
+                        stringIdsListaProductos = new ArrayList<>();
                         listaProductos = new ArrayList<>();
-                        for (int j = 0; j<listaPro.size();j++){
+                        for (int j = 0; j < listaPro.size(); j++) {
                             Producto p = new Producto();
-                            stringListaProductos.add(j, listaPro.get(j).getAsJsonObject().get("id").getAsInt() + "-" + listaPro.get(j).getAsJsonObject().get("descripcion").toString());
+                            stringIdsListaProductos.add(j, listaPro.get(j).getAsJsonObject().get("id").getAsInt() + "-" + listaPro.get(j).getAsJsonObject().get("descripcion").toString());
                             p.setId(listaPro.get(j).getAsJsonObject().get("id").getAsInt());
                             p.setDescripcion(listaPro.get(j).getAsJsonObject().get("descripcion").toString());
                             p.setFk_familia(listaPro.get(j).getAsJsonObject().get("fk_unidad").getAsInt());
@@ -153,14 +180,14 @@ public class ProductoContent extends AppCompatActivity {
                             p.setDetalle(listaPro.get(j).getAsJsonObject().get("detalle").toString());
                             listaProductos.add(p);
                         }
-                        setListaProductos(stringListaProductos, listaProductos);
+                        setListaProductos(stringIdsListaProductos, listaProductos);
                         Toast.makeText(ProductoContent.this, "Datos cargados exitosamente!", Toast.LENGTH_SHORT).show();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<JsonArray> call, Throwable t) {
-                    Toast.makeText(ProductoContent.this, t.getMessage() +  "ResponseMsg, la peticion fallo!" + t.toString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(ProductoContent.this, "La peticion falló: " + t.toString(), Toast.LENGTH_SHORT).show();
                 }
             });
         } else {
@@ -169,48 +196,57 @@ public class ProductoContent extends AppCompatActivity {
     }
 
     /**
-     * Carga datos de productos en un spUnidadProducto
+     * Carga datos de productos en un listviewProductos
      */
     private void setListaProductos(ArrayList<String> listaproducto, List<Producto> p) {
-        this.listaProductos = p;
-        listviewProducto = findViewById(R.id.lvProductos);
-        mAdapter = new SelectionAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1, listaproducto);
-        listviewProducto.setAdapter(mAdapter);
-        onTextChanged();
-        setUpActionBar();
+        try {
+            this.listaProductos = p;
+            listviewProductos = findViewById(R.id.lvContentProductos);
+            mAdapter = new SelectionAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1, listaproducto);
+            listviewProductos.setAdapter(mAdapter);
+            onTextChanged();
+            setUpActionBar();
+        } catch (NullPointerException npe) {
+            Toast.makeText(ProductoContent.this, "Error, verifique por favor: " + npe.getMessage(), Toast.LENGTH_LONG).show();
+        }
     }
-    /**Filtro sobre el Listview de productos*/
-    private void onTextChanged(){
+
+    /**
+     * Filtro sobre el Listview de productos
+     */
+    private void onTextChanged() {
         // Arraylist con datos filtrados
         final ArrayList<String> array_sort = new ArrayList<>();
-        mAdapter = new SelectionAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1, stringListaProductos);
-        listviewProducto = findViewById(R.id.lvProductos);
-        listviewProducto.setAdapter(mAdapter);
+        mAdapter = new SelectionAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1, stringIdsListaProductos);
+        listviewProductos = findViewById(R.id.lvContentProductos);
+        listviewProductos.setAdapter(mAdapter);
         // Inicializamos textview de busqueda
-        tvBuscar = findViewById(R.id.txtBuscarProducto);
-        tvBuscar.addTextChangedListener(new TextWatcher() {
+        tvBuscarProducto = findViewById(R.id.txtBuscarProducto);
+        tvBuscarProducto.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
             }
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                int textlength = tvBuscar.getText().length();
+                int textlength = Objects.requireNonNull(tvBuscarProducto.getText()).length();
                 array_sort.clear();
-                for (int i = 0; i< stringListaProductos.size(); i++){
-                    if (textlength <= stringListaProductos.get(i).length()) {
-                        if (stringListaProductos.get(i).contains(tvBuscar.getText().toString())) {
-                            array_sort.add(stringListaProductos.get(i));
+                for (int i = 0; i < stringIdsListaProductos.size(); i++) {
+                    if (textlength <= stringIdsListaProductos.get(i).length()) {
+                        if (stringIdsListaProductos.get(i).contains(tvBuscarProducto.getText().toString())) {
+                            array_sort.add(stringIdsListaProductos.get(i));
                         }
                     }
                 }
-                listviewProducto.setAdapter(new SelectionAdapter(ProductoContent.this, android.R.layout.simple_list_item_1, android.R.id.text1, array_sort));
+                listviewProductos.setAdapter(new SelectionAdapter(ProductoContent.this, android.R.layout.simple_list_item_1, android.R.id.text1, array_sort));
             }
+
             @Override
             public void afterTextChanged(Editable s) {
             }
         });
     }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -218,20 +254,20 @@ public class ProductoContent extends AppCompatActivity {
 
     private void setUpActionBar() {
 
-        listviewProducto.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
-        listviewProducto.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
+        listviewProductos.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        listviewProductos.setMultiChoiceModeListener(new AbsListView.MultiChoiceModeListener() {
 
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
 
                 // If element is checked, it is added to selection; if not, it's deleted
                 if (checked) {
-                    idProductoSeleccionado.add(listviewProducto.getItemAtPosition(position).toString());
+                    idProductoSeleccionado.add(listviewProductos.getItemAtPosition(position).toString());
                     mAdapter.setNewSelection(position);
                     //con position obtenemos el producto de la listaProductos, el indice es el mismo
                     producto = listaProductos.get(position);
                 } else {
-                    idProductoSeleccionado.remove(listviewProducto.getItemAtPosition(position).toString());
+                    idProductoSeleccionado.remove(listviewProductos.getItemAtPosition(position).toString());
                     mAdapter.removeSelection(position);
                 }
                 mode.setTitle(mAdapter.getSelectionCount() + " Items seleccionados");
@@ -240,17 +276,15 @@ public class ProductoContent extends AppCompatActivity {
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
                 // CAB menu options
-                switch (item.getItemId()) {
-                    case R.id.delete:
-                        Toast.makeText(ProductoContent.this,
-                                mAdapter.getSelectionCount() + " Items eliminados",
-                                Toast.LENGTH_LONG).show();
-                        mAdapter.clearSelection();
-                        mode.finish();
-                        return true;
-                    default:
-                        return false;
+                if (item.getItemId() == R.id.delete) {
+                    Toast.makeText(ProductoContent.this,
+                            mAdapter.getSelectionCount() + " Items eliminados",
+                            Toast.LENGTH_LONG).show();
+                    mAdapter.clearSelection();
+                    mode.finish();
+                    return true;
                 }
+                return false;
             }
 
             @Override

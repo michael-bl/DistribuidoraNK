@@ -45,13 +45,13 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <ListView
-            android:id="@+id/lvProductos"
+            android:id="@+id/lvContentProductos"
             android:layout_width="match_parent"
             android:layout_height="350dp"
             android:layout_marginTop="10dp" />
 
         <Button
-            android:id="@+id/btnSiguienteContentProducto"
+            android:id="@+id/btnNextContentProducto"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="15dp"

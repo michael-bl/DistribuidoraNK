@@ -133,4 +133,16 @@ public class Cliente implements Serializable {
     public void setEstado(int estado) {
         this.estado = estado;
     }
+
+    public String getLocalidad() {
+        return localidad;
+    }
+
+    public void setLocalidad(String localidad) {
+        this.localidad = localidad;
+    }
+
+    @SerializedName("localidad")
+    @Expose
+    private String localidad;
 }

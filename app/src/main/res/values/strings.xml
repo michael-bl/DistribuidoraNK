@@ -32,6 +32,7 @@
     <string name="logo_distribuidorank">Logo</string>
     <string name="title_activity_principal">Distribuidora NK</string>
     <string name="title_activity_usuario">Usuario</string>
+    <string name="title_activity_buscar">Buscar</string>
     <string name="title_activity_cliente">Cliente</string>
     <string name="title_activity_proveedor">Proveedor</string>
     <string name="title_activity_producto">Producto</string>
@@ -46,6 +47,7 @@
     <string name="id">Código</string>
     <string name="fecha">Fecha</string>
     <string name="buscar">Buscar</string>
+    <string name="estado">Estado</string>
     <string name="procesar">Procesar</string>
     <string name="configdb">Config. Base Datos</string>
     <string name="masAcciones">Más acciones</string>
@@ -66,7 +68,6 @@
     <string name="precioVenta">Precio de venta</string>
     <string name="gananciaGeneral">Ganancia general</string>
     <!--Base de datos-->
-    <string name="crearBasedatos">Crear Base Datos</string>
     <string name="sincroLocal">Sincronizar a Local</string>
     <string name="sincroRemoto">Sincronizar a Remoto</string>
     <string name="eliminarBasedatos">Eliminar Base Datos</string>

@@ -30,20 +30,20 @@ public class MsgDialogDBLocal {
     private ConnectivityService conexionAinternet;
     private List<Cliente> listaClientes;
     private AlertDialog.Builder builder;
+    private ProgressDialog progressBar;
     private DrawerLayout drawerLayout;
     private LayoutInflater inflater;
     private Conexiones conexiones;
     private Gson objetoGson;
-    private View view;
     private Context context;
-    private ProgressDialog progressBar;
+    private View view;
+
+
 
     public MsgDialogDBLocal() {
     }
 
-    /**
-     * Recibe contexto para inflar layout y mostrar dialog
-     **/
+    /** Recibe contexto para inflar layout y mostrar dialog **/
     @SuppressLint("InflateParams")
     public MsgDialogDBLocal(Context contexto) {
         context = contexto;
@@ -53,25 +53,13 @@ public class MsgDialogDBLocal {
         builder = new AlertDialog.Builder(context);
     }
 
-    /**
-     * AlertDialog conexionAinternet opciones de a realizar sobre db local
-     **/
+    /** AlertDialog de opciones a realizar sobre db local **/
     public AlertDialog opcionesDBLocal() {
         File DB_FILE = new File("/data/data/com.example.distribuidorank/databases/pos.db");
         view = inflater.inflate(R.layout.dialog_basedatos, null);
-        final Button btnCreardb = view.findViewById(R.id.btnCrearBaseDatos);
         final Button btnSincroLocal = view.findViewById(R.id.btnSincronizarLocal);
         final Button btnSincroRemoto = view.findViewById(R.id.btnSincronizarRemoto);
-        final Button btnEliminardb = view.findViewById(R.id.btnEliminarBaseDatos);
-        btnCreardb.setOnClickListener(v -> {
-            if (!DB_FILE.exists()) {
-                conexiones = new Conexiones();
-                conexiones.crearDbLocal(context);
-                Toast.makeText(context, "Base de datos local creada correctamente!", Toast.LENGTH_LONG).show();
-            } else {
-                Toast.makeText(context, "La base de datos local, ya existe!!!", Toast.LENGTH_LONG).show();
-            }
-        });
+        final Button btnEliminarDB = view.findViewById(R.id.btnEliminarBaseDatos);
         // Ejecutar metodos que solicitan datos remotos e insertar almacenar de manera local
         btnSincroLocal.setOnClickListener(v -> {
             mostrarProgressBar();   // Barra de progreso
@@ -82,10 +70,9 @@ public class MsgDialogDBLocal {
             getProveedores();
             getCabecerasFacturas();
             getDetallesFacturas();
-
         });
         btnSincroRemoto.setOnClickListener(v -> { });
-        btnEliminardb.setOnClickListener(v -> { });
+        btnEliminarDB.setOnClickListener(v -> { });
 
         builder.setView(view).setTitle("Almacenamiento de datos").setPositiveButton("", (dialog, id) -> {
             ((ViewGroup) drawerLayout.getParent()).removeView(view);
@@ -93,7 +80,7 @@ public class MsgDialogDBLocal {
         return builder.create();
     }
 
-    /** Solicita los clientes al servidor remoto*/
+    /** Solicita los clientes al servidor remoto */
     public void getClientes(){
         // Verificamos que el dispositivo tenga coneccion a internet
         conexionAinternet = new ConnectivityService();
@@ -124,7 +111,7 @@ public class MsgDialogDBLocal {
         }
     }
 
-    /**Solicitamos los datos de unidades al servidor remoto */
+    /** Solicitamos los datos de unidades al servidor remoto */
     private void getUnidades() {
         // Verificamos que el dispositivo tenga coneccion a internet
         conexionAinternet = new ConnectivityService();
@@ -302,7 +289,7 @@ public class MsgDialogDBLocal {
         }
     }
 
-    /* Mostramos barra de progreso mientras se descargan y almacenan los datos en db local*/
+    /** Mostramos barra de progreso mientras se descargan y almacenan los datos en db local */
     public void mostrarProgressBar(){
         progressBar = new ProgressDialog(context);
         progressBar.setMessage("Sincronizando datos...");
@@ -310,14 +297,14 @@ public class MsgDialogDBLocal {
         progressBar.setIndeterminate(true);
         progressBar.setProgress(0);
         progressBar.show();
-        final int tiempoTotal = 270; // 4.5 segundos
+        final int tiempoTotal = 300; // 5 segundos
         final Thread thread = new Thread(){
             @Override
             public void run() {
                 int contador = 0;
                 while (contador<tiempoTotal){
                     try {
-                        sleep(270);
+                        sleep(300);
                         contador+=5;
                         progressBar.setProgress(contador);
                     } catch (InterruptedException interruptedException){

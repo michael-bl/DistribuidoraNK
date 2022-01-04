@@ -7,4 +7,9 @@
         android:orderInCategory="100"
         android:title="@string/action_settings"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/app_bar_switch"
+        android:title="Modo Local"
+        app:actionLayout="@layout/switch_item"
+        app:showAsAction="always" />
 </menu>

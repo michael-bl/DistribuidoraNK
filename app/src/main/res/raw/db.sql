@@ -114,3 +114,9 @@ CREATE TABLE IF NOT EXISTS "cabecera_factura" (
 
   	PRIMARY KEY("id")
   );
+
+  CREATE TABLE IF NOT EXISTS "modo" (
+  "id" INTEGER NOT NULL,
+  "mode" INTEGER NOT NULL,
+  PRIMARY KEY("id")
+  );

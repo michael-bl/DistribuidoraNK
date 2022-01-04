@@ -17,13 +17,17 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.distribuidorank.Database.Conexiones;
+import com.example.distribuidorank.Database.ExistDataBaseSqlite;
 import com.example.distribuidorank.R;
 import com.example.distribuidorank.controlador.ApiUtils;
 import com.example.distribuidorank.controlador.ConnectivityService;
 import com.example.distribuidorank.controlador.MsgDialogDBLocal;
 import com.example.distribuidorank.controlador.RecyclerViewAdapter;
+import com.example.distribuidorank.modelo.Cliente;
 import com.example.distribuidorank.modelo.Producto;
 import com.example.distribuidorank.modelo.Targeta;
+import com.example.distribuidorank.modelo.Usuario;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.JsonArray;
 
@@ -40,14 +44,19 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView.Adapter recyclerAdapter;
     private NavigationView navigationView;
     private List<Producto> listaProductos;
+    private ExistDataBaseSqlite existDb;
     private AlertDialog.Builder builder;
     private ArrayList<Targeta> cardList;
     private DrawerLayout drawerLayout;
     private RecyclerView recyclerView;
     private LayoutInflater inflater;
-    private View view;
-    private Bundle bundle;
+    private Conexiones conexiones;
     private Producto producto;
+    private Usuario usuario;
+    private Cliente cliente;
+    private Intent intent;
+    private Bundle bundle;
+    private View view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
         navigationView.setNavigationItemSelectedListener(this::onOptionsItemSelected);
 
         inflater = getLayoutInflater();
-        view = inflater.inflate(R.layout.dialog_opciones,null);
+        view = inflater.inflate(R.layout.dialog_opciones, null);
         builder = new AlertDialog.Builder(this);
 
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -66,8 +75,26 @@ public class MainActivity extends AppCompatActivity {
                 this, drawerLayout, null, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-        //Solicitud de productos remotos
-        getProductos();
+
+        getProductosLocalOremoto();
+    }
+
+    private void getProductosLocalOremoto(){
+        //Solicitar productos
+        conexiones = new Conexiones(this);
+        existDb = new ExistDataBaseSqlite();
+        if (existDb.existeDataBase())
+            getProductosLocal();
+        else getProductosRemoto();
+    }
+    private void getProductosLocal() {
+        try {
+            conexiones = new Conexiones(this);
+            ArrayList<Producto> arrayListProductos = new ArrayList<>(conexiones.getProductos());
+            crearTargetasProductos(arrayListProductos);
+        } catch (NullPointerException e) {
+            Toast.makeText(MainActivity.this, "Error, verifique por favor: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     @Override
@@ -83,31 +110,38 @@ public class MainActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up btnSiguienteContent, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-         if(id==R.id.nav_usuario){
-             Intent intent = new Intent(this.getApplicationContext(), UsuarioActivity.class);
-             startActivity(intent);
-        } if(id==R.id.nav_cliente){
+        if (id == R.id.nav_usuario) {
+            dialogOpciones("Usuarios").show();
+        }
+        if (id == R.id.nav_cliente) {
             dialogOpciones("Clientes").show();
-        }if(id==R.id.nav_producto){
+        }
+        if (id == R.id.nav_producto) {
             dialogOpciones("Productos").show();
-        }if(id==R.id.nav_proveedor){
+        }
+        if (id == R.id.nav_proveedor) {
             Intent intent = new Intent(this.getApplicationContext(), ProveedorActivity.class);
             startActivity(intent);
-        }if(id==R.id.nav_localizacion){
-            Intent intent = new Intent(this.getApplicationContext(),LocalidadActivity.class);
+        }
+        if (id == R.id.nav_localizacion) {
+            Intent intent = new Intent(this.getApplicationContext(), LocalidadActivity.class);
             startActivity(intent);
-        }if(id==R.id.nav_facturacion){
+        }
+        if (id == R.id.nav_facturacion) {
             dialogOpciones("Facturacion").show();
-        }if(id==R.id.nav_unidadmedida){
+        }
+        if (id == R.id.nav_unidadmedida) {
             Intent intent = new Intent(this.getApplicationContext(), UnidadActivity.class);
             startActivity(intent);
-        }if(id==R.id.nav_configdb){
+        }
+        if (id == R.id.nav_configdb) {
             //Dialog para crear db local, sincronizar hacia local o remoto
             MsgDialogDBLocal messageDialog = new MsgDialogDBLocal(this);
             messageDialog.opcionesDBLocal().show();
-        }else if (id == R.id.nav_send) {
+        } else if (id == R.id.nav_send) {
             return true;
-        } if(id==R.id.nav_share){
+        }
+        if (id == R.id.nav_share) {
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -118,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    /** Recibe lista de productos guardados en bd, luego crea las targetas para cada uno**/
+    /** Recibe lista de productos guardados en bd, luego crea las targetas para cada uno */
     private void crearTargetasProductos(List<Producto> listaProductos) {
         // Lista de cardviews dinámicas para mostrar productos
         cardList = new ArrayList<>();
@@ -126,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(MainActivity.this);
         recyclerView.setLayoutManager(mLayoutManager);
 
-        if (listaProductos==null){
+        if (listaProductos == null) {
             Targeta obj = new Targeta();
             obj.setImagen("Sin imagen");
             obj.setNombre("Sin productos");
@@ -150,8 +184,8 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(recyclerAdapter);
     }
 
-    /**Solicitamos los datos al servidor remoto */
-    private void getProductos() {
+    /** Solicitamos los datos al servidor remoto */
+    private void getProductosRemoto() {
         // Verificamos que el dispositivo tenga coneccion a internet
         ConnectivityService con = new ConnectivityService();
         if (con.stateConnection(this)) {
@@ -160,12 +194,12 @@ public class MainActivity extends AppCompatActivity {
                 public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
                     if (!response.isSuccessful()) {
                         // Mensaje de error
-                        Toast.makeText(MainActivity.this, response.message() +" al cargar datos!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, response.message() + " al cargar datos!", Toast.LENGTH_SHORT).show();
                     } else {
                         // Manejar datos obtenidos en la petición
                         listaProductos = new ArrayList<>();
                         JsonArray listaPro = response.body();
-                        for (int j = 0; j<listaPro.size();j++){
+                        for (int j = 0; j < listaPro.size(); j++) {
                             Producto p = new Producto();
                             p.setId(listaPro.get(j).getAsJsonObject().get("id").getAsInt());
                             p.setDescripcion(listaPro.get(j).getAsJsonObject().get("descripcion").toString());
@@ -178,6 +212,7 @@ public class MainActivity extends AppCompatActivity {
                         crearTargetasProductos(listaProductos);
                     }
                 }
+
                 @Override
                 public void onFailure(Call<JsonArray> call, Throwable t) {
                     Toast.makeText(MainActivity.this, "La peticion falló!" + t.toString(), Toast.LENGTH_SHORT).show();
@@ -188,31 +223,46 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /** AlertDialog con opciones a realizar sobre tipo de objeto seleccionado*/
+    /**
+     * AlertDialog con opciones a realizar sobre tipo de objeto seleccionado
+     */
     private AlertDialog dialogOpciones(String objeto) {
 
-        view = inflater.inflate(R.layout.dialog_opciones,null);
+        view = inflater.inflate(R.layout.dialog_opciones, null);
         final Button btnNuevo = view.findViewById(R.id.btnNuevo);
         final Button btnActualizar = view.findViewById(R.id.btnMasOpciones);
         btnNuevo.setOnClickListener(v -> {
-            Intent intent;
-            switch (objeto){
+            // Accion 0=nuevo
+            switch (objeto) {
+                case "Usuarios":
+                    intent = new Intent(MainActivity.this, UsuarioActivity.class);
+                    bundle = new Bundle();
+                    usuario = new Usuario();
+                    usuario.setAccion(0); // Cero para insertar nuevo usuario
+                    bundle.putSerializable("usuario", usuario);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    break;
                 case "Clientes":
-                intent = new Intent(MainActivity.this, ClienteActivity.class);
-                startActivity(intent);
-                break;
+                    intent = new Intent(MainActivity.this, ClienteActivity.class);
+                    bundle = new Bundle();
+                    cliente = new Cliente();
+                    cliente.setAccion(0);
+                    bundle.putSerializable("cliente", cliente);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    break;
                 case "Productos":
                     intent = new Intent(MainActivity.this, ProductoActivity.class);
                     bundle = new Bundle();
                     producto = new Producto();
                     producto.setAccion(0);
-                    producto.setEstado(1);
                     bundle.putSerializable("producto", producto);
                     intent.putExtras(bundle);
                     startActivity(intent);
-                break;
+                    break;
                 case "Facturacion":
-                    intent = new Intent(this.getApplicationContext(),FacturacionActivity.class);
+                    intent = new Intent(this.getApplicationContext(), FacturacionActivity.class);
                     bundle = new Bundle();
                     bundle.putSerializable("productos", (Serializable) listaProductos);
                     intent.putExtras(bundle);
@@ -222,8 +272,12 @@ public class MainActivity extends AppCompatActivity {
 
         });
         btnActualizar.setOnClickListener(v -> {
-            Intent intent;
-            switch (objeto){
+
+            switch (objeto) {
+                case "Usuarios":
+                    intent = new Intent(MainActivity.this, UsuarioContent.class);
+                    startActivity(intent);
+                    break;
                 case "Clientes":
                     intent = new Intent(MainActivity.this, ClienteContent.class);
                     startActivity(intent);
@@ -234,9 +288,10 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         });
-        
-        builder.setView(view).setTitle("Opciones de " + objeto).setPositiveButton("", (dialog, id) -> {((ViewGroup)drawerLayout.getParent()).removeView(view);
-        }).setNegativeButton("Cancelar", (dialog, which) -> ((ViewGroup)drawerLayout.getParent()).removeView(view));
+
+        builder.setView(view).setTitle("Opciones de " + objeto).setPositiveButton("", (dialog, id) -> {
+            ((ViewGroup) drawerLayout.getParent()).removeView(view);
+        }).setNegativeButton("Cancelar", (dialog, which) -> ((ViewGroup) drawerLayout.getParent()).removeView(view));
         return builder.create();
     }
 }
