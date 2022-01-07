@@ -32,8 +32,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class UsuarioActivity extends AppCompatActivity {
-    private TextInputEditText txtIdUsuario, txtNombre, txtPass,
-            txtTelefono, txtEmail, txtDireccion;
+    private TextInputEditText txtIdUsuario, txtNombre, txtPass, txtTelefono, txtEmail, txtDireccion;
     private String idUsuario, nombre, pass, telefono, email, direccion;
     private List<Localidad> listaLocalidades;
     private int accion, estado, idLocalidad;
@@ -159,8 +158,8 @@ public class UsuarioActivity extends AppCompatActivity {
         if (con.stateConnection(UsuarioActivity.this)) {
             // Verificamos que todos los datos del reporte esten ingresados
             if (crearUsuario()) {
-                Call<JsonObject> solicitudAccionProducto = ApiUtils.getApiServices().accionUsuario(idUsuario, idLocalidad, nombre, pass, telefono, email, direccion, accion, estado);
-                solicitudAccionProducto.enqueue(new Callback<JsonObject>() {
+                Call<JsonObject> solicitudAccionUsuario = ApiUtils.getApiServices().accionUsuario(idUsuario, idLocalidad, nombre, pass, telefono, email, direccion, accion, estado);
+                solicitudAccionUsuario.enqueue(new Callback<JsonObject>() {
                     @Override
                     public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
                         try {

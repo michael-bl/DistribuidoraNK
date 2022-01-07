@@ -24,9 +24,7 @@
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="5dp"
         android:layout_marginTop="58dp"
-        android:layout_marginRight="5dp"
         android:gravity="center_horizontal"
         android:orientation="vertical">
 
@@ -41,7 +39,7 @@
                 android:layout_marginTop="10dp"
                 android:gravity="center"
                 android:hint="@string/buscar"
-                android:inputType="textCapCharacters"  />
+                android:inputType="textCapCharacters" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <ListView

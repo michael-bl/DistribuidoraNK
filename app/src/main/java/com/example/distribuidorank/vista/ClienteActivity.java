@@ -1,5 +1,6 @@
 package com.example.distribuidorank.vista;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -33,11 +34,11 @@ public class ClienteActivity extends AppCompatActivity {
     private String idCliente, nombre, telefono, email, direccion;
     private List<Localidad> listaLocalidades;
     private int accion, estado, idLocalidad;
+    private ArrayList<Cliente> arrayCliente;
     private Spinner spLocalidad, spEstado;
     private Conexiones conexiones;
     private Cliente cliente;
     private Gson objetoGson;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,6 +77,9 @@ public class ClienteActivity extends AppCompatActivity {
         getLocalidadLocalOremoto();
     }
 
+    /**
+     * Inicializa los inputEditText de la interfaz cliente
+     */
     private void instanciaComponentes() {
         txtDireccion = findViewById(R.id.txtDireccionCliente);
         txtTelefono = findViewById(R.id.txtTelefonoCliente);
@@ -92,6 +96,12 @@ public class ClienteActivity extends AppCompatActivity {
             llenarSpinnerEstado(1);
             txtEmail.setText(cliente.getEmail());
             txtIdCliente.setText(cliente.getId());
+            txtIdCliente.setFocusable(false);
+            txtIdCliente.setEnabled(false);
+            txtIdCliente.setCursorVisible(false);
+            txtIdCliente.setKeyListener(null);
+            txtIdCliente.setBackgroundColor(Color.TRANSPARENT);
+
             txtNombre.setText(cliente.getNombre());
             txtTelefono.setText(cliente.getTelefono());
             txtDireccion.setText(cliente.getDireccion());
@@ -120,7 +130,7 @@ public class ClienteActivity extends AppCompatActivity {
     }
 
     /**
-     * Guardar el nuevo cliente
+     * Guardar el nuevo cliente en db remota
      */
     private void guardarClienteRemoto() {
         // Validamos que el dispositivo tenga coneccion a internet
@@ -166,7 +176,9 @@ public class ClienteActivity extends AppCompatActivity {
     private void guardarClienteLocal() {
         try {
             if (crearCliente()) {
+                int resultado = 0;
                 objetoGson = new Gson();
+                arrayCliente = new ArrayList<>();
                 conexiones = new Conexiones(this);
                 cliente.setEmail(email);
                 cliente.setId(idCliente);
@@ -175,10 +187,16 @@ public class ClienteActivity extends AppCompatActivity {
                 cliente.setTelefono(telefono);
                 cliente.setDireccion(direccion);
                 cliente.setFk_localidad(idLocalidad);
-                if (conexiones.accionesTablaCliente(accion, objetoGson.toJson(cliente)) == 0)
-                    Toast.makeText(ClienteActivity.this, "Error al guardar cliente!", Toast.LENGTH_LONG).show();
+                arrayCliente.add(cliente);
+                if (accion >= 1)
+                    resultado = conexiones.accionesTablaCliente(accion, objetoGson.toJson(cliente));
                 else
+                    resultado = conexiones.accionesTablaCliente(accion, objetoGson.toJson(arrayCliente));
+
+                if (resultado > 0)
                     Toast.makeText(ClienteActivity.this, "Cliente guardado correctamente!", Toast.LENGTH_LONG).show();
+                else
+                    Toast.makeText(ClienteActivity.this, "Error al guardar cliente!", Toast.LENGTH_LONG).show();
                 //finalizamos esta activity
                 finish();
             }

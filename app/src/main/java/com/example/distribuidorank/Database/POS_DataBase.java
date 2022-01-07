@@ -1156,7 +1156,8 @@ public class POS_DataBase extends DataBaseHelper {
                     proveedor.setNombre(cursor.getString(1));
                     proveedor.setTelefono(cursor.getString(2));
                     proveedor.setEmail(cursor.getString(3));
-                    proveedor.setUltima_actualizacion(this.simpleDateFormat.parse(cursor.getString(4)));
+                    proveedor.setEstado(cursor.getInt(4));
+                    proveedor.setUltima_actualizacion(this.simpleDateFormat.parse(cursor.getString(5)));
 
                     proveedores.add(proveedor);
 
@@ -1522,21 +1523,23 @@ public class POS_DataBase extends DataBaseHelper {
             ContentValues values = new ContentValues();
 
             values.put("id", producto.getId());
-            values.put("fk_familia", producto.getFk_unidad());
+            values.put("fk_unidad", producto.getFk_unidad());
             values.put("descripcion", producto.getDescripcion());
             values.put("utilidad", String.valueOf(producto.getUtilidad()));
             values.put("precio_compra", String.valueOf(producto.getPrecio_compra()));
             values.put("precio_venta", String.valueOf(producto.getPrecio_venta()));
+            values.put("estado", String.valueOf(producto.getEstado()));
 
             @SuppressLint("DefaultLocale") long trans_ID = db.update("producto", values, String.format("id = %d", producto.getId()), null);
 
             if (trans_ID > actualizado) {
-                @SuppressLint("DefaultLocale") String sql_Command = String.format("UPDATE producto SET fk_unidad = '%s', descripcion = '%s', utilidad = '%s', precio_compra = '%s', precio_venta = '%s' WHERE id = %d",
+                @SuppressLint("DefaultLocale") String sql_Command = String.format("UPDATE producto SET fk_unidad = '%d', descripcion = '%s', utilidad = '%s', precio_compra = '%s', precio_venta = '%s', estado = '%d' WHERE id = %d",
                         producto.getFk_unidad(),
                         producto.getDescripcion(),
                         producto.getUtilidad(),
                         producto.getPrecio_compra(),
                         producto.getPrecio_venta(),
+                        producto.getEstado(),
                         producto.getId());
 
                 ContentValues values2 = new ContentValues();

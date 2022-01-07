@@ -73,10 +73,10 @@ public class ProductoContent extends AppCompatActivity {
         bundle = new Bundle();
         producto = new Producto();
 
-        //Extrayendo el extra de tipo cadena
+        // Extrayendo el extra de tipo cadena
         producto = (Producto) bundle.getSerializable("producto");
 
-        //Evento boton siguiente, hacia ProductoActivity.class
+        // Evento boton siguiente, hacia ProductoActivity.class
         Button btnSiguiente = findViewById(R.id.btnNextContentProducto);
         btnSiguiente.setOnClickListener(v -> {
             if (producto.getAccion() == 0) {
@@ -90,7 +90,7 @@ public class ProductoContent extends AppCompatActivity {
             }
         });
 
-        //Solicitar productos
+        // Solicitar productos
         existDb = new ExistDataBaseSqlite();
         if (existDb.existeDataBase())
             getProductosLocal();
@@ -156,8 +156,8 @@ public class ProductoContent extends AppCompatActivity {
         // Verificamos que el dispositivo tenga coneccion a internet
         ConnectivityService con = new ConnectivityService();
         if (con.stateConnection(this)) {
-            Call<JsonArray> requestLastReports = ApiUtils.getApiServices().getProductos();
-            requestLastReports.enqueue(new Callback<JsonArray>() {
+            Call<JsonArray> requestProductos = ApiUtils.getApiServices().getProductos();
+            requestProductos.enqueue(new Callback<JsonArray>() {
                 @Override
                 public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
 
@@ -221,7 +221,7 @@ public class ProductoContent extends AppCompatActivity {
         listviewProductos = findViewById(R.id.lvContentProductos);
         listviewProductos.setAdapter(mAdapter);
         // Inicializamos textview de busqueda
-        tvBuscarProducto = findViewById(R.id.txtBuscarProducto);
+        tvBuscarProducto = findViewById(R.id.txtBuscarContentProducto);
         tvBuscarProducto.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

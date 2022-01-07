@@ -165,20 +165,20 @@ public class UsuarioContent extends AppCompatActivity {
                         Toast.makeText(UsuarioContent.this, response.message() + "Error al cargar datos!", Toast.LENGTH_SHORT).show();
                     } else {
                         // Manejar datos obtenidos en la petición
-                        JsonArray listaPro = response.body();
+                        JsonArray listaUsuario = response.body();
                         stringIdsListaUsuarios = new ArrayList<>();
                         listaUsuarios = new ArrayList<>();
-                        for (int j = 0; j < Objects.requireNonNull(listaPro).size(); j++) {
+                        for (int j = 0; j < Objects.requireNonNull(listaUsuario).size(); j++) {
                             Usuario usuario = new Usuario();
-                            stringIdsListaUsuarios.add(j, listaPro.get(j).getAsJsonObject().get("id").toString() + "-" + listaPro.get(j).getAsJsonObject().get("nombre").toString());
-                            usuario.setId(listaPro.get(j).getAsJsonObject().get("id").toString());
-                            usuario.setFk_localidad(listaPro.get(j).getAsJsonObject().get("fk_localidad").getAsInt());
-                            usuario.setNombre(listaPro.get(j).getAsJsonObject().get("nombre").toString());
-                            usuario.setPass(listaPro.get(j).getAsJsonObject().get("pass").toString());
-                            usuario.setTelefono(listaPro.get(j).getAsJsonObject().get("telefono").toString());
-                            usuario.setEmail(listaPro.get(j).getAsJsonObject().get("email").toString());
-                            usuario.setDireccion(listaPro.get(j).getAsJsonObject().get("direccion").toString());
-                            usuario.setEstado(listaPro.get(j).getAsJsonObject().get("estado").getAsInt());
+                            stringIdsListaUsuarios.add(j, listaUsuario.get(j).getAsJsonObject().get("id").toString() + "-" + listaUsuario.get(j).getAsJsonObject().get("nombre").toString());
+                            usuario.setId(listaUsuario.get(j).getAsJsonObject().get("id").toString());
+                            usuario.setFk_localidad(listaUsuario.get(j).getAsJsonObject().get("fk_localidad").getAsInt());
+                            usuario.setNombre(listaUsuario.get(j).getAsJsonObject().get("nombre").toString());
+                            usuario.setPass(listaUsuario.get(j).getAsJsonObject().get("pass").toString());
+                            usuario.setTelefono(listaUsuario.get(j).getAsJsonObject().get("telefono").toString());
+                            usuario.setEmail(listaUsuario.get(j).getAsJsonObject().get("email").toString());
+                            usuario.setDireccion(listaUsuario.get(j).getAsJsonObject().get("direccion").toString());
+                            usuario.setEstado(listaUsuario.get(j).getAsJsonObject().get("estado").getAsInt());
                             //usuario.setLocalidad(listaPro.get(j).getAsJsonObject().get("localidad").toString()); Esta variable no esta inlcuida dentro de la clase usuario
                             listaUsuarios.add(usuario);
                         }

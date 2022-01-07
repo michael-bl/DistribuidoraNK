@@ -36,10 +36,11 @@
     <string name="title_activity_cliente">Cliente</string>
     <string name="title_activity_proveedor">Proveedor</string>
     <string name="title_activity_producto">Producto</string>
-    <string name="title_activity_localizacion">Localización</string>
+    <string name="title_activity_localizacion">Localidad</string>
     <string name="title_activity_unidad">Unidad de Medida</string>
     <string name="title_activity_facturacion">Facturación</string>
     <!--Uso general-->
+    <string name="powered">Powered by - UpTechnologies</string>
     <string name="nuevo">Nuevo</string>
     <string name="actualizar">Actualizar</string>
     <string name="guardar">Guardar</string>

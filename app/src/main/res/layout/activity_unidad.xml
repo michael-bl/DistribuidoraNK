@@ -28,8 +28,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="5dp">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/txtCedulaCliente"
@@ -74,13 +74,29 @@
             android:maxLines="2" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="15dp"
+        android:background="@color/design_default_color_on_secondary" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/estado" />
+
     <Spinner
         android:id="@+id/spinnerUnidad"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
-        android:layout_marginTop="20dp"
         android:layout_marginRight="5dp" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@color/design_default_color_on_secondary" />
 
     <Button
         android:id="@+id/btnGuardarCliente"

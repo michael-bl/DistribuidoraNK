@@ -7,6 +7,7 @@ import android.widget.Toast;
 import com.example.distribuidorank.modelo.Cliente;
 import com.example.distribuidorank.modelo.Localidad;
 import com.example.distribuidorank.modelo.Producto;
+import com.example.distribuidorank.modelo.Proveedor;
 import com.example.distribuidorank.modelo.Unidad;
 import com.example.distribuidorank.modelo.Usuario;
 import com.google.gson.Gson;
@@ -247,6 +248,29 @@ public class Conexiones {
         return resultado;
     }
 
+    /**
+     * Recibe string con modo de almacenamiento y accion a realizar sobre el objeto, POS_Database
+     */
+    public int accionesTablaProveedor(int accion, String proveedor) {
+        posDataBase = new POS_DataBase(context);
+        int resultado = 0;
+        try {
+            switch (accion) {
+                case 0:
+                    return posDataBase.INSERT("Proveedor", proveedor, 0) ? 1 : 0;
+                case 1:
+                    return posDataBase.UPDATE("Proveedor", proveedor, 0) ? 1 : 0;
+                case 2:
+                    // Método para actualizar unicamente el campo estado, falta crearlo en POS_DataBase
+                    return posDataBase.UPDATE("Proveedor", proveedor, 0) ? 1 : 0;
+            }
+        } catch (NullPointerException nullPointerException) {
+            nullPointerException.printStackTrace();
+        } catch (SQLiteConstraintException e) {
+            e.printStackTrace();
+        }
+        return resultado;
+    }
     /* ****************************************************************************************************************************************** */
 
     /* ************************************************************ Métodos SELECT ************************************************************ */
@@ -330,6 +354,18 @@ public class Conexiones {
             gson = new Gson();
             posDataBase = new POS_DataBase(context);
             return gson.fromJson(posDataBase.SELECT("Unidad"), new TypeToken<ArrayList<Unidad>>() {
+            }.getType());
+        } catch (NullPointerException nullPointerException) {
+            nullPointerException.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<Proveedor> getProveedores() {
+        try {
+            gson = new Gson();
+            posDataBase = new POS_DataBase(context);
+            return gson.fromJson(posDataBase.SELECT("Proveedor"), new TypeToken<ArrayList<Proveedor>>() {
             }.getType());
         } catch (NullPointerException nullPointerException) {
             nullPointerException.printStackTrace();

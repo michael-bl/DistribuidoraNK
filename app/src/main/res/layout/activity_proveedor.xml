@@ -29,7 +29,7 @@
         android:layout_marginTop="20dp">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/txtCedulaCliente"
+            android:id="@+id/txtCedulaProveedor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -43,7 +43,7 @@
         android:layout_marginTop="20dp">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/txtNombreCliente"
+            android:id="@+id/txtNombreProveedor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -58,7 +58,7 @@
         android:layout_marginTop="20dp">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/txtTelefonoCliente"
+            android:id="@+id/txtTelefonoProveedor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -74,7 +74,7 @@
         android:layout_marginTop="20dp">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/txtEmailCliente"
+            android:id="@+id/txtEmailProveedor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
@@ -83,8 +83,30 @@
             android:maxLines="1" />
     </com.google.android.material.textfield.TextInputLayout>
 
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="15dp"
+        android:background="@color/design_default_color_on_secondary" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/estado" />
+
+    <Spinner
+        android:id="@+id/spEstadoProveedor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="@color/design_default_color_on_secondary" />
+
     <Button
-        android:id="@+id/btnGuardarCliente"
+        android:id="@+id/btnGuardarProveedor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"

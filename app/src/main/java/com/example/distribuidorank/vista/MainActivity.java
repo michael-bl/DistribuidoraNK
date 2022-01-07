@@ -25,7 +25,9 @@ import com.example.distribuidorank.controlador.ConnectivityService;
 import com.example.distribuidorank.controlador.MsgDialogDBLocal;
 import com.example.distribuidorank.controlador.RecyclerViewAdapter;
 import com.example.distribuidorank.modelo.Cliente;
+import com.example.distribuidorank.modelo.Localidad;
 import com.example.distribuidorank.modelo.Producto;
+import com.example.distribuidorank.modelo.Proveedor;
 import com.example.distribuidorank.modelo.Targeta;
 import com.example.distribuidorank.modelo.Usuario;
 import com.google.android.material.navigation.NavigationView;
@@ -51,6 +53,8 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private LayoutInflater inflater;
     private Conexiones conexiones;
+    private Localidad localidad;
+    private Proveedor proveedor;
     private Producto producto;
     private Usuario usuario;
     private Cliente cliente;
@@ -79,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
         getProductosLocalOremoto();
     }
 
-    private void getProductosLocalOremoto(){
+    private void getProductosLocalOremoto() {
         //Solicitar productos
         conexiones = new Conexiones(this);
         existDb = new ExistDataBaseSqlite();
@@ -87,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
             getProductosLocal();
         else getProductosRemoto();
     }
+
     private void getProductosLocal() {
         try {
             conexiones = new Conexiones(this);
@@ -120,8 +125,7 @@ public class MainActivity extends AppCompatActivity {
             dialogOpciones("Productos").show();
         }
         if (id == R.id.nav_proveedor) {
-            Intent intent = new Intent(this.getApplicationContext(), ProveedorActivity.class);
-            startActivity(intent);
+            dialogOpciones("Proveedor").show();
         }
         if (id == R.id.nav_localizacion) {
             Intent intent = new Intent(this.getApplicationContext(), LocalidadActivity.class);
@@ -152,7 +156,9 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
     }
 
-    /** Recibe lista de productos guardados en bd, luego crea las targetas para cada uno */
+    /**
+     * Recibe lista de productos guardados en bd, luego crea las targetas para cada uno
+     */
     private void crearTargetasProductos(List<Producto> listaProductos) {
         // Lista de cardviews dinámicas para mostrar productos
         cardList = new ArrayList<>();
@@ -184,7 +190,9 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(recyclerAdapter);
     }
 
-    /** Solicitamos los datos al servidor remoto */
+    /**
+     * Solicitamos los datos al servidor remoto
+     */
     private void getProductosRemoto() {
         // Verificamos que el dispositivo tenga coneccion a internet
         ConnectivityService con = new ConnectivityService();
@@ -261,10 +269,28 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtras(bundle);
                     startActivity(intent);
                     break;
+                case "Proveedor":
+                    intent = new Intent(MainActivity.this, ProveedorActivity.class);
+                    bundle = new Bundle();
+                    proveedor = new Proveedor();
+                    proveedor.setAccion(0);
+                    bundle.putSerializable("proveedor", proveedor);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    break;
                 case "Facturacion":
                     intent = new Intent(this.getApplicationContext(), FacturacionActivity.class);
                     bundle = new Bundle();
-                    bundle.putSerializable("productos", (Serializable) listaProductos);
+                    bundle.putSerializable("productos", (Serializable) listaProductos); //OJO CON ESTE DATO ENVIADO
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    break;
+                case "Localidad":
+                    intent = new Intent(this.getApplicationContext(), LocalidadActivity.class);
+                    bundle = new Bundle();
+                    localidad = new Localidad();
+                    localidad.setAccion(0);
+                    bundle.putSerializable("localidades", (Serializable) localidad);
                     intent.putExtras(bundle);
                     startActivity(intent);
                     break;
@@ -286,12 +312,16 @@ public class MainActivity extends AppCompatActivity {
                     intent = new Intent(MainActivity.this, ProductoContent.class);
                     startActivity(intent);
                     break;
+                case "Proveedor":
+                    intent = new Intent(MainActivity.this, ProveedorContent.class);
+                    startActivity(intent);
+                    break;
             }
         });
 
         builder.setView(view).setTitle("Opciones de " + objeto).setPositiveButton("", (dialog, id) -> {
             ((ViewGroup) drawerLayout.getParent()).removeView(view);
-        }).setNegativeButton("Cancelar", (dialog, which) -> ((ViewGroup) drawerLayout.getParent()).removeView(view));
+        });
         return builder.create();
     }
 }

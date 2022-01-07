@@ -38,8 +38,8 @@ public interface ApiRoutes {
     Call<List<Cliente>> getClientes();
 
     // Agrega nuevo, actualiza o desactiva cliente
-      @GET("accioncliente/{id}/{fk_localidad}/{nombre}/{telefono}/{email}/{direccion}/{accion}/{estado}")
-      Call<JsonObject> accionCliente(@Path("id") String a,
+    @GET("accioncliente/{id}/{fk_localidad}/{nombre}/{telefono}/{email}/{direccion}/{accion}/{estado}")
+    Call<JsonObject> accionCliente(@Path("id") String a,
                                    @Path("fk_localidad") int b,
                                    @Path("nombre") String c,
                                    @Path("telefono") String d,
@@ -55,13 +55,13 @@ public interface ApiRoutes {
     // Agrega nuevo, actualiza o desactiva producto
     @GET("accionproducto/{id}/{fk_unidad}/{descripcion}/{utilidad}/{precio_compra}/{precio_venta}/{accion}/{estado}")
     Call<JsonObject> accionProducto(@Path("id") int a,
-                                   @Path("fk_unidad") int b,
-                                   @Path("descripcion") String c,
-                                   @Path("utilidad") String d,
-                                   @Path("precio_compra") String e,
-                                   @Path("precio_venta") String f,
-                                   @Path("accion") int g,
-                                   @Path("estado") int h);
+                                    @Path("fk_unidad") int b,
+                                    @Path("descripcion") String c,
+                                    @Path("utilidad") String d,
+                                    @Path("precio_compra") String e,
+                                    @Path("precio_venta") String f,
+                                    @Path("accion") int g,
+                                    @Path("estado") int h);
 
     // Retorna lista de unidades
     @GET("unidades")
@@ -74,6 +74,15 @@ public interface ApiRoutes {
     // Retorna lista de proveedores
     @GET("proveedores")
     Call<JsonArray> getProveedores();
+
+    // Agrega nuevo, actualiza o desactiva proveedor
+    @GET("accionproveedor/{id}/{nombre}/{telefono}/{email}/{accion}/{estado}")
+    Call<JsonObject> accionProveedor(@Path("id") String a,
+                                     @Path("nombre") String b,
+                                     @Path("telefono") String c,
+                                     @Path("email") String d,
+                                     @Path("accion") int e,
+                                     @Path("estado") int f);
 
     // Retorna lista de cabeceras de factura
     @GET("cabecerasfacturas")

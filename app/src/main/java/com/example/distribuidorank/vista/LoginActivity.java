@@ -38,8 +38,6 @@ public class LoginActivity extends AppCompatActivity {
     private Intent intent;
     private String user;
     private String pass;
-    private Gson gson;
-    private Modo modo;
 
 
     @Override
@@ -49,18 +47,23 @@ public class LoginActivity extends AppCompatActivity {
 
         // Evento boton login
         Button button = findViewById(R.id.btnLogin);
-        button.setOnClickListener(v-> loginLocalOremoto());
+        button.setOnClickListener(v -> loginLocalOremoto());
     }
 
-    /** Escoge de donde obtener los datos para el inicio de sesion*/
-    private void loginLocalOremoto(){
+    /**
+     * Escoge de donde obtener los datos para el inicio de sesion
+     */
+    private void loginLocalOremoto() {
         conexiones = new Conexiones(this);
         existDb = new ExistDataBaseSqlite();
         if (!existDb.existeDataBase()) loginRemoto();
         else loginLocal();
     }
 
-    private void loginLocal(){
+    /**
+     * Realiza inicio de sesion en db local
+     */
+    private void loginLocal() {
         conexiones = new Conexiones(this);
         hashPass = new HashPass();
         getUsuarioYpass();
@@ -74,14 +77,21 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    private void getUsuarioYpass(){
+    /**
+     * Obtiene y valida el llenado de los datos ingresados en los inputs del formulario
+     */
+    private void getUsuarioYpass() {
         txtUser = findViewById(R.id.edittext_usuario);
         txtPass = findViewById(R.id.edittext_contrasena);
         user = txtUser.getText().toString().trim();
         pass = txtPass.getText().toString().trim();
-        if (user.equals("") & pass.equals("")) Toast.makeText(this, "Debe rellenar todos los campos!", Toast.LENGTH_LONG).show();
+        if (user.equals("") & pass.equals(""))
+            Toast.makeText(this, "Debe rellenar todos los campos!", Toast.LENGTH_LONG).show();
     }
 
+    /**
+     * Realiza inicio de sesion en db remota
+     */
     private void loginRemoto() {
         hashPass = new HashPass();
         getUsuarioYpass();
@@ -103,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
                                 for (int i = 0; i < respuesta.size(); i++) {
                                     if (user.equals(respuesta.get(i).getId()) && pass.equals(respuesta.get(i).getPass())) {
                                         existDb = new ExistDataBaseSqlite();
-                                        if (!existDb.existeDataBase()){
+                                        if (!existDb.existeDataBase()) {
                                             // Enviamos el usuario al metodo crearDblocal para almacenarlo
                                             usuario = new Usuario();
                                             usuario.setId(respuesta.get(i).getId());
@@ -128,6 +138,7 @@ public class LoginActivity extends AppCompatActivity {
                             }
                         }
                     }
+
                     @Override
                     public void onFailure(Call<List<Usuario>> call, Throwable t) {
                         Toast.makeText(LoginActivity.this, "La petición falló!", Toast.LENGTH_SHORT).show();
@@ -141,16 +152,18 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    /** Crear BD local e insertar usuario logeado*/
-    private void crearDBlocal(Usuario usuario){
+    /**
+     * Crear BD local e insertar usuario logeado
+     */
+    private void crearDBlocal(Usuario usuario) {
         // Guardamos por defecto, almacenamiento y lectura en modo local
-        gson = new Gson();
-        modo = new Modo();
+        Gson gson = new Gson();
+        Modo modo = new Modo();
         modo.setId(1);
         modo.setMode(0);
         conexiones = new Conexiones(LoginActivity.this);
         conexiones.crearDbLocal(LoginActivity.this);
-        conexiones.accionesTablaModo(gson.toJson(modo),"Insert");
+        conexiones.accionesTablaModo(gson.toJson(modo), "Insert");
         conexiones.accionesTablaUsuario(0, gson.toJson(usuario));
     }
 }

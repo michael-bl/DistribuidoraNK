@@ -37,6 +37,7 @@ public class ProductoActivity extends AppCompatActivity {
     private float precioCompra, precioVenta, nuevaUtilidad, resta;
     private int accion, estado, idUnidad, idProducto;
     private Button btnGuardar, btncalcularUtilidad;
+    private ArrayList<Producto> arrayProducto;
     private Spinner spUnidades, spEstado;
     private DecimalFormat decimalFormat;
     private List<Unidad> listaUnidades;
@@ -207,7 +208,9 @@ public class ProductoActivity extends AppCompatActivity {
     private void guardarProductoLocal() {
         try {
             if (crearProducto()) {
+                int resultado = 0;
                 objetoGson = new Gson();
+                arrayProducto = new ArrayList<>();
                 conexiones = new Conexiones(this);
                 producto.setId(idProducto);
                 producto.setEstado(estado);
@@ -217,10 +220,16 @@ public class ProductoActivity extends AppCompatActivity {
                 producto.setPrecio_venta(precioVenta);
                 producto.setPrecio_compra(precioCompra);
                 producto.setEstado(Integer.parseInt(spEstado.getItemAtPosition(spEstado.getSelectedItemPosition()).toString().trim().substring(0, 1)));
-                if (conexiones.accionesTablaProducto(accion, objetoGson.toJson(producto)) == 0)
-                    Toast.makeText(ProductoActivity.this, "Error al guardar producto!", Toast.LENGTH_LONG).show();
+                arrayProducto.add(producto);
+                if (accion >= 1)
+                    resultado = conexiones.accionesTablaCliente(accion, objetoGson.toJson(producto));
                 else
+                    resultado = conexiones.accionesTablaCliente(accion, objetoGson.toJson(arrayProducto));
+
+                if (resultado > 0)
                     Toast.makeText(ProductoActivity.this, "Producto guardado correctamente!", Toast.LENGTH_LONG).show();
+                else
+                    Toast.makeText(ProductoActivity.this, "Error al guardar producto!", Toast.LENGTH_LONG).show();
                 //finalizamos esta activity
                 finish();
             }
