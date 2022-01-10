@@ -83,25 +83,6 @@ public class MainActivity extends AppCompatActivity {
         getProductosLocalOremoto();
     }
 
-    private void getProductosLocalOremoto() {
-        //Solicitar productos
-        conexiones = new Conexiones(this);
-        existDb = new ExistDataBaseSqlite();
-        if (existDb.existeDataBase())
-            getProductosLocal();
-        else getProductosRemoto();
-    }
-
-    private void getProductosLocal() {
-        try {
-            conexiones = new Conexiones(this);
-            ArrayList<Producto> arrayListProductos = new ArrayList<>(conexiones.getProductos());
-            crearTargetasProductos(arrayListProductos);
-        } catch (NullPointerException e) {
-            Toast.makeText(MainActivity.this, "Error, verifique por favor: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -128,8 +109,7 @@ public class MainActivity extends AppCompatActivity {
             dialogOpciones("Proveedor").show();
         }
         if (id == R.id.nav_localizacion) {
-            Intent intent = new Intent(this.getApplicationContext(), LocalidadActivity.class);
-            startActivity(intent);
+            dialogOpciones("Localidad").show();
         }
         if (id == R.id.nav_facturacion) {
             dialogOpciones("Facturacion").show();
@@ -154,6 +134,26 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+    }
+
+
+    private void getProductosLocalOremoto() {
+        //Solicitar productos
+        conexiones = new Conexiones(this);
+        existDb = new ExistDataBaseSqlite();
+        if (existDb.existeDataBase())
+            getProductosLocal();
+        else getProductosRemoto();
+    }
+
+    private void getProductosLocal() {
+        try {
+            conexiones = new Conexiones(this);
+            ArrayList<Producto> arrayListProductos = new ArrayList<>(conexiones.getProductos());
+            crearTargetasProductos(arrayListProductos);
+        } catch (NullPointerException e) {
+            Toast.makeText(MainActivity.this, "Error, verifique por favor: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     /**
@@ -290,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
                     bundle = new Bundle();
                     localidad = new Localidad();
                     localidad.setAccion(0);
-                    bundle.putSerializable("localidades", (Serializable) localidad);
+                    bundle.putSerializable("localidad", localidad);
                     intent.putExtras(bundle);
                     startActivity(intent);
                     break;
@@ -314,6 +314,10 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "Proveedor":
                     intent = new Intent(MainActivity.this, ProveedorContent.class);
+                    startActivity(intent);
+                    break;
+                case "Localidad":
+                    intent = new Intent(MainActivity.this, LocalidadContent.class);
                     startActivity(intent);
                     break;
             }

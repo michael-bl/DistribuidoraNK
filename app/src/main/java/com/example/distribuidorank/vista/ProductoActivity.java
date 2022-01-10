@@ -222,9 +222,9 @@ public class ProductoActivity extends AppCompatActivity {
                 producto.setEstado(Integer.parseInt(spEstado.getItemAtPosition(spEstado.getSelectedItemPosition()).toString().trim().substring(0, 1)));
                 arrayProducto.add(producto);
                 if (accion >= 1)
-                    resultado = conexiones.accionesTablaCliente(accion, objetoGson.toJson(producto));
+                    resultado = conexiones.crudProducto(accion, objetoGson.toJson(producto));
                 else
-                    resultado = conexiones.accionesTablaCliente(accion, objetoGson.toJson(arrayProducto));
+                    resultado = conexiones.crudProducto(accion, objetoGson.toJson(arrayProducto));
 
                 if (resultado > 0)
                     Toast.makeText(ProductoActivity.this, "Producto guardado correctamente!", Toast.LENGTH_LONG).show();

@@ -189,9 +189,9 @@ public class ClienteActivity extends AppCompatActivity {
                 cliente.setFk_localidad(idLocalidad);
                 arrayCliente.add(cliente);
                 if (accion >= 1)
-                    resultado = conexiones.accionesTablaCliente(accion, objetoGson.toJson(cliente));
+                    resultado = conexiones.crudCliente(accion, objetoGson.toJson(cliente));
                 else
-                    resultado = conexiones.accionesTablaCliente(accion, objetoGson.toJson(arrayCliente));
+                    resultado = conexiones.crudCliente(accion, objetoGson.toJson(arrayCliente));
 
                 if (resultado > 0)
                     Toast.makeText(ClienteActivity.this, "Cliente guardado correctamente!", Toast.LENGTH_LONG).show();

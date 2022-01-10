@@ -206,7 +206,7 @@ public class UsuarioActivity extends AppCompatActivity {
                 usuario.setTelefono(telefono);
                 usuario.setDireccion(direccion);
                 usuario.setEstado(estado);
-                if (conexiones.accionesTablaUsuario(accion, objetoGson.toJson(usuario)) == 0)
+                if (conexiones.crudUsuario(accion, objetoGson.toJson(usuario)) == 0)
                     Toast.makeText(UsuarioActivity.this, "Error al guardar usuario!", Toast.LENGTH_LONG).show();
                 else
                     Toast.makeText(UsuarioActivity.this, "Usuario guardado correctamente!", Toast.LENGTH_LONG).show();

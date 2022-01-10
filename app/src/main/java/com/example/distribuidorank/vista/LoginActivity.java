@@ -163,7 +163,7 @@ public class LoginActivity extends AppCompatActivity {
         modo.setMode(0);
         conexiones = new Conexiones(LoginActivity.this);
         conexiones.crearDbLocal(LoginActivity.this);
-        conexiones.accionesTablaModo(gson.toJson(modo), "Insert");
-        conexiones.accionesTablaUsuario(0, gson.toJson(usuario));
+        conexiones.crudModo(gson.toJson(modo), "Insert");
+        conexiones.crudUsuario(0, gson.toJson(usuario));
     }
 }

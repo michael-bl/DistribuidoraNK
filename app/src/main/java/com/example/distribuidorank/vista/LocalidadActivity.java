@@ -1,5 +1,6 @@
 package com.example.distribuidorank.vista;
 
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
@@ -73,7 +74,7 @@ public class LocalidadActivity extends AppCompatActivity {
      * Inicializa los inputEditText de la interfaz localidad
      */
     private void instanciaComponentes() {
-        txtIdLocalidad = findViewById(R.id.txtIdLocalidad);
+        txtIdLocalidad = findViewById(R.id.txtIdLocalidade);
         txtLocalidad = findViewById(R.id.txtLocalidad);
     }
 
@@ -83,7 +84,8 @@ public class LocalidadActivity extends AppCompatActivity {
     private void mostrarDatosdeLocalidad(Localidad localidad) {
         try {
             llenarSpinnerEstado(1);
-            txtIdLocalidad.setText(localidad.getId());
+
+            txtIdLocalidad.setText(String.valueOf(localidad.getId()));
             txtIdLocalidad.setFocusable(false);
             txtIdLocalidad.setEnabled(false);
             txtIdLocalidad.setCursorVisible(false);
@@ -93,6 +95,8 @@ public class LocalidadActivity extends AppCompatActivity {
             txtLocalidad.setText(localidad.getLocalidad());
         } catch (Error npe) {
             Toast.makeText(LocalidadActivity.this, "Error, favor verificar: " + npe.getMessage(), Toast.LENGTH_LONG).show();
+        } catch (Resources.NotFoundException nfe){
+            Toast.makeText(LocalidadActivity.this, "Error, favor verificar: " + nfe.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
@@ -102,7 +106,7 @@ public class LocalidadActivity extends AppCompatActivity {
     private boolean crearLocalidad() {
         try {
             accion = localidad.getAccion();
-            idLocalidad = Integer.parseInt(txtIdLocalidad.toString());
+            idLocalidad = Integer.parseInt(txtIdLocalidad.getText().toString().trim());
             stringLocalidad = txtLocalidad.getText().toString().trim();
             estado = Integer.parseInt(spEstado.getItemAtPosition(spEstado.getSelectedItemPosition()).toString().trim().substring(0, 1));
         } catch (Error e) {
@@ -120,7 +124,8 @@ public class LocalidadActivity extends AppCompatActivity {
         if (con.stateConnection(LocalidadActivity.this)) {
             // Verificamos que todos los datos del reporte esten ingresados
             if (crearLocalidad()) {
-                Call<JsonObject> solicitudAccionLocalidad = ApiUtils.getApiServices().accionLocalidad(stringLocalidad, idLocalidad, accion, estado);
+                // el id de la localidad puede ir null, para que mysql haga la magia y asigne el consecutivo
+                Call<JsonObject> solicitudAccionLocalidad = ApiUtils.getApiServices().accionLocalidad(idLocalidad, stringLocalidad, accion, estado);
                 solicitudAccionLocalidad.enqueue(new Callback<JsonObject>() {
                     @Override
                     public void onResponse(Call<JsonObject> call, Response<JsonObject> response) {
@@ -158,7 +163,7 @@ public class LocalidadActivity extends AppCompatActivity {
     private void guardarLocalidadLocal() {
         try {
             if (crearLocalidad()) {
-                int resultado = 0;
+                int resultado;
                 objetoGson = new Gson();
                 arrayLocalidad = new ArrayList<>();
                 conexiones = new Conexiones(this);
@@ -167,9 +172,9 @@ public class LocalidadActivity extends AppCompatActivity {
                 localidad.setLocalidad(stringLocalidad);
                 arrayLocalidad.add(localidad);
                 if (accion >= 1)
-                    resultado = conexiones.accionesTablaLocalidad(accion, objetoGson.toJson(localidad));
+                    resultado = conexiones.crudLocalidad(accion, objetoGson.toJson(localidad));
                 else
-                    resultado = conexiones.accionesTablaLocalidad(accion, objetoGson.toJson(arrayLocalidad));
+                    resultado = conexiones.crudLocalidad(accion, objetoGson.toJson(arrayLocalidad));
 
                 if (resultado > 0)
                     Toast.makeText(LocalidadActivity.this, "Localidad guardado correctamente!", Toast.LENGTH_LONG).show();
@@ -187,16 +192,16 @@ public class LocalidadActivity extends AppCompatActivity {
      * Seteamos los estados al spinner, preleccionando el que posee el localidad
      */
     private void llenarSpinnerEstado(int accion) {
-        ArrayList<String> localidadList = new ArrayList<>();
+        ArrayList<String> listEstado = new ArrayList<>();
         try {
             int posicion = 0;
-            localidadList.add("0-Inactivo");
-            localidadList.add("1-Activo");
-            ArrayAdapter adapter = new ArrayAdapter(LocalidadActivity.this, android.R.layout.simple_list_item_1, localidadList);
+            listEstado.add("0-Inactivo");
+            listEstado.add("1-Activo");
+            ArrayAdapter adapter = new ArrayAdapter(LocalidadActivity.this, android.R.layout.simple_list_item_1, listEstado);
 
             if (accion > 0) {
-                for (int i = 0; i < localidadList.size(); i++) {
-                    if (localidadList.get(i).substring(0, 1).equals(String.valueOf(localidad.getEstado()))) {
+                for (int i = 0; i < listEstado.size(); i++) {
+                    if (listEstado.get(i).substring(0, 1).equals(String.valueOf(localidad.getEstado()))) {
                         posicion = i;
                     }
                 }

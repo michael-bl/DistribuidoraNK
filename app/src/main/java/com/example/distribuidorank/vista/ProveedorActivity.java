@@ -176,9 +176,9 @@ public class ProveedorActivity extends AppCompatActivity {
                 proveedor.setTelefono(telefono);
                 arrayProveedor.add(proveedor);
                 if (accion >= 1)
-                    resultado = conexiones.accionesTablaCliente(accion, objetoGson.toJson(proveedor));
+                    resultado = conexiones.crudProveedor(accion, objetoGson.toJson(proveedor));
                 else
-                    resultado = conexiones.accionesTablaCliente(accion, objetoGson.toJson(arrayProveedor));
+                    resultado = conexiones.crudProveedor(accion, objetoGson.toJson(arrayProveedor));
 
                 if (resultado > 0)
                     Toast.makeText(ProveedorActivity.this, "Proveedor guardado correctamente!", Toast.LENGTH_LONG).show();

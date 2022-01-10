@@ -71,6 +71,13 @@ public interface ApiRoutes {
     @GET("localidades")
     Call<JsonArray> getLocalidades();
 
+    // Agrega nuevo, actualiza o desactiva localidad
+    @GET("accionlocalidad/{id}/{localidad}/{accion}/{estado}")
+    Call<JsonObject> accionLocalidad(@Path("id") int a,
+                                   @Path("localidad") String b,
+                                   @Path("accion") int c,
+                                   @Path("estado") int d);
+
     // Retorna lista de proveedores
     @GET("proveedores")
     Call<JsonArray> getProveedores();

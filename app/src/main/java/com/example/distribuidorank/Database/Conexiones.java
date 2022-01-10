@@ -155,7 +155,7 @@ public class Conexiones {
     /**
      * Recibe string con modo de almacenamiento y accion a realizar sobre el objeto, POS_Database
      */
-    public void accionesTablaModo(String modo, String accion) {
+    public void crudModo(String modo, String accion) {
         posDataBase = new POS_DataBase(context);
         String resultado;
         try {
@@ -177,9 +177,9 @@ public class Conexiones {
     }
 
     /**
-     * Recibe string con modo de almacenamiento y accion a realizar sobre el objeto, POS_Database
+     * Recibe string con usuario y accion a realizar sobre el objeto, POS_Database
      */
-    public int accionesTablaUsuario(int accion, String usuario) {
+    public int crudUsuario(int accion, String usuario) {
         posDataBase = new POS_DataBase(context);
         int resultado = 0;
         try {
@@ -201,9 +201,9 @@ public class Conexiones {
     }
 
     /**
-     * Recibe string con modo de almacenamiento y accion a realizar sobre el objeto, POS_Database
+     * Recibe string con cliente y accion a realizar sobre el objeto, POS_Database
      */
-    public int accionesTablaCliente(int accion, String cliente) {
+    public int crudCliente(int accion, String cliente) {
         posDataBase = new POS_DataBase(context);
         int resultado = 0;
         try {
@@ -225,9 +225,9 @@ public class Conexiones {
     }
 
     /**
-     * Recibe string con modo de almacenamiento y accion a realizar sobre el objeto, POS_Database
+     * Recibe string con producto y accion a realizar sobre el objeto, POS_Database
      */
-    public int accionesTablaProducto(int accion, String producto) {
+    public int crudProducto(int accion, String producto) {
         posDataBase = new POS_DataBase(context);
         int resultado = 0;
         try {
@@ -249,9 +249,9 @@ public class Conexiones {
     }
 
     /**
-     * Recibe string con modo de almacenamiento y accion a realizar sobre el objeto, POS_Database
+     * Recibe string con proveedor y accion a realizar sobre el objeto, POS_Database
      */
-    public int accionesTablaProveedor(int accion, String proveedor) {
+    public int crudProveedor(int accion, String proveedor) {
         posDataBase = new POS_DataBase(context);
         int resultado = 0;
         try {
@@ -271,6 +271,31 @@ public class Conexiones {
         }
         return resultado;
     }
+
+    /**
+     * Recibe string con localidad y accion a realizar sobre el objeto, POS_Database
+     */
+    public int crudLocalidad(int accion, String proveedor) {
+        posDataBase = new POS_DataBase(context);
+        int resultado = 0;
+        try {
+            switch (accion) {
+                case 0:
+                    return posDataBase.INSERT("Localidad", proveedor, 0) ? 1 : 0;
+                case 1:
+                    return posDataBase.UPDATE("Localidad", proveedor, 0) ? 1 : 0;
+                case 2:
+                    // Método para actualizar unicamente el campo estado, falta crearlo en POS_DataBase
+                    return posDataBase.UPDATE("Localidad", proveedor, 0) ? 1 : 0;
+            }
+        } catch (NullPointerException nullPointerException) {
+            nullPointerException.printStackTrace();
+        } catch (SQLiteConstraintException e) {
+            e.printStackTrace();
+        }
+        return resultado;
+    }
+
     /* ****************************************************************************************************************************************** */
 
     /* ************************************************************ Métodos SELECT ************************************************************ */
