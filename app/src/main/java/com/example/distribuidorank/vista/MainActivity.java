@@ -29,6 +29,7 @@ import com.example.distribuidorank.modelo.Localidad;
 import com.example.distribuidorank.modelo.Producto;
 import com.example.distribuidorank.modelo.Proveedor;
 import com.example.distribuidorank.modelo.Targeta;
+import com.example.distribuidorank.modelo.Unidad;
 import com.example.distribuidorank.modelo.Usuario;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.JsonArray;
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private Cliente cliente;
     private Intent intent;
     private Bundle bundle;
+    private Unidad unidad;
     private View view;
 
     @Override
@@ -80,7 +82,7 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        getProductosLocalOremoto();
+        getProductosDeLocalOremoto();
     }
 
     @Override
@@ -115,8 +117,7 @@ public class MainActivity extends AppCompatActivity {
             dialogOpciones("Facturacion").show();
         }
         if (id == R.id.nav_unidadmedida) {
-            Intent intent = new Intent(this.getApplicationContext(), UnidadActivity.class);
-            startActivity(intent);
+            dialogOpciones("Unidad").show();
         }
         if (id == R.id.nav_configdb) {
             //Dialog para crear db local, sincronizar hacia local o remoto
@@ -137,29 +138,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
-    private void getProductosLocalOremoto() {
-        //Solicitar productos
+    private void getProductosDeLocalOremoto() {
         conexiones = new Conexiones(this);
         existDb = new ExistDataBaseSqlite();
-        if (existDb.existeDataBase())
-            getProductosLocal();
-        else getProductosRemoto();
+        if (existDb.existeDataBaseLocal())
+            getProductosDeDbLocal();
+        else getProductosDeDbRemoto();
     }
 
-    private void getProductosLocal() {
+    private void getProductosDeDbLocal() {
         try {
             conexiones = new Conexiones(this);
             ArrayList<Producto> arrayListProductos = new ArrayList<>(conexiones.getProductos());
-            crearTargetasProductos(arrayListProductos);
+            crearTargetasDeProductos(arrayListProductos);
         } catch (NullPointerException e) {
             Toast.makeText(MainActivity.this, "Error, verifique por favor: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 
-    /**
-     * Recibe lista de productos guardados en bd, luego crea las targetas para cada uno
-     */
-    private void crearTargetasProductos(List<Producto> listaProductos) {
+    private void crearTargetasDeProductos(List<Producto> listaProductos) {
         // Lista de cardviews dinámicas para mostrar productos
         cardList = new ArrayList<>();
         recyclerView = findViewById(R.id.recyclerVCard);
@@ -190,13 +187,9 @@ public class MainActivity extends AppCompatActivity {
         recyclerView.setAdapter(recyclerAdapter);
     }
 
-    /**
-     * Solicitamos los datos al servidor remoto
-     */
-    private void getProductosRemoto() {
-        // Verificamos que el dispositivo tenga coneccion a internet
-        ConnectivityService con = new ConnectivityService();
-        if (con.stateConnection(this)) {
+    private void getProductosDeDbRemoto() {
+        ConnectivityService estaConectado = new ConnectivityService();
+        if (estaConectado.stateConnection(this)) {
             Call<JsonArray> requestProductos = ApiUtils.getApiServices().getProductos();
             requestProductos.enqueue(new Callback<JsonArray>() {
                 public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
@@ -217,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
                             p.setUtilidad(listaPro.get(j).getAsJsonObject().get("utilidad").getAsFloat());
                             listaProductos.add(p);
                         }
-                        crearTargetasProductos(listaProductos);
+                        crearTargetasDeProductos(listaProductos);
                     }
                 }
 
@@ -231,9 +224,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * AlertDialog con opciones a realizar sobre tipo de objeto seleccionado
-     */
     private AlertDialog dialogOpciones(String objeto) {
 
         view = inflater.inflate(R.layout.dialog_opciones, null);
@@ -294,6 +284,15 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtras(bundle);
                     startActivity(intent);
                     break;
+                case "Unidad":
+                    intent = new Intent(this.getApplicationContext(), UnidadActivity.class);
+                    bundle = new Bundle();
+                    unidad = new Unidad();
+                    unidad.setAccion(0);
+                    bundle.putSerializable("unidad", unidad);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                    break;
             }
 
         });
@@ -318,6 +317,10 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case "Localidad":
                     intent = new Intent(MainActivity.this, LocalidadContent.class);
+                    startActivity(intent);
+                    break;
+                case "Unidad":
+                    intent = new Intent(MainActivity.this, UnidadContent.class);
                     startActivity(intent);
                     break;
             }

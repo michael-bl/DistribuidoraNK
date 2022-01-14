@@ -79,7 +79,7 @@ public class ProveedorContent extends AppCompatActivity {
         Button btnSiguiente = findViewById(R.id.btnNextContentProveedor);
         btnSiguiente.setOnClickListener(v -> {
             if (proveedor.getAccion() == 0) {
-                dialogAccion().show();
+                dialogOpcionCrudSobreProveedor().show();
             } else {
                 proveedor.setAccion(0);
                 proveedor.setEstado(1);
@@ -89,17 +89,13 @@ public class ProveedorContent extends AppCompatActivity {
             }
         });
 
-        // Solicitar proveedores
         existDb = new ExistDataBaseSqlite();
-        if (existDb.existeDataBase())
-            getProveedoresLocal();
-        else getProveedoresRemoto();
+        if (existDb.existeDataBaseLocal())
+            getProveedoresDeDbLocal();
+        else getProveedoresDeDbRemoto();
     }
 
-    /**
-     * MsgDialogDBLocal captura opcion - Actualizar o eliminar objeto
-     */
-    private AlertDialog dialogAccion() {
+    private AlertDialog dialogOpcionCrudSobreProveedor() {
         view = inflater.inflate(R.layout.dialog_opciones, null);
         final Button btnActualizar = view.findViewById(R.id.btnNuevo);
         btnActualizar.setText("Actualizar");
@@ -126,10 +122,7 @@ public class ProveedorContent extends AppCompatActivity {
         return builder.create();
     }
 
-    /**
-     * Obtiene lista de proveedores de bd local
-     */
-    private void getProveedoresLocal() {
+    private void getProveedoresDeDbLocal() {
         try {
             conexiones = new Conexiones(this);
             List<Proveedor> listaProveedores = new ArrayList<>(conexiones.getProveedores());
@@ -137,7 +130,7 @@ public class ProveedorContent extends AppCompatActivity {
             for (Proveedor proveedor : listaProveedores) {
                 stringIdsListaProveedores.add(proveedor.getId() + "-" + proveedor.getNombre());
             }
-            setListaProveedores(stringIdsListaProveedores, listaProveedores);
+            llenarListViewProveedores(stringIdsListaProveedores, listaProveedores);
         } catch (NullPointerException npe) {
             Toast.makeText(ProveedorContent.this, "Error, verifique por favor: " + npe.getMessage(), Toast.LENGTH_LONG).show();
         } catch (JsonSyntaxException jse) {
@@ -145,13 +138,9 @@ public class ProveedorContent extends AppCompatActivity {
         }
     }
 
-    /**
-     * Obtiene lista de proveedores de bd remota
-     */
-    public void getProveedoresRemoto() {
-        // Verificamos que el dispositivo tenga coneccion a internet
-        ConnectivityService con = new ConnectivityService();
-        if (con.stateConnection(this)) {
+    public void getProveedoresDeDbRemoto() {
+        ConnectivityService estaConectado = new ConnectivityService();
+        if (estaConectado.stateConnection(this)) {
             Call<JsonArray> requestProveedores = ApiUtils.getApiServices().getProveedores();
             requestProveedores.enqueue(new Callback<JsonArray>() {
                 @Override
@@ -171,7 +160,7 @@ public class ProveedorContent extends AppCompatActivity {
                             p.setEmail(listaPro.getAsJsonObject().get("email").toString());
                             p.setEstado(listaPro.getAsJsonObject().get("estado").getAsInt());
                         }
-                        setListaProveedores(stringIdsListaProveedores, listaProveedores);
+                        llenarListViewProveedores(stringIdsListaProveedores, listaProveedores);
                         Toast.makeText(ProveedorContent.this, "Datos cargados exitosamente!", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -186,12 +175,9 @@ public class ProveedorContent extends AppCompatActivity {
         }
     }
 
-    /**
-     * Carga datos de proveedores en listviewproveedores
-     */
-    private void setListaProveedores(ArrayList<String> stringListaProveedor, List<Proveedor> c) {
+    private void llenarListViewProveedores(ArrayList<String> stringListaProveedor, List<Proveedor> listaProveedor) {
         try {
-            this.listaProveedores = c;
+            this.listaProveedores = listaProveedor;
             listviewProveedores = findViewById(R.id.lvContentProveedor);
             mAdapter = new SelectionAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1, stringListaProveedor);
             listviewProveedores.setAdapter(mAdapter);
@@ -202,9 +188,6 @@ public class ProveedorContent extends AppCompatActivity {
         }
     }
 
-    /**
-     * Filtro sobre el Listview de proveedores
-     */
     private void onTextChanged() {
         // Arraylist con datos filtrados
         final ArrayList<String> array_sort = new ArrayList<>();

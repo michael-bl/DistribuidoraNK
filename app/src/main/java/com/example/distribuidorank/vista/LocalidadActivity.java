@@ -20,7 +20,6 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import retrofit2.Call;
@@ -30,12 +29,11 @@ import retrofit2.Response;
 public class LocalidadActivity extends AppCompatActivity {
     private TextInputEditText txtIdLocalidad, txtLocalidad;
     private ArrayList<Localidad> arrayLocalidad;
-    private List<Localidad> listaLocalidades;
     private int accion, estado, idLocalidad;
     private String stringLocalidad;
     private Conexiones conexiones;
     private Localidad localidad;
-    private Spinner spEstado;
+    private Spinner spinnerEstado;
     private Gson objetoGson;
 
     @Override
@@ -43,12 +41,11 @@ public class LocalidadActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_localidad);
 
-        // Instancia de textviews y otros componentes de la UI
         instanciaComponentes();
 
         localidad = new Localidad();
 
-        spEstado = findViewById(R.id.spEstadoLocalidad);
+        spinnerEstado = findViewById(R.id.spEstadoLocalidad);
 
         // Obtener datos del bundle
         Bundle bundle = this.getIntent().getExtras();
@@ -56,32 +53,26 @@ public class LocalidadActivity extends AppCompatActivity {
             // Extrayendo el extra de tipo cadena
             localidad = (Localidad) bundle.getSerializable("localidad");
             if (Objects.requireNonNull(localidad).getAccion() != 0)
-                mostrarDatosdeLocalidad(localidad);
+                mostrarDatosdeLocalidadEnLaUi(localidad);
             else
                 llenarSpinnerEstado(0); // 0 para setear orden por defecto
         }
 
-        Button btnGuardar = findViewById(R.id.btnGuardarLoacalidad);
+        Button btnGuardar = findViewById(R.id.btnGuardarLocalidad);
         btnGuardar.setOnClickListener(v -> {
             conexiones = new Conexiones(this);
             int guardarLocalOremoto = conexiones.getModoDeAlmacenamiento();
-            if (guardarLocalOremoto == 0) guardarLocalidadLocal();
-            else guardarLocalidadRemoto();
+            if (guardarLocalOremoto == 0) guardarLocalidadEnDbLocal();
+            else guardarLocalidadEnDbRemoto();
         });
     }
 
-    /**
-     * Inicializa los inputEditText de la interfaz localidad
-     */
     private void instanciaComponentes() {
-        txtIdLocalidad = findViewById(R.id.txtIdLocalidade);
+        txtIdLocalidad = findViewById(R.id.txtIdLocalidad);
         txtLocalidad = findViewById(R.id.txtLocalidad);
     }
 
-    /**
-     * Mostramos los datos del localidad en los campos de la interfaz
-     */
-    private void mostrarDatosdeLocalidad(Localidad localidad) {
+    private void mostrarDatosdeLocalidadEnLaUi(Localidad localidad) {
         try {
             llenarSpinnerEstado(1);
 
@@ -100,30 +91,22 @@ public class LocalidadActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Asignamos los nuevos valores a las variables del localidad
-     */
-    private boolean crearLocalidad() {
+    private boolean llenarVariablesDeLocalidad() {
         try {
             accion = localidad.getAccion();
             idLocalidad = Integer.parseInt(txtIdLocalidad.getText().toString().trim());
             stringLocalidad = txtLocalidad.getText().toString().trim();
-            estado = Integer.parseInt(spEstado.getItemAtPosition(spEstado.getSelectedItemPosition()).toString().trim().substring(0, 1));
+            estado = Integer.parseInt(spinnerEstado.getItemAtPosition(spinnerEstado.getSelectedItemPosition()).toString().trim().substring(0, 1));
         } catch (Error e) {
             Toast.makeText(LocalidadActivity.this, "Error, favor verificar: " + e.toString(), Toast.LENGTH_LONG).show();
         }
         return idLocalidad > 0 & !stringLocalidad.equals("");
     }
 
-    /**
-     * Guardar la nueva localidad en db remota
-     */
-    private void guardarLocalidadRemoto() {
-        // Validamos que el dispositivo tenga coneccion a internet
-        ConnectivityService con = new ConnectivityService();
-        if (con.stateConnection(LocalidadActivity.this)) {
-            // Verificamos que todos los datos del reporte esten ingresados
-            if (crearLocalidad()) {
+    private void guardarLocalidadEnDbRemoto() {
+        ConnectivityService estaConectado = new ConnectivityService();
+        if (estaConectado.stateConnection(LocalidadActivity.this)) {
+            if (llenarVariablesDeLocalidad()) {
                 // el id de la localidad puede ir null, para que mysql haga la magia y asigne el consecutivo
                 Call<JsonObject> solicitudAccionLocalidad = ApiUtils.getApiServices().accionLocalidad(idLocalidad, stringLocalidad, accion, estado);
                 solicitudAccionLocalidad.enqueue(new Callback<JsonObject>() {
@@ -157,12 +140,9 @@ public class LocalidadActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Almacena localidad, sea nuevo o actualizado, por medio de variable accion se indica que se debe hacer
-     */
-    private void guardarLocalidadLocal() {
+    private void guardarLocalidadEnDbLocal() {
         try {
-            if (crearLocalidad()) {
+            if (llenarVariablesDeLocalidad()) {
                 int resultado;
                 objetoGson = new Gson();
                 arrayLocalidad = new ArrayList<>();
@@ -188,9 +168,6 @@ public class LocalidadActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Seteamos los estados al spinner, preleccionando el que posee el localidad
-     */
     private void llenarSpinnerEstado(int accion) {
         ArrayList<String> listEstado = new ArrayList<>();
         try {
@@ -205,10 +182,10 @@ public class LocalidadActivity extends AppCompatActivity {
                         posicion = i;
                     }
                 }
-                this.spEstado.setAdapter(adapter);
-                this.spEstado.setSelection(posicion);
+                this.spinnerEstado.setAdapter(adapter);
+                this.spinnerEstado.setSelection(posicion);
             } else {
-                this.spEstado.setAdapter(adapter);
+                this.spinnerEstado.setAdapter(adapter);
             }
         } catch (NullPointerException npe) {
             Toast.makeText(LocalidadActivity.this, npe.getMessage(), Toast.LENGTH_LONG).show();

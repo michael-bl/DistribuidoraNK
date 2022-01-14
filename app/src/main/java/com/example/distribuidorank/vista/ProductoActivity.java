@@ -50,7 +50,6 @@ public class ProductoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_producto);
 
-        // instancia de textviews y otros componentes de la UI Producto
         instanciaComponentes();
 
         producto = new Producto();
@@ -65,30 +64,24 @@ public class ProductoActivity extends AppCompatActivity {
             // Extrayendo el extra de tipo cadena
             producto = (Producto) bundle.getSerializable("producto");
             if (Objects.requireNonNull(producto).getAccion() != 0)
-                mostrarDatosdelProducto(producto);
+                mostrarDatosdeProductoEnLaUi(producto);
             else
                 llenarSpinnerEstado(0); // 0 para setear orden por defecto
         }
 
-        // Evento del boton que guarda el producto
         btnGuardar = findViewById(R.id.btnGuardarProducto);
         btnGuardar.setOnClickListener(v -> {
             int guardarLocalOremoto = conexiones.getModoDeAlmacenamiento();
-            if (guardarLocalOremoto == 0) guardarProductoLocal();
-            else guardarProductoRemoto();
+            if (guardarLocalOremoto == 0) guardarProductoEnDbLocal();
+            else guardarProductoEnDbRemoto();
         });
 
-        // Evento del boton que calcula utilidad
         btncalcularUtilidad = findViewById(R.id.btnCalculaUtilidadProducto);
-        btncalcularUtilidad.setOnClickListener(v -> calcularUtilidad());
+        btncalcularUtilidad.setOnClickListener(v -> calcularUtilidadDeProducto());
 
-        // Obtener unidades según indica la tabla local Modo
         getUnidadLocalOremoto();
     }
 
-    /**
-     * Inicializa los inputEditText de la interfaz producto
-     */
     private void instanciaComponentes() {
         txtIdProducto = findViewById(R.id.txtIdProducto);
         txtDescripcion = findViewById(R.id.txtNombreProducto);
@@ -97,10 +90,7 @@ public class ProductoActivity extends AppCompatActivity {
         txtPrecioVenta = findViewById(R.id.txtPrecioVenta);
     }
 
-    /**
-     * Realiza el calculo de nueva utilidad de un producto nuevo o editado
-     */
-    private void calcularUtilidad() {
+    private void calcularUtilidadDeProducto() {
         try {
             precioCompra = Float.parseFloat(txtPrecioCompra.getText().toString().trim());
             precioVenta = Float.parseFloat(txtPrecioVenta.getText().toString().trim());
@@ -117,13 +107,8 @@ public class ProductoActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Mostramos los datos del producto en los campos de la interfaz
-     *
-     * @param producto
-     */
     @SuppressLint("SetTextI18n")
-    private void mostrarDatosdelProducto(Producto producto) {
+    private void mostrarDatosdeProductoEnLaUi(Producto producto) {
         try {
             txtIdProducto.setText(String.valueOf(producto.getId()));
             txtIdProducto.setFocusable(false);
@@ -142,10 +127,7 @@ public class ProductoActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Asigna los nuevos valores a las variables del objeto producto a guardar
-     */
-    private boolean crearProducto() {
+    private boolean llenarVariablesDeProducto() {
         try {
             accion = producto.getAccion();
             utilidad = txtUtilidad.getText().toString().trim();
@@ -161,15 +143,10 @@ public class ProductoActivity extends AppCompatActivity {
         return !utilidad.equals("") & !descripcion.equals("") & !precio_venta.equals("") & !precio_compra.equals("") & idUnidad != 0 & idProducto != 0;
     }
 
-    /**
-     * Almacena producto, por medio de la variable accion se indica si se  actualiza o uno nuevo
-     */
-    private void guardarProductoRemoto() {
-        // Validamos que el dispositivo tenga coneccion a internet
-        ConnectivityService con = new ConnectivityService();
-        if (con.stateConnection(ProductoActivity.this)) {
-            // Verificamos que todos los datos del reporte esten ingresados
-            if (crearProducto()) {
+    private void guardarProductoEnDbRemoto() {
+        ConnectivityService estaConectado = new ConnectivityService();
+        if (estaConectado.stateConnection(ProductoActivity.this)) {
+            if (llenarVariablesDeProducto()) {
                 Call<JsonObject> solicitudAccionProducto = ApiUtils.getApiServices().accionProducto(idProducto, idUnidad, descripcion, utilidad, precio_compra, precio_venta, accion, estado);
                 solicitudAccionProducto.enqueue(new Callback<JsonObject>() {
                     @Override
@@ -202,12 +179,9 @@ public class ProductoActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Almacena cliente, sea nuevo o actualizado, por medio de variable accion se indica que se debe hacer
-     */
-    private void guardarProductoLocal() {
+    private void guardarProductoEnDbLocal() {
         try {
-            if (crearProducto()) {
+            if (llenarVariablesDeProducto()) {
                 int resultado = 0;
                 objetoGson = new Gson();
                 arrayProducto = new ArrayList<>();
@@ -238,27 +212,20 @@ public class ProductoActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Escoge de donde obtener los datos
-     */
     private void getUnidadLocalOremoto() {
         try {
             conexiones = new Conexiones(this);
             int modo = conexiones.getModoDeAlmacenamiento();
             if (modo == 0) getUnidaLocal();
-            else getUnidadRemoto();
+            else getUnidadDeDbRemoto();
         } catch (NullPointerException npe) {
             Toast.makeText(ProductoActivity.this, "Error, favor verificar: " + npe.toString(), Toast.LENGTH_LONG).show();
         }
     }
 
-    /**
-     * Solicitamos los datos de unidades al servidor remoto
-     */
-    private void getUnidadRemoto() {
-        // Verificamos que el dispositivo tenga coneccion a internet
-        ConnectivityService con = new ConnectivityService();
-        if (con.stateConnection(this)) {
+    private void getUnidadDeDbRemoto() {
+        ConnectivityService estaConectado = new ConnectivityService();
+        if (estaConectado.stateConnection(this)) {
             Call<JsonArray> requestProductos = ApiUtils.getApiServices().getUnidades();
             requestProductos.enqueue(new Callback<JsonArray>() {
                 public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
@@ -289,9 +256,6 @@ public class ProductoActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Solicitamos los datos de localidades a db local
-     */
     private void getUnidaLocal() {
         try {
             conexiones = new Conexiones(this);
@@ -302,11 +266,6 @@ public class ProductoActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Seteamos las unidades al spinner correspondiente
-     *
-     * @param unidadList
-     */
     private void llenarSpinnerUnidades(List<Unidad> unidadList) {
         int posicion = 0;
         listaUnidades = unidadList;
@@ -331,11 +290,6 @@ public class ProductoActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Seteamos los estados al spinner, preleccionando el que posee el producto
-     *
-     * @param accion
-     */
     private void llenarSpinnerEstado(int accion) {
         ArrayList<String> localidadList = new ArrayList<>();
         try {

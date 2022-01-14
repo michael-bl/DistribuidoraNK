@@ -30,7 +30,7 @@
         android:layout_marginTop="20dp">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/txtIdLocalidade"
+            android:id="@+id/txtIdLocalidad"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -76,7 +76,7 @@
         android:background="@color/design_default_color_on_secondary" />
 
     <Button
-        android:id="@+id/btnGuardarLoacalidad"
+        android:id="@+id/btnGuardarLocalidad"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"

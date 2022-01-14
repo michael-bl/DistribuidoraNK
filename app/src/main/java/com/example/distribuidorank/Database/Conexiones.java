@@ -296,6 +296,26 @@ public class Conexiones {
         return resultado;
     }
 
+    public int crudUnidad(int accion, String unidad) {
+        posDataBase = new POS_DataBase(context);
+        int resultado = 0;
+        try {
+            switch (accion) {
+                case 0:
+                    return posDataBase.INSERT("Unidad", unidad, 0) ? 1 : 0;
+                case 1:
+                    return posDataBase.UPDATE("Unidad", unidad, 0) ? 1 : 0;
+                case 2:
+                    // Método para actualizar unicamente el campo estado, falta crearlo en POS_DataBase
+                    return posDataBase.UPDATE("Unidad", unidad, 0) ? 1 : 0;
+            }
+        } catch (NullPointerException nullPointerException) {
+            nullPointerException.printStackTrace();
+        } catch (SQLiteConstraintException e) {
+            e.printStackTrace();
+        }
+        return resultado;
+    }
     /* ****************************************************************************************************************************************** */
 
     /* ************************************************************ Métodos SELECT ************************************************************ */

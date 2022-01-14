@@ -80,7 +80,7 @@ public class ProductoContent extends AppCompatActivity {
         Button btnSiguiente = findViewById(R.id.btnNextContentProducto);
         btnSiguiente.setOnClickListener(v -> {
             if (producto.getAccion() == 0) {
-                dialogAccion().show();
+                dialogOpcionCrudSobreProducto().show();
             } else {
                 producto.setAccion(0);
                 producto.setEstado(1);
@@ -90,17 +90,13 @@ public class ProductoContent extends AppCompatActivity {
             }
         });
 
-        // Solicitar productos
         existDb = new ExistDataBaseSqlite();
-        if (existDb.existeDataBase())
-            getProductosLocal();
-        else getProductosRemoto();
+        if (existDb.existeDataBaseLocal())
+            getProductosDeDbLocal();
+        else getProductosDeDbRemoto();
     }
 
-    /**
-     * Alert dialog para capturar opcion - Actualizar o eliminar(desactivar) un producto
-     */
-    private AlertDialog dialogAccion() {
+    private AlertDialog dialogOpcionCrudSobreProducto() {
         view = inflater.inflate(R.layout.dialog_opciones, null);
 
         final Button btnActualizar = view.findViewById(R.id.btnNuevo);
@@ -130,10 +126,7 @@ public class ProductoContent extends AppCompatActivity {
         return builder.create();
     }
 
-    /**
-     * Obtiene lista de productos de bd local
-     */
-    private void getProductosLocal() {
+    private void getProductosDeDbLocal() {
         try {
             conexiones = new Conexiones(ProductoContent.this);
             List<Producto> listaProductos = new ArrayList<>(conexiones.getProductos());
@@ -141,7 +134,7 @@ public class ProductoContent extends AppCompatActivity {
             for (Producto producto : listaProductos) {
                 stringIdsListaProductos.add(producto.getId() + "-" + producto.getDescripcion());
             }
-            setListaProductos(stringIdsListaProductos, listaProductos);
+            llenarListViewProductos(stringIdsListaProductos, listaProductos);
         } catch (NullPointerException npe) {
             Toast.makeText(ProductoContent.this, "Error, verifique por favor: " + npe.getMessage(), Toast.LENGTH_LONG).show();
         } catch (JsonSyntaxException jse) {
@@ -149,18 +142,13 @@ public class ProductoContent extends AppCompatActivity {
         }
     }
 
-    /**
-     * Obtiene lista de productos de bd remota
-     */
-    public void getProductosRemoto() {
-        // Verificamos que el dispositivo tenga coneccion a internet
-        ConnectivityService con = new ConnectivityService();
-        if (con.stateConnection(this)) {
+    public void getProductosDeDbRemoto() {
+        ConnectivityService estaConectado = new ConnectivityService();
+        if (estaConectado.stateConnection(this)) {
             Call<JsonArray> requestProductos = ApiUtils.getApiServices().getProductos();
             requestProductos.enqueue(new Callback<JsonArray>() {
                 @Override
                 public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
-
                     if (!response.isSuccessful()) {
                         Toast.makeText(ProductoContent.this, response.message() + "Error al cargar datos!", Toast.LENGTH_SHORT).show();
                     } else {
@@ -180,7 +168,7 @@ public class ProductoContent extends AppCompatActivity {
                             p.setDetalle(listaPro.get(j).getAsJsonObject().get("detalle").toString());
                             listaProductos.add(p);
                         }
-                        setListaProductos(stringIdsListaProductos, listaProductos);
+                        llenarListViewProductos(stringIdsListaProductos, listaProductos);
                         Toast.makeText(ProductoContent.this, "Datos cargados exitosamente!", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -195,12 +183,9 @@ public class ProductoContent extends AppCompatActivity {
         }
     }
 
-    /**
-     * Carga datos de productos en un listviewProductos
-     */
-    private void setListaProductos(ArrayList<String> listaproducto, List<Producto> p) {
+    private void llenarListViewProductos(ArrayList<String> listaproducto, List<Producto> listaProducto) {
         try {
-            this.listaProductos = p;
+            this.listaProductos = listaProducto;
             listviewProductos = findViewById(R.id.lvContentProductos);
             mAdapter = new SelectionAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1, listaproducto);
             listviewProductos.setAdapter(mAdapter);
@@ -211,9 +196,6 @@ public class ProductoContent extends AppCompatActivity {
         }
     }
 
-    /**
-     * Filtro sobre el Listview de productos
-     */
     private void onTextChanged() {
         // Arraylist con datos filtrados
         final ArrayList<String> array_sort = new ArrayList<>();

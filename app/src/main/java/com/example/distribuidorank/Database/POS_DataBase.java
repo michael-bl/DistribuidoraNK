@@ -1246,7 +1246,8 @@ public class POS_DataBase extends DataBaseHelper {
 
                 unidad.setId(cursor.getInt(0));
                 unidad.setDetalle(cursor.getString(1));
-                unidad.setUltima_actualizacion(this.simpleDateFormat.parse(cursor.getString(2)));
+                unidad.setEstado(cursor.getInt(2));
+                unidad.setUltima_actualizacion(this.simpleDateFormat.parse(cursor.getString(3)));
 
                 cursor.close();
             }

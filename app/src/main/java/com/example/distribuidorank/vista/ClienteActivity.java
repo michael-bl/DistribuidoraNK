@@ -47,7 +47,6 @@ public class ClienteActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Instancia de textviews y otros componentes de la UI
         instanciaComponentes();
 
         cliente = new Cliente();
@@ -61,7 +60,7 @@ public class ClienteActivity extends AppCompatActivity {
             // Extrayendo el extra de tipo cadena
             cliente = (Cliente) bundle.getSerializable("cliente");
             if (Objects.requireNonNull(cliente).getAccion() != 0)
-                mostrarDatosdelCliente(cliente);
+                mostrarDatosdelClienteEnLaUi(cliente);
             else
                 llenarSpinnerEstado(0); // 0 para setear orden por defecto
         }
@@ -69,17 +68,13 @@ public class ClienteActivity extends AppCompatActivity {
         Button btnGuardar = findViewById(R.id.btnGuardarCliente);
         btnGuardar.setOnClickListener(v -> {
             int guardarLocalOremoto = conexiones.getModoDeAlmacenamiento();
-            if (guardarLocalOremoto == 0) guardarClienteLocal();
-            else guardarClienteRemoto();
+            if (guardarLocalOremoto == 0) guardarClienteEnDbLocal();
+            else guardarClienteEnDbRemoto();
         });
 
-        // Solicitamos localidades
         getLocalidadLocalOremoto();
     }
 
-    /**
-     * Inicializa los inputEditText de la interfaz cliente
-     */
     private void instanciaComponentes() {
         txtDireccion = findViewById(R.id.txtDireccionCliente);
         txtTelefono = findViewById(R.id.txtTelefonoCliente);
@@ -88,10 +83,7 @@ public class ClienteActivity extends AppCompatActivity {
         txtEmail = findViewById(R.id.txtEmailCliente);
     }
 
-    /**
-     * Mostramos los datos del cliente en los campos de la interfaz
-     */
-    private void mostrarDatosdelCliente(Cliente cliente) {
+    private void mostrarDatosdelClienteEnLaUi(Cliente cliente) {
         try {
             llenarSpinnerEstado(1);
             txtEmail.setText(cliente.getEmail());
@@ -110,10 +102,7 @@ public class ClienteActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Asignamos los nuevos valores a las variables del cliente
-     */
-    private boolean crearCliente() {
+    private boolean llenarVariablesDeCliente() {
         try {
             accion = cliente.getAccion();
             email = txtEmail.getText().toString().trim();
@@ -129,15 +118,10 @@ public class ClienteActivity extends AppCompatActivity {
         return !idCliente.equals("") & !nombre.equals("") & !telefono.equals("") & !email.equals("") & !direccion.equals("");
     }
 
-    /**
-     * Guardar el nuevo cliente en db remota
-     */
-    private void guardarClienteRemoto() {
-        // Validamos que el dispositivo tenga coneccion a internet
-        ConnectivityService con = new ConnectivityService();
-        if (con.stateConnection(ClienteActivity.this)) {
-            // Verificamos que todos los datos del reporte esten ingresados
-            if (crearCliente()) {
+    private void guardarClienteEnDbRemoto() {
+        ConnectivityService estaConectado = new ConnectivityService();
+        if (estaConectado.stateConnection(ClienteActivity.this)) {
+            if (llenarVariablesDeCliente()) {
                 Call<JsonObject> solicitudAccionCliente = ApiUtils.getApiServices().accionCliente(idCliente, idLocalidad, nombre, telefono, email, direccion, accion, estado);
                 solicitudAccionCliente.enqueue(new Callback<JsonObject>() {
                     @Override
@@ -173,9 +157,9 @@ public class ClienteActivity extends AppCompatActivity {
     /**
      * Almacena cliente, sea nuevo o actualizado, por medio de variable accion se indica que se debe hacer
      */
-    private void guardarClienteLocal() {
+    private void guardarClienteEnDbLocal() {
         try {
-            if (crearCliente()) {
+            if (llenarVariablesDeCliente()) {
                 int resultado = 0;
                 objetoGson = new Gson();
                 arrayCliente = new ArrayList<>();
@@ -291,9 +275,6 @@ public class ClienteActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Seteamos los estados al spinner, preleccionando el que posee el cliente
-     */
     private void llenarSpinnerEstado(int accion) {
         ArrayList<String> localidadList = new ArrayList<>();
         try {

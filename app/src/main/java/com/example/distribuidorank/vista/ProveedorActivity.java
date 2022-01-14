@@ -43,7 +43,6 @@ public class ProveedorActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Instancia de textviews y otros componentes de la UI
         instanciaComponentes();
 
         proveedor = new Proveedor();
@@ -56,7 +55,7 @@ public class ProveedorActivity extends AppCompatActivity {
             // Extrayendo el extra de tipo cadena
             proveedor = (Proveedor) bundle.getSerializable("proveedor");
             if (Objects.requireNonNull(proveedor).getAccion() != 0)
-                mostrarDatosdelProveedor(proveedor);
+                mostrarDatosdeProveedorEnLaUi(proveedor);
             else
                 llenarSpinnerEstado(0); // 0 para setear orden por defecto
         }
@@ -65,14 +64,11 @@ public class ProveedorActivity extends AppCompatActivity {
         btnGuardar.setOnClickListener(v -> {
             conexiones = new Conexiones(this);
             int guardarLocalOremoto = conexiones.getModoDeAlmacenamiento();
-            if (guardarLocalOremoto == 0) guardarProveedorLocal();
-            else guardarProveedorRemoto();
+            if (guardarLocalOremoto == 0) guardarProveedorEnDbLocal();
+            else guardarProveedorEnDbRemoto();
         });
     }
 
-    /**
-     * Inicializa los inputEditText de la interfaz proveedor
-     */
     private void instanciaComponentes() {
         txtTelefono = findViewById(R.id.txtTelefonoProveedor);
         txtIdProveedor = findViewById(R.id.txtCedulaProveedor);
@@ -80,10 +76,7 @@ public class ProveedorActivity extends AppCompatActivity {
         txtEmail = findViewById(R.id.txtEmailProveedor);
     }
 
-    /**
-     * Mostramos los datos del proveedor en los campos de la interfaz
-     */
-    private void mostrarDatosdelProveedor(Proveedor proveedor) {
+    private void mostrarDatosdeProveedorEnLaUi(Proveedor proveedor) {
         try {
             llenarSpinnerEstado(1);
             txtEmail.setText(proveedor.getEmail());
@@ -101,10 +94,7 @@ public class ProveedorActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Asignamos los nuevos valores a las variables del proveedor
-     */
-    private boolean crearProveedor() {
+    private boolean llenarVariablesDeProveedor() {
         try {
             accion = proveedor.getAccion();
             email = txtEmail.getText().toString().trim();
@@ -118,15 +108,10 @@ public class ProveedorActivity extends AppCompatActivity {
         return !idProveedor.equals("") & !nombre.equals("") & !telefono.equals("") & !email.equals("");
     }
 
-    /**
-     * Guardar el nuevo proveedor
-     */
-    private void guardarProveedorRemoto() {
-        // Validamos que el dispositivo tenga coneccion a internet
-        ConnectivityService con = new ConnectivityService();
-        if (con.stateConnection(ProveedorActivity.this)) {
-            // Verificamos que todos los datos del reporte esten ingresados
-            if (crearProveedor()) {
+    private void guardarProveedorEnDbRemoto() {
+        ConnectivityService estaConectado = new ConnectivityService();
+        if (estaConectado.stateConnection(ProveedorActivity.this)) {
+            if (llenarVariablesDeProveedor()) {
                 Call<JsonObject> solicitudAccionProveedor = ApiUtils.getApiServices().accionProveedor(idProveedor, nombre, telefono, email, accion, estado);
                 solicitudAccionProveedor.enqueue(new Callback<JsonObject>() {
                     @Override
@@ -159,12 +144,9 @@ public class ProveedorActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Almacena proveedor, sea nuevo o actualizado, por medio de variable accion se indica que se debe hacer
-     */
-    private void guardarProveedorLocal() {
+    private void guardarProveedorEnDbLocal() {
         try {
-            if (crearProveedor()) {
+            if (llenarVariablesDeProveedor()) {
                 int resultado = 0;
                 objetoGson = new Gson();
                 arrayProveedor = new ArrayList<>();
@@ -192,9 +174,6 @@ public class ProveedorActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Seteamos los estados al spinner, preleccionando el que posee el proveedor
-     */
     private void llenarSpinnerEstado(int accion) {
         ArrayList<String> localidadList = new ArrayList<>();
         try {

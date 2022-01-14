@@ -7,7 +7,7 @@ public class ExistDataBaseSqlite {
     public ExistDataBaseSqlite(){
     }
 
-    public boolean existeDataBase(){
+    public boolean existeDataBaseLocal(){
         return DB_FILE.exists();
     }
 }

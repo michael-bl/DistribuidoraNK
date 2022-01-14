@@ -80,7 +80,7 @@ public class UsuarioContent extends AppCompatActivity {
         Button btnSiguiente = findViewById(R.id.btnNextContentUsuario);
         btnSiguiente.setOnClickListener(v -> {
             if (usuario.getAccion() == 0) {
-                dialogAccion().show();
+                dialogOpcionCrudSobreUsuario().show();
             } else {
                 usuario.setAccion(0);
                 usuario.setEstado(1);
@@ -90,17 +90,13 @@ public class UsuarioContent extends AppCompatActivity {
             }
         });
 
-        //Solicitar usuarios
         existDb = new ExistDataBaseSqlite();
-        if (existDb.existeDataBase())
-            getUsuariosLocal();
-        else getUsuariosRemoto();
+        if (existDb.existeDataBaseLocal())
+            getUsuariosDeDbLocal();
+        else getUsuariosDeDbRemoto();
     }
 
-    /**
-     * MsgDialogDBLocal captura opcion - Actualizar o eliminar objeto
-     */
-    private AlertDialog dialogAccion() {
+    private AlertDialog dialogOpcionCrudSobreUsuario() {
         view = inflater.inflate(R.layout.dialog_opciones, null);
 
         final Button btnActualizar = view.findViewById(R.id.btnNuevo);
@@ -130,10 +126,7 @@ public class UsuarioContent extends AppCompatActivity {
         return builder.create();
     }
 
-    /**
-     * Obtiene lista de usuarios de bd local
-     */
-    private void getUsuariosLocal() {
+    private void getUsuariosDeDbLocal() {
         try {
             conexiones = new Conexiones(this);
             List<Usuario> listaUsuarios = new ArrayList<>(conexiones.getUsuarios());
@@ -141,7 +134,7 @@ public class UsuarioContent extends AppCompatActivity {
             for (Usuario usuario : listaUsuarios) {
                 stringIdsListaUsuarios.add(usuario.getId() + "-" + usuario.getNombre());
             }
-            setListaUsuarios(stringIdsListaUsuarios, listaUsuarios);
+            llenarListViewUsuarios(stringIdsListaUsuarios, listaUsuarios);
         } catch (NullPointerException npe) {
             Toast.makeText(UsuarioContent.this, "Error, verifique por favor: " + npe.getMessage(), Toast.LENGTH_LONG).show();
         } catch (JsonSyntaxException jse) {
@@ -149,18 +142,13 @@ public class UsuarioContent extends AppCompatActivity {
         }
     }
 
-    /**
-     * Obtiene lista de productos de bd remota
-     */
-    public void getUsuariosRemoto() {
-        // Verificamos que el dispositivo tenga coneccion a internet
-        ConnectivityService con = new ConnectivityService();
-        if (con.stateConnection(this)) {
+    public void getUsuariosDeDbRemoto() {
+        ConnectivityService estaConectado = new ConnectivityService();
+        if (estaConectado.stateConnection(this)) {
             Call<JsonArray> requestLastReports = ApiUtils.getApiServices().getUsuarios();
             requestLastReports.enqueue(new Callback<JsonArray>() {
                 @Override
                 public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
-
                     if (!response.isSuccessful()) {
                         Toast.makeText(UsuarioContent.this, response.message() + "Error al cargar datos!", Toast.LENGTH_SHORT).show();
                     } else {
@@ -182,7 +170,7 @@ public class UsuarioContent extends AppCompatActivity {
                             //usuario.setLocalidad(listaPro.get(j).getAsJsonObject().get("localidad").toString()); Esta variable no esta inlcuida dentro de la clase usuario
                             listaUsuarios.add(usuario);
                         }
-                        setListaUsuarios(stringIdsListaUsuarios, listaUsuarios);
+                        llenarListViewUsuarios(stringIdsListaUsuarios, listaUsuarios);
                         Toast.makeText(UsuarioContent.this, "Datos cargados exitosamente!", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -197,12 +185,9 @@ public class UsuarioContent extends AppCompatActivity {
         }
     }
 
-    /**
-     * Carga datos de usuarios en listviewusuarios
-     */
-    private void setListaUsuarios(ArrayList<String> stringListaUsuario, List<Usuario> u) {
+    private void llenarListViewUsuarios(ArrayList<String> stringListaUsuario, List<Usuario> listaUsuario) {
         try {
-            this.listaUsuarios = u;
+            this.listaUsuarios = listaUsuario;
             listviewUsuarios = findViewById(R.id.lvContentUsuarios);
             mAdapter = new SelectionAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1, stringListaUsuario);
             listviewUsuarios.setAdapter(mAdapter);
@@ -213,9 +198,6 @@ public class UsuarioContent extends AppCompatActivity {
         }
     }
 
-    /**
-     * Filtro sobre el Listview de usuarios
-     */
     private void onTextChanged() {
         try {
             // Arraylist con datos filtrados

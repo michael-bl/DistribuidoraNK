@@ -45,28 +45,21 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        // Evento boton login
-        Button button = findViewById(R.id.btnLogin);
-        button.setOnClickListener(v -> loginLocalOremoto());
+        Button botonLogin = findViewById(R.id.btnLogin);
+        botonLogin.setOnClickListener(v -> loginLocalOremoto());
     }
 
-    /**
-     * Escoge de donde obtener los datos para el inicio de sesion
-     */
     private void loginLocalOremoto() {
         conexiones = new Conexiones(this);
         existDb = new ExistDataBaseSqlite();
-        if (!existDb.existeDataBase()) loginRemoto();
-        else loginLocal();
+        if (!existDb.existeDataBaseLocal()) loginEnDbRemoto();
+        else loginEnDbLocal();
     }
 
-    /**
-     * Realiza inicio de sesion en db local
-     */
-    private void loginLocal() {
+    private void loginEnDbLocal() {
         conexiones = new Conexiones(this);
         hashPass = new HashPass();
-        getUsuarioYpass();
+        getUsuarioYpassDelFormulario();
         pass = hashPass.convertirSHA256(txtPass.getText().toString().trim());
         if (!conexiones.inicarSesion(user, pass))
             Toast.makeText(LoginActivity.this, "Usuario o contraseña incorrecto!", Toast.LENGTH_SHORT).show();
@@ -77,10 +70,7 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Obtiene y valida el llenado de los datos ingresados en los inputs del formulario
-     */
-    private void getUsuarioYpass() {
+    private void getUsuarioYpassDelFormulario() {
         txtUser = findViewById(R.id.edittext_usuario);
         txtPass = findViewById(R.id.edittext_contrasena);
         user = txtUser.getText().toString().trim();
@@ -89,16 +79,12 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(this, "Debe rellenar todos los campos!", Toast.LENGTH_LONG).show();
     }
 
-    /**
-     * Realiza inicio de sesion en db remota
-     */
-    private void loginRemoto() {
+    private void loginEnDbRemoto() {
         hashPass = new HashPass();
-        getUsuarioYpass();
+        getUsuarioYpassDelFormulario();
         if (!user.equals("") && !pass.equals("")) {
-            // Verificamos que el dispositivo tenga conexion a internet
-            ConnectivityService con = new ConnectivityService();
-            if (con.stateConnection(this)) {
+            ConnectivityService estaConectado = new ConnectivityService();
+            if (estaConectado.stateConnection(this)) {
                 pass = hashPass.convertirSHA256(txtPass.getText().toString().trim());
                 Call<List<Usuario>> requestLogin = ApiUtils.getApiServices().login(user, pass);
                 requestLogin.enqueue(new Callback<List<Usuario>>() {
@@ -113,7 +99,7 @@ public class LoginActivity extends AppCompatActivity {
                                 for (int i = 0; i < respuesta.size(); i++) {
                                     if (user.equals(respuesta.get(i).getId()) && pass.equals(respuesta.get(i).getPass())) {
                                         existDb = new ExistDataBaseSqlite();
-                                        if (!existDb.existeDataBase()) {
+                                        if (!existDb.existeDataBaseLocal()) {
                                             // Enviamos el usuario al metodo crearDblocal para almacenarlo
                                             usuario = new Usuario();
                                             usuario.setId(respuesta.get(i).getId());
@@ -152,9 +138,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Crear BD local e insertar usuario logeado
-     */
     private void crearDBlocal(Usuario usuario) {
         // Guardamos por defecto, almacenamiento y lectura en modo local
         Gson gson = new Gson();

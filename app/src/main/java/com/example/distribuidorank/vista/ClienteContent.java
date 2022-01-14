@@ -74,11 +74,10 @@ public class ClienteContent extends AppCompatActivity {
         //Extrayendo el extra de tipo cadena
         cliente = (Cliente) bundle.getSerializable("cliente");
 
-        //Evento boton siguiente, hacia ClienteActivity.class
         Button btnSiguiente = findViewById(R.id.btnNextContentCliente);
         btnSiguiente.setOnClickListener(v -> {
             if (cliente.getAccion() == 0) {
-                dialogAccion().show();
+                dialogOpcionCrudSobreCliente().show();
             } else {
                 cliente.setAccion(0);
                 cliente.setEstado(1);
@@ -88,17 +87,13 @@ public class ClienteContent extends AppCompatActivity {
             }
         });
 
-        //Solicitar clientes
         existDb = new ExistDataBaseSqlite();
-        if (existDb.existeDataBase())
-            getClientesLocal();
-        else getClientesRemoto();
+        if (existDb.existeDataBaseLocal())
+            getClientesDeDbLocal();
+        else getClientesDeDbRemoto();
     }
 
-    /**
-     * MsgDialogDBLocal captura opcion - Actualizar o eliminar objeto
-     */
-    private AlertDialog dialogAccion() {
+    private AlertDialog dialogOpcionCrudSobreCliente() {
         view = inflater.inflate(R.layout.dialog_opciones, null);
         final Button btnActualizar = view.findViewById(R.id.btnNuevo);
         btnActualizar.setText("Actualizar");
@@ -125,10 +120,7 @@ public class ClienteContent extends AppCompatActivity {
         return builder.create();
     }
 
-    /**
-     * Obtiene lista de clientes de bd local
-     */
-    private void getClientesLocal() {
+    private void getClientesDeDbLocal() {
         try {
             conexiones = new Conexiones(this);
             List<Cliente> listaClientes = new ArrayList<>(conexiones.getClientes());
@@ -136,7 +128,7 @@ public class ClienteContent extends AppCompatActivity {
             for (Cliente cliente : listaClientes) {
                 stringIdsListaClientes.add(cliente.getId() + "-" + cliente.getNombre());
             }
-            setListaClientes(stringIdsListaClientes, listaClientes);
+            llenarListViewClientes(stringIdsListaClientes, listaClientes);
         } catch (NullPointerException npe) {
             Toast.makeText(ClienteContent.this, "Error, verifique por favor: " + npe.getMessage(), Toast.LENGTH_LONG).show();
         } catch (JsonSyntaxException jse) {
@@ -144,13 +136,9 @@ public class ClienteContent extends AppCompatActivity {
         }
     }
 
-    /**
-     * Obtiene lista de productos de bd remota
-     */
-    public void getClientesRemoto() {
-        // Verificamos que el dispositivo tenga coneccion a internet
-        ConnectivityService con = new ConnectivityService();
-        if (con.stateConnection(this)) {
+    public void getClientesDeDbRemoto() {
+        ConnectivityService estaConectado = new ConnectivityService();
+        if (estaConectado.stateConnection(this)) {
             Call<List<Cliente>> requestLastReports = ApiUtils.getApiServices().getClientes();
             requestLastReports.enqueue(new Callback<List<Cliente>>() {
                 @Override
@@ -170,7 +158,7 @@ public class ClienteContent extends AppCompatActivity {
                             cliente.setDireccion(listaClientes.get(i).getDireccion());
                             cliente.setId(listaClientes.get(i).getId());
                         }
-                        setListaClientes(stringIdsListaClientes, listaClientes);
+                        llenarListViewClientes(stringIdsListaClientes, listaClientes);
                         Toast.makeText(ClienteContent.this, "Datos cargados exitosamente!", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -185,12 +173,9 @@ public class ClienteContent extends AppCompatActivity {
         }
     }
 
-    /**
-     * Carga datos de clientes en listviewclientes
-     */
-    private void setListaClientes(ArrayList<String> stringListaCliente, List<Cliente> c) {
+    private void llenarListViewClientes(ArrayList<String> stringListaCliente, List<Cliente> listaCliente) {
         try {
-            this.listaClientes = c;
+            this.listaClientes = listaCliente;
             listviewClientes = findViewById(R.id.lvContentClientes);
             mAdapter = new SelectionAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1, stringListaCliente);
             listviewClientes.setAdapter(mAdapter);
@@ -201,9 +186,6 @@ public class ClienteContent extends AppCompatActivity {
         }
     }
 
-    /**
-     * Filtro sobre el Listview de clientes
-     */
     private void onTextChanged() {
         // Arraylist con datos filtrados
         final ArrayList<String> array_sort = new ArrayList<>();

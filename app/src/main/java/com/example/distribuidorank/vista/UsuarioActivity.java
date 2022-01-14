@@ -34,9 +34,9 @@ import retrofit2.Response;
 public class UsuarioActivity extends AppCompatActivity {
     private TextInputEditText txtIdUsuario, txtNombre, txtPass, txtTelefono, txtEmail, txtDireccion;
     private String idUsuario, nombre, pass, telefono, email, direccion;
+    private Spinner spinnerLocalidad, spinnerEstado;
     private List<Localidad> listaLocalidades;
     private int accion, estado, idLocalidad;
-    private Spinner spLocalidad, spEstado;
     private Conexiones conexiones;
     private Gson objetoGson;
     private Usuario usuario;
@@ -48,13 +48,12 @@ public class UsuarioActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Instancia de textviews y otros componentes de la UI
         instanciaComponentes();
 
         usuario = new Usuario();
 
-        spEstado = findViewById(R.id.spEstadoUsuario);
-        spLocalidad = findViewById(R.id.spLocalidadUsuario);
+        spinnerEstado = findViewById(R.id.spEstadoUsuario);
+        spinnerLocalidad = findViewById(R.id.spLocalidadUsuario);
 
         // Obtener datos del bundle
         Bundle bundle = this.getIntent().getExtras();
@@ -62,7 +61,7 @@ public class UsuarioActivity extends AppCompatActivity {
             // Extrayendo el extra de tipo cadena
             usuario = (Usuario) bundle.getSerializable("usuario");
             if (Objects.requireNonNull(usuario).getAccion() != 0) {
-                mostrarDatosdelUsuario(usuario);
+                mostrarDatosdelUsuarioEnLaUi(usuario);
             } else {
                 llenarSpinnerEstado(0); // 0 para setear orden por defecto
             }
@@ -71,17 +70,13 @@ public class UsuarioActivity extends AppCompatActivity {
         Button btnGuardar = findViewById(R.id.btnGuardarUsuario);
         btnGuardar.setOnClickListener(v -> {
             int guardarLocalOremoto = conexiones.getModoDeAlmacenamiento();
-            if (guardarLocalOremoto == 0) guardarUsuarioLocal();
-            else guardarUsuarioRemoto();
+            if (guardarLocalOremoto == 0) guardarUsuarioEnDbLocal();
+            else guardarUsuarioEnDbRemoto();
         });
 
-        // Solicitamos localidades
-        getLocalidadLocalOremoto();
+        getLocalidadDeLocalOremoto();
     }
 
-    /**
-     * Asigna los nuevos valores a las variables del objeto usuario a guardar
-     */
     private void instanciaComponentes() {
         txtDireccion = findViewById(R.id.txtDireccionCliente);
         txtTelefono = findViewById(R.id.txtTelefonoCliente);
@@ -91,11 +86,8 @@ public class UsuarioActivity extends AppCompatActivity {
         txtPass = findViewById(R.id.txtPassUsuario);
     }
 
-    /**
-     * Mostramos los datos del usuario en los campos de la interfaz
-     */
     @SuppressLint("SetTextI18n")
-    private void mostrarDatosdelUsuario(Usuario usuario) {
+    private void mostrarDatosdelUsuarioEnLaUi(Usuario usuario) {
         try {
             txtIdUsuario.setText(usuario.getId());
             txtIdUsuario.setFocusable(false);
@@ -122,10 +114,7 @@ public class UsuarioActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Asignamos los nuevos valores a las variables del usuario
-     */
-    private boolean crearUsuario() {
+    private boolean llenarVariablesDeUsuario() {
         try {
             HashPass hashPass = new HashPass();
             accion = usuario.getAccion();
@@ -140,8 +129,8 @@ public class UsuarioActivity extends AppCompatActivity {
             } else {
                 pass = usuario.getPass();
             }
-            estado = Integer.parseInt(spEstado.getItemAtPosition(spEstado.getSelectedItemPosition()).toString().trim().substring(0, 1));
-            idLocalidad = Integer.parseInt(spLocalidad.getItemAtPosition(spLocalidad.getSelectedItemPosition()).toString().trim().substring(0, 1));
+            estado = Integer.parseInt(spinnerEstado.getItemAtPosition(spinnerEstado.getSelectedItemPosition()).toString().trim().substring(0, 1));
+            idLocalidad = Integer.parseInt(spinnerLocalidad.getItemAtPosition(spinnerLocalidad.getSelectedItemPosition()).toString().trim().substring(0, 1));
         } catch (Error e) {
             Toast.makeText(UsuarioActivity.this, "Error, favor verificar: " + e.toString(), Toast.LENGTH_LONG).show();
         }
@@ -149,15 +138,10 @@ public class UsuarioActivity extends AppCompatActivity {
         return !idUsuario.equals("") & !nombre.equals("") & !pass.equals("") & !telefono.equals("") & !email.equals("") & !direccion.equals("");
     }
 
-    /**
-     * Almacena accion sobre producto, sea nuevo o actualizado, por medio de variable accion se indica que se desa hacer
-     */
-    private void guardarUsuarioRemoto() {
-        // Validamos que el dispositivo tenga coneccion a internet
-        ConnectivityService con = new ConnectivityService();
-        if (con.stateConnection(UsuarioActivity.this)) {
-            // Verificamos que todos los datos del reporte esten ingresados
-            if (crearUsuario()) {
+    private void guardarUsuarioEnDbRemoto() {
+        ConnectivityService estaConectado = new ConnectivityService();
+        if (estaConectado.stateConnection(UsuarioActivity.this)) {
+            if (llenarVariablesDeUsuario()) {
                 Call<JsonObject> solicitudAccionUsuario = ApiUtils.getApiServices().accionUsuario(idUsuario, idLocalidad, nombre, pass, telefono, email, direccion, accion, estado);
                 solicitudAccionUsuario.enqueue(new Callback<JsonObject>() {
                     @Override
@@ -190,12 +174,9 @@ public class UsuarioActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Almacena usuario, sea nuevo o actualizado, por medio de variable accion se indica que se debe hacer
-     */
-    private void guardarUsuarioLocal() {
+    private void guardarUsuarioEnDbLocal() {
         try {
-            if (crearUsuario()) {
+            if (llenarVariablesDeUsuario()) {
                 objetoGson = new Gson();
                 conexiones = new Conexiones(this);
                 usuario.setId(idUsuario);
@@ -217,27 +198,20 @@ public class UsuarioActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Escoge de donde obtener los datos
-     */
-    private void getLocalidadLocalOremoto() {
+    private void getLocalidadDeLocalOremoto() {
         try {
             conexiones = new Conexiones(this);
             int modo = conexiones.getModoDeAlmacenamiento();
-            if (modo == 0) getLocalidaLocal();
-            else getLocalidadRemoto();
+            if (modo == 0) getLocalidadDeDbLocal();
+            else getLocalidadDeDbRemoto();
         } catch (NullPointerException npe) {
             Toast.makeText(UsuarioActivity.this, "Error, favor verificar: " + npe.toString(), Toast.LENGTH_LONG).show();
         }
     }
 
-    /**
-     * Solicitamos los datos de localidades al servidor remoto
-     */
-    private void getLocalidadRemoto() {
-        // Verificamos que el dispositivo tenga coneccion a internet
-        ConnectivityService con = new ConnectivityService();
-        if (con.stateConnection(this)) {
+    private void getLocalidadDeDbRemoto() {
+        ConnectivityService estaConectado = new ConnectivityService();
+        if (estaConectado.stateConnection(this)) {
             Call<JsonArray> requestProductos = ApiUtils.getApiServices().getUnidades();
             requestProductos.enqueue(new Callback<JsonArray>() {
                 public void onResponse(Call<JsonArray> call, Response<JsonArray> response) {
@@ -268,10 +242,7 @@ public class UsuarioActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Solicitamos los datos de localidades a db local
-     */
-    private void getLocalidaLocal() {
+    private void getLocalidadDeDbLocal() {
         try {
             conexiones = new Conexiones(this);
             List<Localidad> arrayListLocalidades = conexiones.getLocalidades();
@@ -281,9 +252,6 @@ public class UsuarioActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Seteamos las localidades al spinner
-     */
     private void llenarSpinnerLocalidades(List<Localidad> localidadList) {
         ArrayList<String> stringLocalidades = new ArrayList<>();
         try {
@@ -296,16 +264,13 @@ public class UsuarioActivity extends AppCompatActivity {
                 }
             }
             ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_list_item_1, stringLocalidades);
-            this.spLocalidad.setAdapter(adapter);
-            this.spLocalidad.setSelection(posicion);
+            this.spinnerLocalidad.setAdapter(adapter);
+            this.spinnerLocalidad.setSelection(posicion);
         } catch (NullPointerException npe) {
             Toast.makeText(this, npe.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
-    /**
-     * Seteamos los estados al spinner, preleccionando el que posee el usuario
-     */
     private void llenarSpinnerEstado(int accion) {
         ArrayList<String> localidadList = new ArrayList<>();
         try {
@@ -320,10 +285,10 @@ public class UsuarioActivity extends AppCompatActivity {
                         posicion = i;
                     }
                 }
-                this.spEstado.setAdapter(adapter);
-                this.spEstado.setSelection(posicion);
+                this.spinnerEstado.setAdapter(adapter);
+                this.spinnerEstado.setSelection(posicion);
             } else {
-                this.spEstado.setAdapter(adapter);
+                this.spinnerEstado.setAdapter(adapter);
             }
         } catch (NullPointerException npe) {
             Toast.makeText(this, npe.getMessage(), Toast.LENGTH_LONG).show();

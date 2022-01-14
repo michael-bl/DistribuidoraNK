@@ -32,7 +32,7 @@
         android:layout_marginRight="5dp">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/txtCedulaCliente"
+            android:id="@+id/txtIdUnidad"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -48,24 +48,7 @@
         android:layout_marginRight="5dp">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/txtNombreCliente"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:hint="@string/unidadMedida"
-            android:inputType="text"
-            android:maxLines="1" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="5dp">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/txtDetalle"
+            android:id="@+id/txtDetalleUnidad"
             android:layout_width="match_parent"
             android:layout_height="81dp"
             android:gravity="center"
@@ -87,7 +70,7 @@
         android:text="@string/estado" />
 
     <Spinner
-        android:id="@+id/spinnerUnidad"
+        android:id="@+id/spEstadoUnidad"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="5dp"
@@ -99,7 +82,7 @@
         android:background="@color/design_default_color_on_secondary" />
 
     <Button
-        android:id="@+id/btnGuardarCliente"
+        android:id="@+id/btnGuardarUnidad"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"

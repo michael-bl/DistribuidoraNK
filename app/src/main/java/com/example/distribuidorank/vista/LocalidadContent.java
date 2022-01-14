@@ -75,11 +75,10 @@ public class LocalidadContent extends AppCompatActivity {
         //Extrayendo el extra de tipo cadena
         localidad = (Localidad) bundle.getSerializable("localidad");
 
-        //Evento boton siguiente, hacia LocalidadActivity.class
         Button btnSiguiente = findViewById(R.id.btnNextContentLocalidad);
         btnSiguiente.setOnClickListener(v -> {
             if (localidad.getAccion() == 0) {
-                dialogAccion().show();
+                dialogOpcionCrudSobreLocalidad().show();
             } else {
                 localidad.setAccion(0);
                 localidad.setEstado(1);
@@ -89,17 +88,13 @@ public class LocalidadContent extends AppCompatActivity {
             }
         });
 
-        //Solicitar localidades
         existDb = new ExistDataBaseSqlite();
-        if (existDb.existeDataBase())
-            getLocalidadesLocal();
-        else getLocalidadesRemoto();
+        if (existDb.existeDataBaseLocal())
+            getLocalidadesDeDbLocal();
+        else getLocalidadesDeDbRemoto();
     }
 
-    /**
-     * MsgDialogDBLocal captura opcion - Actualizar o eliminar objeto
-     */
-    private AlertDialog dialogAccion() {
+    private AlertDialog dialogOpcionCrudSobreLocalidad() {
         view = inflater.inflate(R.layout.dialog_opciones, null);
         final Button btnActualizar = view.findViewById(R.id.btnNuevo);
         btnActualizar.setText("Actualizar");
@@ -126,10 +121,7 @@ public class LocalidadContent extends AppCompatActivity {
         return builder.create();
     }
 
-    /**
-     * Obtiene lista de localidades de bd local
-     */
-    private void getLocalidadesLocal() {
+    private void getLocalidadesDeDbLocal() {
         try {
             conexiones = new Conexiones(this);
             List<Localidad> listaLocalidades = new ArrayList<>(conexiones.getLocalidades());
@@ -137,7 +129,7 @@ public class LocalidadContent extends AppCompatActivity {
             for (Localidad localidad : listaLocalidades) {
                 stringIdsListaLocalidades.add(localidad.getId() + "-" + localidad.getLocalidad());
             }
-            setListaLocalidades(stringIdsListaLocalidades, listaLocalidades);
+            llenarListViewLocalidad(stringIdsListaLocalidades, listaLocalidades);
         } catch (NullPointerException npe) {
             Toast.makeText(LocalidadContent.this, "Error, verifique por favor: " + npe.getMessage(), Toast.LENGTH_LONG).show();
         } catch (JsonSyntaxException jse) {
@@ -145,13 +137,9 @@ public class LocalidadContent extends AppCompatActivity {
         }
     }
 
-    /**
-     * Obtiene lista de localidades de bd remota
-     */
-    public void getLocalidadesRemoto() {
-        // Verificamos que el dispositivo tenga coneccion a internet
-        ConnectivityService con = new ConnectivityService();
-        if (con.stateConnection(this)) {
+    public void getLocalidadesDeDbRemoto() {
+        ConnectivityService estaConectado = new ConnectivityService();
+        if (estaConectado.stateConnection(this)) {
             Call<JsonArray> requestLastReports = ApiUtils.getApiServices().getLocalidades();
             requestLastReports.enqueue(new Callback<JsonArray>() {
                 @Override
@@ -168,7 +156,7 @@ public class LocalidadContent extends AppCompatActivity {
                             localidad.setLocalidad(arrayLocalidades.getAsJsonObject().get("localidad").getAsString());
                             listaLocalidades.add(localidad);
                         }
-                        setListaLocalidades(stringIdsListaLocalidades, listaLocalidades);
+                        llenarListViewLocalidad(stringIdsListaLocalidades, listaLocalidades);
                         Toast.makeText(LocalidadContent.this, "Datos cargados exitosamente!", Toast.LENGTH_SHORT).show();
                     }
                 }
@@ -183,12 +171,9 @@ public class LocalidadContent extends AppCompatActivity {
         }
     }
 
-    /**
-     * Carga datos de localidades en listviewclocalidades
-     */
-    private void setListaLocalidades(ArrayList<String> stringListaLocalidad, List<Localidad> c) {
+    private void llenarListViewLocalidad(ArrayList<String> stringListaLocalidad, List<Localidad> listaLocalidad) {
         try {
-            this.listaLocalidades = c;
+            this.listaLocalidades = listaLocalidad;
             listviewLocalidad = findViewById(R.id.lvContentLocalidad);
             mAdapter = new SelectionAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1, stringListaLocalidad);
             listviewLocalidad.setAdapter(mAdapter);
@@ -199,9 +184,6 @@ public class LocalidadContent extends AppCompatActivity {
         }
     }
 
-    /**
-     * Filtro sobre el Listview de localidades
-     */
     private void onTextChanged() {
         // Arraylist con datos filtrados
         final ArrayList<String> array_sort = new ArrayList<>();
