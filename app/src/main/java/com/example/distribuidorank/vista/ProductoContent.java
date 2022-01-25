@@ -161,7 +161,7 @@ public class ProductoContent extends AppCompatActivity {
                             stringIdsListaProductos.add(j, listaPro.get(j).getAsJsonObject().get("id").getAsInt() + "-" + listaPro.get(j).getAsJsonObject().get("descripcion").toString());
                             p.setId(listaPro.get(j).getAsJsonObject().get("id").getAsInt());
                             p.setDescripcion(listaPro.get(j).getAsJsonObject().get("descripcion").toString());
-                            p.setFk_familia(listaPro.get(j).getAsJsonObject().get("fk_unidad").getAsInt());
+                            p.setFk_unidad(listaPro.get(j).getAsJsonObject().get("fk_unidad").getAsInt());
                             p.setPrecio_compra(listaPro.get(j).getAsJsonObject().get("precio_compra").getAsFloat());
                             p.setPrecio_venta(listaPro.get(j).getAsJsonObject().get("precio_venta").getAsFloat());
                             p.setUtilidad(listaPro.get(j).getAsJsonObject().get("utilidad").getAsFloat());

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="header_productos" >
+        <item>Código</item>
+        <item>Producto</item>
+        <item>Precio Compra</item>
+        <item>Precio Venta</item>
+        <item>% Utilidad</item>
+        <item>Ganancia</item>
+    </string-array>
+</resources>

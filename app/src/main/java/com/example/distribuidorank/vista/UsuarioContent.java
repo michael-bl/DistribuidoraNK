@@ -252,7 +252,7 @@ public class UsuarioContent extends AppCompatActivity {
                         //con position obtenemos el usuario de la listaUsuarios, el indice es el mismo
                         usuario = listaUsuarios.get(position);
                     } else {
-                        idUsuarioSeleccionado.remove(listviewUsuarios.getItemAtPosition(position).toString());
+                            idUsuarioSeleccionado.remove(listviewUsuarios.getItemAtPosition(position).toString());
                         mAdapter.removeSelection(position);
                     }
                     mode.setTitle(mAdapter.getSelectionCount() + " Items seleccionados");

@@ -137,10 +137,6 @@ public class Producto implements Serializable {
     @Expose
     private int estado;
 
-    @SerializedName("fk_familia")
-    @Expose
-    private int fk_familia;
-
     @SerializedName("detalle")
     @Expose
     private String detalle;
@@ -167,13 +163,5 @@ public class Producto implements Serializable {
 
     public void setEstado(int estado) {
         this.estado = estado;
-    }
-
-    public void setFk_familia(int fk_familia) {
-        this.fk_familia = fk_familia;
-    }
-
-    public int getFk_familia() {
-        return fk_familia;
     }
 }

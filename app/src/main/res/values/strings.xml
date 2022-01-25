@@ -52,6 +52,7 @@
     <string name="procesar">Procesar</string>
     <string name="configdb">Config. Base Datos</string>
     <string name="masAcciones">Más acciones</string>
+    <string name="resumen">Resumen del Pedido</string>
     <!--Usuario-->
     <string name="usuario">Usuario</string>
     <string name="cedula">Cédula</string>
@@ -71,7 +72,7 @@
     <!--Base de datos-->
     <string name="sincroLocal">Sincronizar a Local</string>
     <string name="sincroRemoto">Sincronizar a Remoto</string>
-    <string name="eliminarBasedatos">Eliminar Base Datos</string>
+    <string name="modoAlmacenamiento">Cambiar Modo Almacenamiento</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

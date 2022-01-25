@@ -9,6 +9,7 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.distribuidorank.R;
+import com.example.distribuidorank.modelo.Producto;
 import com.example.distribuidorank.modelo.Targeta;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.DataObjectHolder> {
     private ArrayList<Targeta> mDataset;
     private static MyClickListener myClickListener;
+    private ArrayList<Producto> listaProductos;
 
     public static class DataObjectHolder extends RecyclerView.ViewHolder
             implements View
@@ -33,15 +35,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             precioVenta = view.findViewById(R.id.txtCardPrecioVenta);
             utilidad = view.findViewById(R.id.txtCardUtilidad);
             btnAgregar = view.findViewById(R.id.btnCardComprar);
-            btnAgregar.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
+            btnAgregar.setOnClickListener(v -> {
 
-                }
             });
 
         }
 
+        @SuppressWarnings("deprecation")
         @Override
         public void onClick(View v) {
             myClickListener.onItemClick(getAdapterPosition(), v);
@@ -52,8 +52,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         this.myClickListener = myClickListener;
     }
 
-    public RecyclerViewAdapter(ArrayList<Targeta> myDataset) {
+    public RecyclerViewAdapter(ArrayList<Targeta> myDataset, ArrayList<Producto> arrayListProductos) {
         mDataset = myDataset;
+        listaProductos = arrayListProductos;
     }
 
     public RecyclerViewAdapter() {
@@ -78,11 +79,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     public void addItem(Targeta dataObj, int index) {
+
         mDataset.add(index, dataObj);
         notifyItemInserted(index);
     }
 
     public void deleteItem(int index) {
+
         mDataset.remove(index);
         notifyItemRemoved(index);
     }

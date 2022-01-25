@@ -1,8 +1,10 @@
 package com.example.distribuidorank.modelo;
 
 public class Targeta {
+
     private String nombre;
     private String imagen;
+    private int idProducto;
     private String utilidad;
     private String precioVenta;
     private String precioCompra;
@@ -47,5 +49,14 @@ public class Targeta {
 
     public void setPrecioVenta(String precioVenta) {
         this.precioVenta = precioVenta;
+    }
+
+
+    public int getIdProducto() {
+        return idProducto;
+    }
+
+    public void setIdProducto(int idProducto) {
+        this.idProducto = idProducto;
     }
 }

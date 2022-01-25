@@ -274,7 +274,7 @@ public class ProductoActivity extends AppCompatActivity {
         try {
             for (int k = 0; k < unidadList.size(); k++) {
                 stringUnidades.add(unidadList.get(k).getId() + "-" + unidadList.get(k).getDetalle());
-                if (unidadList.get(k).getId() == producto.getFk_familia()) {
+                if (unidadList.get(k).getId() == producto.getFk_unidad()) {
                     posicion = k;
                 }
             }

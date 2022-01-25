@@ -25,6 +25,7 @@ import com.example.distribuidorank.controlador.ConnectivityService;
 import com.example.distribuidorank.controlador.MsgDialogDBLocal;
 import com.example.distribuidorank.controlador.RecyclerViewAdapter;
 import com.example.distribuidorank.modelo.Cliente;
+import com.example.distribuidorank.modelo.Factura;
 import com.example.distribuidorank.modelo.Localidad;
 import com.example.distribuidorank.modelo.Producto;
 import com.example.distribuidorank.modelo.Proveedor;
@@ -59,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
     private Producto producto;
     private Usuario usuario;
     private Cliente cliente;
+    private Factura factura;
     private Intent intent;
     private Bundle bundle;
     private Unidad unidad;
@@ -82,7 +84,8 @@ public class MainActivity extends AppCompatActivity {
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        getProductosDeLocalOremoto();
+        //getProductosDeLocalOremoto();
+        crearTargetasDeProductos(listaProductos);
     }
 
     @Override
@@ -94,18 +97,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up btnSiguienteContent, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.nav_usuario) {
-            dialogOpciones("Usuarios").show();
+            dialogOpciones("Usuario").show();
         }
         if (id == R.id.nav_cliente) {
-            dialogOpciones("Clientes").show();
+            dialogOpciones("Cliente").show();
         }
         if (id == R.id.nav_producto) {
-            dialogOpciones("Productos").show();
+            dialogOpciones("Producto").show();
         }
         if (id == R.id.nav_proveedor) {
             dialogOpciones("Proveedor").show();
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity {
             dialogOpciones("Localidad").show();
         }
         if (id == R.id.nav_facturacion) {
-            dialogOpciones("Facturacion").show();
+            dialogOpciones("Factura").show();
         }
         if (id == R.id.nav_unidadmedida) {
             dialogOpciones("Unidad").show();
@@ -157,16 +157,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void crearTargetasDeProductos(List<Producto> listaProductos) {
-        // Lista de cardviews dinámicas para mostrar productos
+        // Lista de cardviews dinámicas para mostrar productos en la vista MainActivity
         cardList = new ArrayList<>();
+        ArrayList<Producto> arrayListProductos = new ArrayList<>();
         recyclerView = findViewById(R.id.recyclerVCard);
         mLayoutManager = new LinearLayoutManager(MainActivity.this);
         recyclerView.setLayoutManager(mLayoutManager);
 
         if (listaProductos == null) {
             Targeta obj = new Targeta();
-            obj.setImagen("Sin imagen");
-            obj.setNombre("Sin productos");
+            obj.setImagen("Sin datos");
+            obj.setNombre("No haz realizado pedidos");
             obj.setPrecioCompra("0.00");
             obj.setPrecioVenta("0.00");
             obj.setUtilidad("0.00");
@@ -175,15 +176,17 @@ public class MainActivity extends AppCompatActivity {
             for (int i = 0; i < listaProductos.size(); i++) {
                 Targeta obj = new Targeta();
                 //obj.setImagen(listaProductos.get(i).Imagen);
-                Producto p = listaProductos.get(i);
-                obj.setNombre(p.getDescripcion());
-                obj.setPrecioCompra(Float.toString(p.getPrecio_compra()));
-                obj.setPrecioVenta(Float.toString(p.getPrecio_venta()));
-                obj.setUtilidad(Float.toString(p.getUtilidad()));
+                Producto nuevoProducto = listaProductos.get(i);
+                obj.setIdProducto(nuevoProducto.getId());
+                obj.setNombre(nuevoProducto.getDescripcion());
+                obj.setPrecioCompra(Float.toString(nuevoProducto.getPrecio_compra()));
+                obj.setPrecioVenta(Float.toString(nuevoProducto.getPrecio_venta()));
+                obj.setUtilidad(Float.toString(nuevoProducto.getUtilidad()));
+                arrayListProductos.add(nuevoProducto);
                 cardList.add(i, obj);
             }
         }
-        recyclerAdapter = new RecyclerViewAdapter(cardList);
+        recyclerAdapter = new RecyclerViewAdapter(cardList, arrayListProductos);
         recyclerView.setAdapter(recyclerAdapter);
     }
 
@@ -204,7 +207,7 @@ public class MainActivity extends AppCompatActivity {
                             Producto p = new Producto();
                             p.setId(listaPro.get(j).getAsJsonObject().get("id").getAsInt());
                             p.setDescripcion(listaPro.get(j).getAsJsonObject().get("descripcion").toString());
-                            p.setFk_familia(listaPro.get(j).getAsJsonObject().get("fk_unidad").getAsInt());
+                            p.setFk_unidad(listaPro.get(j).getAsJsonObject().get("fk_unidad").getAsInt());
                             p.setPrecio_compra(listaPro.get(j).getAsJsonObject().get("precio_compra").getAsFloat());
                             p.setPrecio_venta(listaPro.get(j).getAsJsonObject().get("precio_venta").getAsFloat());
                             p.setUtilidad(listaPro.get(j).getAsJsonObject().get("utilidad").getAsFloat());
@@ -232,7 +235,7 @@ public class MainActivity extends AppCompatActivity {
         btnNuevo.setOnClickListener(v -> {
             // Accion 0=nuevo
             switch (objeto) {
-                case "Usuarios":
+                case "Usuario":
                     intent = new Intent(MainActivity.this, UsuarioActivity.class);
                     bundle = new Bundle();
                     usuario = new Usuario();
@@ -241,7 +244,7 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtras(bundle);
                     startActivity(intent);
                     break;
-                case "Clientes":
+                case "Cliente":
                     intent = new Intent(MainActivity.this, ClienteActivity.class);
                     bundle = new Bundle();
                     cliente = new Cliente();
@@ -250,7 +253,7 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtras(bundle);
                     startActivity(intent);
                     break;
-                case "Productos":
+                case "Producto":
                     intent = new Intent(MainActivity.this, ProductoActivity.class);
                     bundle = new Bundle();
                     producto = new Producto();
@@ -268,10 +271,12 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtras(bundle);
                     startActivity(intent);
                     break;
-                case "Facturacion":
+                case "Factura":
                     intent = new Intent(this.getApplicationContext(), FacturacionActivity.class);
                     bundle = new Bundle();
-                    bundle.putSerializable("productos", (Serializable) listaProductos); //OJO CON ESTE DATO ENVIADO
+                    producto = new Producto();
+                    producto.setAccion(0);
+                    bundle.putSerializable("producto", (Serializable) listaProductos); //OJO CON ESTE DATO ENVIADO
                     intent.putExtras(bundle);
                     startActivity(intent);
                     break;
@@ -299,20 +304,24 @@ public class MainActivity extends AppCompatActivity {
         btnActualizar.setOnClickListener(v -> {
 
             switch (objeto) {
-                case "Usuarios":
+                case "Usuario":
                     intent = new Intent(MainActivity.this, UsuarioContent.class);
                     startActivity(intent);
                     break;
-                case "Clientes":
+                case "Cliente":
                     intent = new Intent(MainActivity.this, ClienteContent.class);
                     startActivity(intent);
                     break;
-                case "Productos":
+                case "Producto":
                     intent = new Intent(MainActivity.this, ProductoContent.class);
                     startActivity(intent);
                     break;
                 case "Proveedor":
                     intent = new Intent(MainActivity.this, ProveedorContent.class);
+                    startActivity(intent);
+                    break;
+                case "Factura":
+                    intent = new Intent(MainActivity.this, FacturacionContent.class);
                     startActivity(intent);
                     break;
                 case "Localidad":
@@ -323,6 +332,7 @@ public class MainActivity extends AppCompatActivity {
                     intent = new Intent(MainActivity.this, UnidadContent.class);
                     startActivity(intent);
                     break;
+
             }
         });
 
