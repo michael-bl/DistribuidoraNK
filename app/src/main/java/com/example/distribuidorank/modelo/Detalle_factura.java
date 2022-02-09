@@ -79,7 +79,7 @@ public class Detalle_factura {
             this.utilidad = decimal_format.parse(utilidad).floatValue();
         } catch (ParseException | NullPointerException e) {
             this.utilidad = 0;
-            Log.e("Parse Exception", String.format("Clase: Detalle_factura\tMétodo: setUtilidad\nError:%s", e.toString()));
+            Log.e("Parse Exception", String.format("Clase: Detalle_factura\tMétodo: setPorcentajeUtilidad\nError:%s", e.toString()));
         }
     }
 

@@ -5,9 +5,11 @@ public class Targeta {
     private String nombre;
     private String imagen;
     private int idProducto;
-    private String utilidad;
-    private String precioVenta;
+    private String porcentajeUtilidad;
     private String precioCompra;
+    private String precioVenta;
+    private String dineroUtilidad;
+    private String cantidad;
 
     public Targeta(){
     }
@@ -35,12 +37,12 @@ public class Targeta {
         this.imagen = imagen;
     }
 
-    public String getUtilidad() {
-        return utilidad;
+    public String getPorcentajeUtilidad() {
+        return porcentajeUtilidad;
     }
 
-    public void setUtilidad(String utilidad) {
-        this.utilidad = utilidad;
+    public void setPorcentajeUtilidad(String porcentajeUtilidad) {
+        this.porcentajeUtilidad = porcentajeUtilidad;
     }
 
     public String getPrecioVenta() {
@@ -58,5 +60,21 @@ public class Targeta {
 
     public void setIdProducto(int idProducto) {
         this.idProducto = idProducto;
+    }
+
+    public String getDineroUtilidad() {
+        return dineroUtilidad;
+    }
+
+    public void setDineroUtilidad(String dineroUtilidad) {
+        this.dineroUtilidad = dineroUtilidad;
+    }
+
+    public String getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(String cantidad) {
+        this.cantidad = cantidad;
     }
 }

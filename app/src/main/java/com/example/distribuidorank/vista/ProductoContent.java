@@ -183,11 +183,11 @@ public class ProductoContent extends AppCompatActivity {
         }
     }
 
-    private void llenarListViewProductos(ArrayList<String> listaproducto, List<Producto> listaProducto) {
+    private void llenarListViewProductos(ArrayList<String> stringListaProducto, List<Producto> listaProducto) {
         try {
             this.listaProductos = listaProducto;
             listviewProductos = findViewById(R.id.lvContentProductos);
-            mAdapter = new SelectionAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1, listaproducto);
+            mAdapter = new SelectionAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1, stringListaProducto);
             listviewProductos.setAdapter(mAdapter);
             onTextChanged();
             setUpActionBar();

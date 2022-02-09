@@ -154,9 +154,6 @@ public class ClienteActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Almacena cliente, sea nuevo o actualizado, por medio de variable accion se indica que se debe hacer
-     */
     private void guardarClienteEnDbLocal() {
         try {
             if (llenarVariablesDeCliente()) {
@@ -189,9 +186,6 @@ public class ClienteActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Escoge de donde obtener los datos
-     */
     private void getLocalidadLocalOremoto() {
         try {
             conexiones = new Conexiones(this);
@@ -203,9 +197,6 @@ public class ClienteActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Solicitamos los datos de localidades al servidor remoto
-     */
     private void getLocalidadRemoto() {
         // Verificamos que el dispositivo tenga coneccion a internet
         ConnectivityService con = new ConnectivityService();
@@ -240,9 +231,6 @@ public class ClienteActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Solicitamos los datos de localidades a db local
-     */
     private void getLocalidaLocal() {
         try {
             conexiones = new Conexiones(this);
@@ -253,9 +241,6 @@ public class ClienteActivity extends AppCompatActivity {
         }
     }
 
-    /**
-     * Seteamos las localidades al spinner
-     */
     private void llenarSpinnerLocalidades(List<Localidad> localidadList) {
         ArrayList<String> stringLocalidades = new ArrayList<>();
         try {

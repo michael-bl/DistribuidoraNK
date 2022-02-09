@@ -53,6 +53,8 @@
     <string name="configdb">Config. Base Datos</string>
     <string name="masAcciones">Más acciones</string>
     <string name="resumen">Resumen del Pedido</string>
+    <string name="unidades">Unidades</string>
+    <string name="cantidad">Cantidad</string>
     <!--Usuario-->
     <string name="usuario">Usuario</string>
     <string name="cedula">Cédula</string>
@@ -64,7 +66,8 @@
     <string name="agregar">Agregar</string>
     <string name="detalle">Detalle</string>
     <string name="nombreProducto">Nombre Producto</string>
-    <string name="utilidad">Utilidad</string>
+    <string name="porcentajeUtilidad">% Utilidad</string>
+    <string name="ganancia">$ Ganancia</string>
     <string name="calcular_utilidad">Calcular Utilidad</string>
     <string name="precioCompra">Precio de compra</string>
     <string name="precioVenta">Precio de venta</string>

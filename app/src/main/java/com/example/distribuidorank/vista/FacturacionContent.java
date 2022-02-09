@@ -79,6 +79,7 @@ public class FacturacionContent extends AppCompatActivity {
         // Evento boton siguiente, hacia ProductoActivity.class
         Button btnSiguiente = findViewById(R.id.btnNextContentFactura);
         btnSiguiente.setOnClickListener(v -> {
+            try {
             if (producto.getAccion() == 0) {
                 dialogOpcionCrudSobreProducto().show();
             } else {
@@ -87,6 +88,9 @@ public class FacturacionContent extends AppCompatActivity {
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
+        } catch (NullPointerException npe) {
+            Toast.makeText(FacturacionContent.this, "Error: " + npe.getMessage(), Toast.LENGTH_LONG).show();
+        }
         });
 
         existDb = new ExistDataBaseSqlite();
@@ -179,11 +183,11 @@ public class FacturacionContent extends AppCompatActivity {
         }
     }
 
-    private void llenarListViewProductos(ArrayList<String> listaproducto, List<Producto> listProducto) {
+    private void llenarListViewProductos(ArrayList<String> strListaproducto, List<Producto> listProducto) {
         try {
             this.listaProductos = listProducto;
             listviewProductos = findViewById(R.id.lvContentFactura);
-            mAdapter = new SelectionAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1, listaproducto);
+            mAdapter = new SelectionAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1, strListaproducto);
             listviewProductos.setAdapter(mAdapter);
             onTextChanged();
             setUpActionBar();

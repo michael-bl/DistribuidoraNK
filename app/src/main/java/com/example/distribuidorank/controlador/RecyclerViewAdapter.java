@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.distribuidorank.R;
 import com.example.distribuidorank.modelo.Producto;
 import com.example.distribuidorank.modelo.Targeta;
+import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.ArrayList;
 
@@ -18,26 +20,41 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     private ArrayList<Targeta> mDataset;
     private static MyClickListener myClickListener;
     private ArrayList<Producto> listaProductos;
+    private DataObjectHolder dataObjectHolder;
+    private int posicion;
+    private double utiliGeneral;
 
-    public static class DataObjectHolder extends RecyclerView.ViewHolder
+
+    public class DataObjectHolder extends RecyclerView.ViewHolder
             implements View
             .OnClickListener {
-        private TextView nombre;
-        private TextView precioVenta;
+        private EditText cantidad;
+        private EditText precioVenta;
         private TextView precioCompra;
-        private TextView utilidad;
-        private Button btnAgregar;
+        private TextView nombre;
+        private TextView porcentajeUtilidad;
+        private TextView dineroUtilidad;
+        private Button btnCalcular;
+        private TextInputEditText totalGeneral;
+        private TextInputEditText utilidadGeneral;
+
 
         public DataObjectHolder(View view) {
             super(view);
-            nombre = view.findViewById(R.id.txtCardNombre);
-            precioCompra = view.findViewById(R.id.txtCardPrecioCompra);
-            precioVenta = view.findViewById(R.id.txtCardPrecioVenta);
-            utilidad = view.findViewById(R.id.txtCardUtilidad);
-            btnAgregar = view.findViewById(R.id.btnCardComprar);
-            btnAgregar.setOnClickListener(v -> {
-
+            view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                }
             });
+
+            /*btnCalcular = view.findViewById(R.id.btnCardCalcular);
+            btnCalcular.setOnClickListener(v -> {
+                cantidad.getText();
+
+                utiliGeneral = Double.parseDouble(String.valueOf(precioCompra.getText()))-Double.parseDouble(String.valueOf(precioCompra.getText()));
+                utilidadGeneral.setText(String.valueOf(utiliGeneral));
+                mostrarDatosDelPedidoEnLaUi();
+            });*/
 
         }
 
@@ -63,8 +80,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public DataObjectHolder onCreateViewHolder(ViewGroup parent,
                                                int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.my_card, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.my_card, parent, false);
 
         DataObjectHolder dataObjectHolder = new DataObjectHolder(view);
         return dataObjectHolder;
@@ -72,10 +88,21 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     @Override
     public void onBindViewHolder(DataObjectHolder holder, int position) {
-        holder.nombre.setText(mDataset.get(position).getNombre());
-        holder.precioCompra.setText(mDataset.get(position).getPrecioCompra());
-        holder.precioVenta.setText(mDataset.get(position).getPrecioVenta());
-        holder.utilidad.setText(mDataset.get(position).getUtilidad());
+        dataObjectHolder = holder;
+        posicion = position;
+        mostrarDatosDelPedidoEnLaUi();
+    }
+
+    public void mostrarDatosDelPedidoEnLaUi(){
+        double precioVenta = Double.parseDouble(mDataset.get(posicion).getPrecioVenta());
+        double precioCompra = Double.parseDouble(mDataset.get(posicion).getPrecioCompra());
+        double dineroUtilidad = precioVenta-precioCompra;
+        dataObjectHolder.nombre.setText(mDataset.get(posicion).getNombre());
+        dataObjectHolder.precioCompra.setText(mDataset.get(posicion).getPrecioCompra());
+        dataObjectHolder.precioVenta.setText(mDataset.get(posicion).getPrecioVenta());
+        dataObjectHolder.porcentajeUtilidad.setText(mDataset.get(posicion).getPorcentajeUtilidad());
+        dataObjectHolder.dineroUtilidad.setText(String.valueOf(dineroUtilidad));
+        dataObjectHolder.cantidad.setText("0");
     }
 
     public void addItem(Targeta dataObj, int index) {
@@ -85,7 +112,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     public void deleteItem(int index) {
-
         mDataset.remove(index);
         notifyItemRemoved(index);
     }

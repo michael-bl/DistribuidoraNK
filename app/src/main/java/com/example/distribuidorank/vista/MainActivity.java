@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         toggle.syncState();
 
         //getProductosDeLocalOremoto();
-        crearTargetasDeProductos(listaProductos);
+        //crearTargetasDeProductos(listaProductos);
     }
 
     @Override
@@ -170,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
             obj.setNombre("No haz realizado pedidos");
             obj.setPrecioCompra("0.00");
             obj.setPrecioVenta("0.00");
-            obj.setUtilidad("0.00");
+            obj.setPorcentajeUtilidad("0.00");
             cardList.add(0, obj);
         } else {
             for (int i = 0; i < listaProductos.size(); i++) {
@@ -181,7 +181,7 @@ public class MainActivity extends AppCompatActivity {
                 obj.setNombre(nuevoProducto.getDescripcion());
                 obj.setPrecioCompra(Float.toString(nuevoProducto.getPrecio_compra()));
                 obj.setPrecioVenta(Float.toString(nuevoProducto.getPrecio_venta()));
-                obj.setUtilidad(Float.toString(nuevoProducto.getUtilidad()));
+                obj.setPorcentajeUtilidad(Float.toString(nuevoProducto.getUtilidad()));
                 arrayListProductos.add(nuevoProducto);
                 cardList.add(i, obj);
             }
