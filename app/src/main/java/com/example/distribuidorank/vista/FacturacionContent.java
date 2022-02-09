@@ -80,17 +80,17 @@ public class FacturacionContent extends AppCompatActivity {
         Button btnSiguiente = findViewById(R.id.btnNextContentFactura);
         btnSiguiente.setOnClickListener(v -> {
             try {
-            if (producto.getAccion() == 0) {
-                dialogOpcionCrudSobreProducto().show();
-            } else {
-                producto.setAccion(0);
-                bundle.putSerializable("productos", listaProductosSeleccionados);
-                intent.putExtras(bundle);
-                startActivity(intent);
+                if (producto.getAccion() == 0) {
+                    dialogOpcionCrudSobreProducto().show();
+                } else {
+                    producto.setAccion(0);
+                    bundle.putSerializable("productos", listaProductosSeleccionados);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
+                }
+            } catch (NullPointerException npe) {
+                Toast.makeText(FacturacionContent.this, "Error: " + npe.getMessage(), Toast.LENGTH_LONG).show();
             }
-        } catch (NullPointerException npe) {
-            Toast.makeText(FacturacionContent.this, "Error: " + npe.getMessage(), Toast.LENGTH_LONG).show();
-        }
         });
 
         existDb = new ExistDataBaseSqlite();
@@ -98,6 +98,7 @@ public class FacturacionContent extends AppCompatActivity {
             getProductosDeDbLocal();
         else getProductosDeDbRemoto();
     }
+
     private AlertDialog dialogOpcionCrudSobreProducto() {
         view = inflater.inflate(R.layout.dialog_opciones, null);
 
@@ -243,14 +244,13 @@ public class FacturacionContent extends AppCompatActivity {
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
 
                 // If element is checked, it is added to selection; if not, it's deleted
+                producto = listaProductos.get(position);
                 if (checked) {
                     //con position obtenemos el producto de la listaProductos, el indice es el mismo
-                    producto = listaProductos.get(position);
                     listaProductosSeleccionados.add(producto);
                     mAdapter.setNewSelection(position);
-
                 } else {
-                    listaProductosSeleccionados.remove(listviewProductos.getItemAtPosition(position));
+                    listaProductosSeleccionados.remove(producto);
                     mAdapter.removeSelection(position);
                 }
                 mode.setTitle(mAdapter.getSelectionCount() + " Items seleccionados");

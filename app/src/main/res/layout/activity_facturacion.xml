@@ -86,7 +86,7 @@
                 android:layout_marginTop="5dp">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/texViewFecha"
+                    android:id="@+id/textViewFecha"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -102,7 +102,7 @@
                 android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/texCliente"
+                    android:id="@+id/textViewCliente"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -118,7 +118,7 @@
                 android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/texViewAgente"
+                    android:id="@+id/textViewAgente"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -134,7 +134,7 @@
                 android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/texViewTotaldelPedido"
+                    android:id="@+id/textViewTotaldelPedido"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -150,7 +150,7 @@
                 android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/texViewUtilidadGeneral"
+                    android:id="@+id/textViewUtilidadGeneral"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
@@ -169,6 +169,9 @@
                 android:layout_marginTop="5dp"
                 android:text="@string/guardar" />
         </LinearLayout>
+
     </ScrollView>
+
+    <include layout="@layout/my_card"/>
 
 </androidx.appcompat.widget.LinearLayoutCompat>

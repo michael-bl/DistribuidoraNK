@@ -33,6 +33,7 @@ import com.google.gson.JsonSyntaxException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -201,7 +202,7 @@ public class ClienteContent extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                int textlength = tvBuscarCliente.getText().length();
+                int textlength = Objects.requireNonNull(tvBuscarCliente.getText()).length();
                 array_sort.clear();
                 for (int i = 0; i < stringIdsListaClientes.size(); i++) {
                     if (textlength <= stringIdsListaClientes.get(i).length()) {
