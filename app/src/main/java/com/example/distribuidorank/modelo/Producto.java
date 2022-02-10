@@ -42,6 +42,10 @@ public class Producto implements Serializable {
     @Expose
     private Date ultima_actualizacion;
 
+    @SerializedName("cantidad")
+    @Expose
+    private int cantidad;
+
     @Expose(serialize = false)
     private static final DecimalFormat decimal_format =new DecimalFormat("#############.00");
 
@@ -163,5 +167,13 @@ public class Producto implements Serializable {
 
     public void setEstado(int estado) {
         this.estado = estado;
+    }
+
+    public int getCantidad() {
+        return cantidad;
+    }
+
+    public void setCantidad(int cantidad) {
+        this.cantidad = cantidad;
     }
 }

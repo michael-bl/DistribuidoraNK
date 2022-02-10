@@ -35,7 +35,6 @@ import com.example.distribuidorank.modelo.Usuario;
 import com.google.android.material.navigation.NavigationView;
 import com.google.gson.JsonArray;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -272,12 +271,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                     break;
                 case "Factura":
-                    intent = new Intent(this.getApplicationContext(), FacturacionActivity.class);
-                    bundle = new Bundle();
-                    producto = new Producto();
-                    producto.setAccion(0);
-                    bundle.putSerializable("producto", (Serializable) listaProductos); //OJO CON ESTE DATO ENVIADO
-                    intent.putExtras(bundle);
+                    intent = new Intent(MainActivity.this, FacturacionContent.class);
                     startActivity(intent);
                     break;
                 case "Localidad":
@@ -321,8 +315,7 @@ public class MainActivity extends AppCompatActivity {
                     startActivity(intent);
                     break;
                 case "Factura":
-                    intent = new Intent(MainActivity.this, FacturacionContent.class);
-                    startActivity(intent);
+                    Toast.makeText(MainActivity.this, "Función en desarrollo!" , Toast.LENGTH_SHORT).show();
                     break;
                 case "Localidad":
                     intent = new Intent(MainActivity.this, LocalidadContent.class);

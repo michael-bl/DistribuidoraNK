@@ -32,11 +32,11 @@ public class FacturacionActivity extends AppCompatActivity {
     private DrawerLayout drawerLayout;
     private LayoutInflater inflater;
     private View view;
-
-    private float precioCompra, precioVenta, dineroUtilidad, porcentajeUtilidad, dineroTotalDelPedido, dineroUtilidadTotal;
+    private int cantidadProductos;
+    private float precioCompra, precioVenta, dineroGanancia, porcentajeUtilidad, dineroTotalDelPedido, dineroUtilidadTotal;
     private String stringFecha, stringCliente, strinAgente;
     private TextInputEditText tvFecha, tvCliente, tvAgente , tvTotaldelPedido , tvDineroUtilidadTotal, txtCardNombreProducto,
-            txtCardPrecioCompra, txtCardPrecioVenta, txtCardPorcentajeUtilidad, txtCardDineroGanancia;
+            txtCardPrecioCompra, txtCardPrecioVenta, txtCardPorcentajeUtilidad, txtCardDineroGanancia, txtCardCantidadProducto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,12 +72,6 @@ public class FacturacionActivity extends AppCompatActivity {
         tvCliente = findViewById(R.id.textViewCliente);
         tvTotaldelPedido = findViewById(R.id.textViewTotaldelPedido);
         tvDineroUtilidadTotal = findViewById(R.id.textViewUtilidadGeneral);
-
-        txtCardPrecioVenta = findViewById(R.id.txtCardPrecioVenta);
-        txtCardDineroGanancia = findViewById(R.id.txtCardGanancia);
-        txtCardPrecioCompra = findViewById(R.id.txtCardPrecioCompra);
-        txtCardNombreProducto = findViewById(R.id.txtCardNombreProducto);
-        txtCardPorcentajeUtilidad = findViewById(R.id.txtCardPorcentajeUtilidad);
     }
 
     private void mostrarDatosResumenEnLaUi(){
@@ -110,36 +104,55 @@ public class FacturacionActivity extends AppCompatActivity {
 
             mAdapter = new SelectionAdapter(this, android.R.layout.simple_list_item_1, android.R.id.text1, strListProducto);
             listviewProductos.setAdapter(mAdapter);
-            //setUpActionBar();
+
         } catch (NullPointerException npe) {
             Toast.makeText(FacturacionActivity.this, "Error, verifique por favor: " + npe.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
-    private AlertDialog dialogEditarProducto(Producto producto, int position) {
+    private AlertDialog dialogEditarProducto(Producto product, int position) {
         view = inflater.inflate(R.layout.my_card, null);
-        Button btnGuardarCambios = findViewById(R.id.btnCardGuardar);
-        Button btnCalcularUtilidad = findViewById(R.id.btnCardCalcular);
+        Button btnGuardarCambios = view.findViewById(R.id.btnCardGuardar);
+        Button btnCalcularUtilidad = view.findViewById(R.id.btnCardCalcular);
+
+        txtCardPrecioVenta = view.findViewById(R.id.txtCardPrecioVenta);
+        txtCardDineroGanancia = view.findViewById(R.id.txtCardGanancia);
+        txtCardPrecioCompra = view.findViewById(R.id.txtCardPrecioCompra);
+        txtCardNombreProducto = view.findViewById(R.id.txtCardNombreProducto);
+        txtCardPorcentajeUtilidad = view.findViewById(R.id.txtCardPorcentajeUtilidad);
+        txtCardCantidadProducto = view.findViewById(R.id.txtCardCantidad);
+
+        txtCardPrecioVenta.setText(String.valueOf(product.getPrecio_venta()));
+        txtCardPorcentajeUtilidad.setText(String.valueOf(product.getUtilidad()));
+        txtCardNombreProducto.setText(product.getDescripcion());
+        txtCardPrecioCompra.setText(String.valueOf(product.getPrecio_compra()));
+        txtCardDineroGanancia.setText(String.valueOf(product.getPrecio_venta()- product.getPrecio_compra()));
 
         btnCalcularUtilidad.setOnClickListener(v -> {
-            precioCompra = producto.getPrecio_compra();
-            precioVenta = producto.getPrecio_venta();
-            porcentajeUtilidad = (precioVenta - precioCompra) / precioCompra;
-            producto.setUtilidad(porcentajeUtilidad);
-            producto.setPrecio_venta(Float.parseFloat(txtCardPrecioVenta.getText().toString().trim()));
-            listaproductos.set(position, producto);
+            precioCompra = product.getPrecio_compra();
+            precioVenta = product.getPrecio_venta();
+            cantidadProductos = Integer.parseInt(txtCardCantidadProducto.getText().toString().trim());
+            dineroGanancia = (precioVenta - precioCompra) * cantidadProductos;
+            porcentajeUtilidad = (dineroGanancia / precioCompra) * 100;
 
-            for (Producto product: listaproductos) {
-                dineroTotalDelPedido+= product.getPrecio_venta();
+            product.setUtilidad(porcentajeUtilidad);
+            product.setPrecio_venta(Float.parseFloat(txtCardPrecioVenta.getText().toString().trim()));
+            product.setCantidad(cantidadProductos);
+            listaproductos.set(position, product);
+
+            txtCardPorcentajeUtilidad.setText(String.valueOf(product.getUtilidad()));
+            txtCardDineroGanancia.setText(String.valueOf(dineroGanancia));
+
+            for (Producto producto1: listaproductos) {
+                dineroTotalDelPedido+= producto1.getPrecio_venta() * producto1.getCantidad();
             }
             tvDineroUtilidadTotal.setText(String.valueOf(dineroTotalDelPedido));
         });
 
         btnGuardarCambios.setOnClickListener(v -> {
-
+            // cerrar el dialog y conservar informacion modificada
         });
-        builder.setView(view).setTitle("Edición de producto");
+        builder.setView(view).setTitle("    Edición de producto");
         return builder.create();
     }
-
 }
