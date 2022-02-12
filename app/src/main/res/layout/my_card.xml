@@ -52,6 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
+                android:inputType="number"
                 android:hint="@string/precioVenta" />
         </com.google.android.material.textfield.TextInputLayout>
 
@@ -81,6 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
+                android:inputType="number"
                 android:hint="@string/cantidad" />
         </com.google.android.material.textfield.TextInputLayout>
 

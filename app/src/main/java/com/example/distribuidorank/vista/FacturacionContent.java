@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.ListView;
@@ -76,7 +75,7 @@ public class FacturacionContent extends AppCompatActivity {
         // Extrayendo el extra de tipo cadena
         producto = (Producto) bundle.getSerializable("producto");
 
-        // Evento boton siguiente, hacia ProductoActivity.class
+        // Evento boton siguiente, hacia FacturacionActivity.class
         Button btnSiguiente = findViewById(R.id.btnNextContentFactura);
         btnSiguiente.setOnClickListener(v -> {
             try {
@@ -121,9 +120,7 @@ public class FacturacionContent extends AppCompatActivity {
             startActivity(intent);
         });
 
-        builder.setView(view).setTitle("Escoga una opción!").setPositiveButton("", (dialog, id) -> {
-            ((ViewGroup) drawerLayout.getParent()).removeView(view);
-        }).setNegativeButton("Cancelar", (dialog, which) -> ((ViewGroup) drawerLayout.getParent()).removeView(view));
+        builder.setView(view).setTitle("Escoga una opción!");
         return builder.create();
     }
 
@@ -247,9 +244,11 @@ public class FacturacionContent extends AppCompatActivity {
                 producto = listaProductos.get(position);
                 if (checked) {
                     //con position obtenemos el producto de la listaProductos, el indice es el mismo
+                    producto.setCantidad(+1);
                     listaProductosSeleccionados.add(producto);
                     mAdapter.setNewSelection(position);
                 } else {
+                    producto.setCantidad(-1);
                     listaProductosSeleccionados.remove(producto);
                     mAdapter.removeSelection(position);
                 }

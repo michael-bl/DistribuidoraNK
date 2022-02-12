@@ -6,7 +6,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -74,9 +73,7 @@ public class MsgDialogDBLocal {
         btnSincroRemoto.setOnClickListener(v -> { });
         btnEliminarDB.setOnClickListener(v -> { });
 
-        builder.setView(view).setTitle("Almacenamiento de datos").setPositiveButton("", (dialog, id) -> {
-            ((ViewGroup) drawerLayout.getParent()).removeView(view);
-        });
+        builder.setView(view).setTitle("Almacenamiento de datos");
         return builder.create();
     }
 

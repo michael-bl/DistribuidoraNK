@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.distribuidorank.R;
+import com.example.distribuidorank.controlador.FormatoFecha;
 import com.example.distribuidorank.controlador.SelectionAdapter;
 import com.example.distribuidorank.modelo.Producto;
 import com.google.android.material.navigation.NavigationView;
@@ -23,6 +24,7 @@ public class FacturacionActivity extends AppCompatActivity {
     private ArrayList<Producto> listaproductos;
     private ArrayList<String> strListProducto;
     private Producto producto;
+    private FormatoFecha fecha;
     // MultiSelect list adapter
     private ListView listviewProductos;
     private SelectionAdapter mAdapter;
@@ -33,9 +35,9 @@ public class FacturacionActivity extends AppCompatActivity {
     private LayoutInflater inflater;
     private View view;
     private int cantidadProductos;
-    private float precioCompra, precioVenta, dineroGanancia, porcentajeUtilidad, dineroTotalDelPedido, dineroUtilidadTotal;
+    private float precioCompra, precioVenta, dineroGanancia, porcentajeUtilidad;
     private String stringFecha, stringCliente, strinAgente;
-    private TextInputEditText tvFecha, tvCliente, tvAgente , tvTotaldelPedido , tvDineroUtilidadTotal, txtCardNombreProducto,
+    private TextInputEditText tvFecha, tvAgente, tvDineroTotaldelPedido, tvDineroUtilidadGeneral, txtCardNombreProducto,
             txtCardPrecioCompra, txtCardPrecioVenta, txtCardPorcentajeUtilidad, txtCardDineroGanancia, txtCardCantidadProducto;
 
     @Override
@@ -66,33 +68,62 @@ public class FacturacionActivity extends AppCompatActivity {
         });
     }
 
-    private void instanciaComponentesDeLaUi(){
+    private void instanciaComponentesDeLaUi() {
         tvFecha = findViewById(R.id.textViewFecha);
         tvAgente = findViewById(R.id.textViewAgente);
-        tvCliente = findViewById(R.id.textViewCliente);
-        tvTotaldelPedido = findViewById(R.id.textViewTotaldelPedido);
-        tvDineroUtilidadTotal = findViewById(R.id.textViewUtilidadGeneral);
+        tvDineroTotaldelPedido = findViewById(R.id.textViewTotaldelPedido);
+        tvDineroUtilidadGeneral = findViewById(R.id.textViewUtilidadGeneral);
     }
 
-    private void mostrarDatosResumenEnLaUi(){
+    private void mostrarDatosResumenEnLaUi() {
         try {
-            realizarCalculoGeneralDelPedido();
+            asignarDatosParaResumenDelPedido();
             tvFecha.setText(stringFecha);
-            tvCliente.setText(stringCliente);
             tvAgente.setText(strinAgente);
-            tvTotaldelPedido.setText(String.valueOf(dineroTotalDelPedido));
+            tvDineroTotaldelPedido.setText(calcularDineroTotalDelPedido());
+            tvDineroUtilidadGeneral.setText(calcularDineroUtilidadTotalDelPedido());
         } catch (Error npe) {
             Toast.makeText(FacturacionActivity.this, "Error, favor verificar: " + npe.getMessage(), Toast.LENGTH_LONG).show();
         }
     }
 
-    private void realizarCalculoGeneralDelPedido(){
-        strinAgente ="Michael Busto L";
-        stringFecha="08-02-2022";
-        stringCliente="Algun cliente";
-        for (Producto producto: listaproductos) {
-            dineroTotalDelPedido+= producto.getPrecio_venta();
+    private void asignarDatosParaResumenDelPedido() {
+        try {
+            fecha = new FormatoFecha();
+            strinAgente = "Michael Busto L";
+            stringFecha = fecha.getFechaConFormato(this);
+            stringCliente = "Algun cliente";
+        } catch (Error npe) {
+            Toast.makeText(FacturacionActivity.this, "Error, favor verificar: " + npe.getMessage(), Toast.LENGTH_LONG).show();
         }
+    }
+
+    private String calcularDineroTotalDelPedido() {
+        try {
+            float dineroTotalDelPedido = 0;
+            for (Producto producto : listaproductos) {
+                dineroTotalDelPedido += producto.getPrecio_venta() * producto.getCantidad();
+            }
+            return String.valueOf(dineroTotalDelPedido);
+        } catch (NullPointerException npe) {
+            Toast.makeText(FacturacionActivity.this, "Error, verifique por favor: " + npe.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        return null;
+    }
+
+    private String calcularDineroUtilidadTotalDelPedido() {
+        try {
+            float dineroUtilidadTotal = 0;
+            int cantidad = 0;
+            for (Producto producto : listaproductos) {
+                cantidad = producto.getCantidad();
+                dineroUtilidadTotal += (producto.getPrecio_venta() * cantidad) - (producto.getPrecio_compra() * cantidad);
+            }
+            return String.valueOf(dineroUtilidadTotal);
+        } catch (NullPointerException npe) {
+            Toast.makeText(FacturacionActivity.this, "Error, verifique por favor: " + npe.getMessage(), Toast.LENGTH_LONG).show();
+        }
+        return null;
     }
 
     private void llenarListViewProductos() {
@@ -118,15 +149,16 @@ public class FacturacionActivity extends AppCompatActivity {
         txtCardPrecioVenta = view.findViewById(R.id.txtCardPrecioVenta);
         txtCardDineroGanancia = view.findViewById(R.id.txtCardGanancia);
         txtCardPrecioCompra = view.findViewById(R.id.txtCardPrecioCompra);
+        txtCardCantidadProducto = view.findViewById(R.id.txtCardCantidad);
         txtCardNombreProducto = view.findViewById(R.id.txtCardNombreProducto);
         txtCardPorcentajeUtilidad = view.findViewById(R.id.txtCardPorcentajeUtilidad);
-        txtCardCantidadProducto = view.findViewById(R.id.txtCardCantidad);
 
-        txtCardPrecioVenta.setText(String.valueOf(product.getPrecio_venta()));
-        txtCardPorcentajeUtilidad.setText(String.valueOf(product.getUtilidad()));
         txtCardNombreProducto.setText(product.getDescripcion());
+        txtCardPrecioVenta.setText(String.valueOf(product.getPrecio_venta()));
+        txtCardCantidadProducto.setText(String.valueOf(product.getCantidad()));
         txtCardPrecioCompra.setText(String.valueOf(product.getPrecio_compra()));
-        txtCardDineroGanancia.setText(String.valueOf(product.getPrecio_venta()- product.getPrecio_compra()));
+        txtCardPorcentajeUtilidad.setText(String.valueOf(product.getUtilidad()));
+        txtCardDineroGanancia.setText(String.valueOf(product.getPrecio_venta() - product.getPrecio_compra()));
 
         btnCalcularUtilidad.setOnClickListener(v -> {
             precioCompra = product.getPrecio_compra();
@@ -143,16 +175,14 @@ public class FacturacionActivity extends AppCompatActivity {
             txtCardPorcentajeUtilidad.setText(String.valueOf(product.getUtilidad()));
             txtCardDineroGanancia.setText(String.valueOf(dineroGanancia));
 
-            for (Producto producto1: listaproductos) {
-                dineroTotalDelPedido+= producto1.getPrecio_venta() * producto1.getCantidad();
-            }
-            tvDineroUtilidadTotal.setText(String.valueOf(dineroTotalDelPedido));
+            tvDineroTotaldelPedido.setText(calcularDineroTotalDelPedido());
+            tvDineroUtilidadGeneral.setText(calcularDineroUtilidadTotalDelPedido());
         });
 
         btnGuardarCambios.setOnClickListener(v -> {
             // cerrar el dialog y conservar informacion modificada
         });
-        builder.setView(view).setTitle("    Edición de producto");
+        builder.setView(view).setTitle("Editar valores de producto");
         return builder.create();
     }
 }
