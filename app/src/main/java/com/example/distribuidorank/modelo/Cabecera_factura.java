@@ -21,13 +21,13 @@ public class Cabecera_factura {
     @Expose
     private String fk_cliente;
 
+    @SerializedName("fk_usuario")
+    @Expose
+    private String fk_usuario;
+
     @SerializedName("fecha")
     @Expose
     private Date fecha;
-
-    @SerializedName("ultima_actualizacion")
-    @Expose
-    private Date ultima_actualizacion;
 
 
 
@@ -63,11 +63,11 @@ public class Cabecera_factura {
         this.fecha = fecha;
     }
 
-    public Date getUltima_actualizacion() {
-        return ultima_actualizacion;
+    public String getFk_usuario() {
+        return fk_usuario;
     }
 
-    public void setUltima_actualizacion(Date ultima_actualizacion) {
-        this.ultima_actualizacion = ultima_actualizacion;
+    public void setFk_usuario(String fk_usuario) {
+        this.fk_usuario = fk_usuario;
     }
 }

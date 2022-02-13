@@ -15,7 +15,8 @@ public class FormatoFecha {
 
     public String getFechaConFormato(Context context) {
         try {
-            return this.simpleDateFormat.format(this.calendar.getTime());
+            //return this.simpleDateFormat.format(this.calendar.getTime());
+            return this.calendar.getTime().toString();
         } catch (Exception e) {
             Toast.makeText(context, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
         }

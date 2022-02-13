@@ -840,7 +840,6 @@ public class POS_DataBase extends DataBaseHelper {
                     cabecera_factura.setTipo(cursor.getString(1));
                     cabecera_factura.setFk_cliente(cursor.getString(2));
                     cabecera_factura.setFecha(this.simpleDateFormat.parse(cursor.getString(3)));
-                    cabecera_factura.setUltima_actualizacion(this.simpleDateFormat.parse(cursor.getString(4)));
 
                     cabecera_facturas.add(cabecera_factura);
 
@@ -872,7 +871,6 @@ public class POS_DataBase extends DataBaseHelper {
                 cabecera_factura.setTipo(cursor.getString(1));
                 cabecera_factura.setFk_cliente(cursor.getString(2));
                 cabecera_factura.setFecha(this.simpleDateFormat.parse(cursor.getString(3)));
-                cabecera_factura.setUltima_actualizacion(this.simpleDateFormat.parse(cursor.getString(4)));
 
                 cursor.close();
             }

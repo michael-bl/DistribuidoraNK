@@ -106,14 +106,8 @@
             android:id="@+id/btnCardCalcular"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/calcular_utilidad" />
-
-        <Button
-            android:id="@+id/btnCardGuardar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:layout_marginBottom="15dp"
-            android:hint="@string/guardar" />
+            android:hint="@string/calcular_utilidad" />
 
     </LinearLayout>
 </androidx.appcompat.widget.LinearLayoutCompat>

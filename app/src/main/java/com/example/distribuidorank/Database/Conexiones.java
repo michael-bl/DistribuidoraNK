@@ -22,22 +22,13 @@ public class Conexiones {
     private Context context;
     private POS_DataBase posDataBase;
 
-    /**
-     * Constructor vacio
-     */
     public Conexiones() {
     }
 
-    /**
-     * Constructor recibe contexto
-     */
     public Conexiones(Context contexto) {
         context = contexto;
     }
 
-    /**
-     * Crea la db local
-     */
     public void crearDbLocal(Context context) {
         DataBaseHelper dbHelper = new DataBaseHelper(context);
         try {
@@ -47,9 +38,6 @@ public class Conexiones {
         }
     }
 
-    /**
-     * Recibe string con lista de productos, los envia al metodo insert de la clase POS_Database
-     */
     public void insertarProductosEnDbLocal(String listaProductos) {
         posDataBase = new POS_DataBase(context);
         try {
@@ -62,10 +50,7 @@ public class Conexiones {
         }
     }
 
-    /**
-     * Recibe string con lista de unidades, las envia al metodo insert de la clase POS_Database
-     */
-    public void insertarUnidadesEnDbLocal(String listaUnidades) {
+   public void insertarUnidadesEnDbLocal(String listaUnidades) {
         posDataBase = new POS_DataBase(context);
         try {
             String resultado = posDataBase.INSERT("Unidad", listaUnidades, 1) ? "Unidades almecenadas correctamente!" : "Error al guardar unidades!";
@@ -77,9 +62,6 @@ public class Conexiones {
         }
     }
 
-    /**
-     * Recibe string con lista de clientes, los envia al metodo insert de la clase POS_Database
-     */
     public void insertarClientesEnDbLocal(String listaClientes) {
         posDataBase = new POS_DataBase(context);
         try {
@@ -92,9 +74,6 @@ public class Conexiones {
         }
     }
 
-    /**
-     * Recibe string con lista de localidades, los envia al metodo insert de la clase POS_Database
-     */
     public void insertarLocalidadesEnDbLocal(String listaUnidades) {
         posDataBase = new POS_DataBase(context);
         try {
@@ -107,9 +86,6 @@ public class Conexiones {
         }
     }
 
-    /**
-     * Recibe string con lista de proveedores, los envia al metodo insert de la clase POS_Database
-     */
     public void insertarProveedoresEnDbLocal(String listaProveedores) {
         posDataBase = new POS_DataBase(context);
         try {
@@ -122,9 +98,6 @@ public class Conexiones {
         }
     }
 
-    /**
-     * Recibe string con lista de cabecera factura, los envia al metodo insert de la clase POS_Database
-     */
     public void insertarCabeceraFacturaEnDbLocal(String listaCabeceraFactura) {
         posDataBase = new POS_DataBase(context);
         try {
@@ -137,9 +110,6 @@ public class Conexiones {
         }
     }
 
-    /**
-     * Recibe string con lista detalles de facturas, los envia al metodo insert de la clase POS_Database
-     */
     public void insertarDetalleFacturaEnDbLocal(String listaDetalleFactura) {
         posDataBase = new POS_DataBase(context);
         try {
@@ -152,9 +122,6 @@ public class Conexiones {
         }
     }
 
-    /**
-     * Recibe string con modo de almacenamiento y accion a realizar sobre el objeto, POS_Database
-     */
     public void crudModo(String modo, String accion) {
         posDataBase = new POS_DataBase(context);
         String resultado;
@@ -176,9 +143,6 @@ public class Conexiones {
         }
     }
 
-    /**
-     * Recibe string con usuario y accion a realizar sobre el objeto, POS_Database
-     */
     public int crudUsuario(int accion, String usuario) {
         posDataBase = new POS_DataBase(context);
         int resultado = 0;
@@ -200,9 +164,6 @@ public class Conexiones {
         return resultado;
     }
 
-    /**
-     * Recibe string con cliente y accion a realizar sobre el objeto, POS_Database
-     */
     public int crudCliente(int accion, String cliente) {
         posDataBase = new POS_DataBase(context);
         int resultado = 0;
@@ -224,9 +185,6 @@ public class Conexiones {
         return resultado;
     }
 
-    /**
-     * Recibe string con producto y accion a realizar sobre el objeto, POS_Database
-     */
     public int crudProducto(int accion, String producto) {
         posDataBase = new POS_DataBase(context);
         int resultado = 0;
@@ -248,9 +206,6 @@ public class Conexiones {
         return resultado;
     }
 
-    /**
-     * Recibe string con proveedor y accion a realizar sobre el objeto, POS_Database
-     */
     public int crudProveedor(int accion, String proveedor) {
         posDataBase = new POS_DataBase(context);
         int resultado = 0;
@@ -272,9 +227,6 @@ public class Conexiones {
         return resultado;
     }
 
-    /**
-     * Recibe string con localidad y accion a realizar sobre el objeto, POS_Database
-     */
     public int crudLocalidad(int accion, String proveedor) {
         posDataBase = new POS_DataBase(context);
         int resultado = 0;
@@ -320,9 +272,6 @@ public class Conexiones {
 
     /* ************************************************************ Métodos SELECT ************************************************************ */
 
-    /**
-     * Inicio de sesion
-     */
     public boolean inicarSesion(String id, String pass) {
         try {
             gson = new Gson();
@@ -361,6 +310,20 @@ public class Conexiones {
             gson = new Gson();
             posDataBase = new POS_DataBase(context);
             return gson.fromJson(posDataBase.SELECT("Usuario"), new TypeToken<ArrayList<Usuario>>() {
+            }.getType());
+        } catch (NullPointerException nullPointerException) {
+            nullPointerException.printStackTrace();
+        } catch (JsonSyntaxException jsonSyntaxException) {
+            jsonSyntaxException.printStackTrace();
+        }
+        return null;
+    }
+
+    public List<Usuario> getUsuarioXid(String id) {
+        try {
+            gson = new Gson();
+            posDataBase = new POS_DataBase(context);
+            return gson.fromJson(posDataBase.SELECT("Usuario", id), new TypeToken<ArrayList<Usuario>>() {
             }.getType());
         } catch (NullPointerException nullPointerException) {
             nullPointerException.printStackTrace();
